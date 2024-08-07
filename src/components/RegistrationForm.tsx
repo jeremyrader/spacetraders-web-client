@@ -1,10 +1,44 @@
 "use client";
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+
+interface Trait {
+  symbol: string;
+  name: string;
+  description: string;
+}
+
+interface Faction {
+  symbol: string;
+  name: string;
+  description: string;
+  headquarters: string;
+  isRecruiting: boolean;
+  traits: Trait[];
+}
 
 function RegistrationForm() {
   const [registrationStatus, setRegistrationStatus] = useState('');
+  const [factions, setFactions] = useState<Faction[]>([])
+  const [selectedFaction, setSelectedFaction] = useState<Faction | null>(null)
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    async function fetchFactions() {
+      const options = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const response = await fetch('https://api.spacetraders.io/v2/factions', options)
+      const result = await response.json();
+
+      setFactions(result.data);
+      setSelectedFaction(result.data[0])
+    }
+    fetchFactions();
+  }, []);
 
   async function fetchData() {
 
@@ -22,7 +56,7 @@ function RegistrationForm() {
       },
       body: JSON.stringify({
         symbol: inputValue,
-        faction: "COSMIC",
+        faction: selectedFaction?.symbol,
       }),
     };
     
@@ -40,15 +74,64 @@ function RegistrationForm() {
   }
 
   return <div>
-    <input 
-      ref={inputRef}
-      type="text"
-      placeholder="Call sign" 
-      className="input input-bordered w-full max-w-xs" 
-    />
-    <button onClick={fetchData} className="btn btn-primary">Register Agent</button>
-    <p>{registrationStatus}</p>
-    </div>;
+    <h1 className="font-bold text-2xl text-center">Space Traders</h1>
+    <div className="flex flex-row">
+      <div>
+        {
+          factions ? (
+            <ul className="menu bg-base-200 rounded-box w-56">
+            {
+              factions.map((faction, index) => (
+                <li key={index}>
+                  <p onClick={() => { setSelectedFaction(faction)} }>{faction.name}</p>
+                </li>
+              ))
+            }
+          </ul>
+          ) : null
+        }
+      </div>
+      {
+        selectedFaction ? (
+          <div className="p-4">
+            <h2 className="font-bold text-xl mb-2">{selectedFaction.name}</h2>
+            <p>{selectedFaction.description}</p>
+
+            { selectedFaction.isRecruiting? (
+                <p className="mt-4">This faction is currently recruiting.</p>
+              ): null
+            }
+
+            <h2 className="mt-4 font-bold text-xl mb-2">Traits</h2>
+            <ul>
+              {
+                selectedFaction.traits.map((trait, index) => (
+                  <div key={index}>
+                    {/* <p>{trait.symbol}</p> */}
+                    <p className="font-bold my-2">{trait.name}</p>
+                    <p>{trait.description}</p>
+                  </div>
+                ))
+              }
+            </ul>
+            <div className="flex space-x-2 mt-4">
+              <input
+                ref={inputRef}
+                type="text"
+                placeholder="Call sign" 
+                className="input input-bordered w-full max-w-xs" 
+              />
+              <button onClick={fetchData} className="btn btn-primary">Register Agent with {selectedFaction.name}</button>
+              <p>{registrationStatus}</p>
+            </div>
+          </div>
+        ) : null
+      }
+      
+    </div>
+   
+    
+  </div>;
 }
 
 export default RegistrationForm;
