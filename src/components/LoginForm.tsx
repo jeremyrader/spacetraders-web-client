@@ -20,14 +20,23 @@ interface Faction {
 
 function LoginForm() {
   const router = useRouter();
-  const [registrationStatus, setRegistrationStatus] = useState('');
-  const [factions, setFactions] = useState<Faction[]>([])
-  const [selectedFaction, setSelectedFaction] = useState<Faction | null>(null)
   const inputRef = useRef<HTMLInputElement>(null);
+  const [loginStatus, setLoginStatus] = useState<string | null>(null);
 
   const handleLogin = (event: { preventDefault: () => void; }) => {
     event.preventDefault();
-    router.push('/dashboard');
+
+    const callsign = inputRef.current?.value;
+
+    if (callsign) {
+      const token = localStorage.getItem(callsign)
+      if (token) {
+        router.push(`/dashboard?callsign=${callsign}`);
+      }
+      else {
+        setLoginStatus("No agent found");
+      }
+    }
   };
 
   const handleRegister = (event: { preventDefault: () => void; }) => {
@@ -43,9 +52,10 @@ function LoginForm() {
         <div className="label">
           <span className="label-text">Sign In</span>
         </div>
-        <input type="text" placeholder="Call sign" className="input input-bordered w-full max-w-xs" />
+        <input type="text" ref={inputRef} placeholder="Call sign" className="input input-bordered w-full max-w-xs" />
       </label>
       <button onClick={handleLogin} className="btn btn-primary">Sign In</button>
+      { loginStatus }
     </div>
 
     <p className="my-4"> or </p>

@@ -64,7 +64,7 @@ function RegistrationForm() {
     const result = await response.json();
 
     if (result.data) {
-      localStorage.setItem('api-token', result.data.token)
+      localStorage.setItem(result.data.agent.symbol, result.data.token)
       setRegistrationStatus('Agent successfully registered')
     }
     else {
