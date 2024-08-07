@@ -74,63 +74,62 @@ function RegistrationForm() {
   }
 
   return <div>
-    <h1 className="font-bold text-2xl text-center">Space Traders</h1>
-    <div className="flex flex-row">
-      <div>
-        {
-          factions ? (
-            <ul className="menu bg-base-200 rounded-box w-56">
-            {
-              factions.map((faction, index) => (
-                <li key={index}>
-                  <p onClick={() => { setSelectedFaction(faction)} }>{faction.name}</p>
-                </li>
-              ))
-            }
-          </ul>
-          ) : null
-        }
-      </div>
-      {
-        selectedFaction ? (
-          <div className="p-4">
-            <h2 className="font-bold text-xl mb-2">{selectedFaction.name}</h2>
-            <p>{selectedFaction.description}</p>
-
-            { selectedFaction.isRecruiting? (
-                <p className="mt-4">This faction is currently recruiting.</p>
-              ): null
-            }
-
-            <h2 className="mt-4 font-bold text-xl mb-2">Traits</h2>
-            <ul>
+    <main className="flex min-h-screen flex-col p-24">
+      <div className="flex flex-row">
+        <div>
+          {
+            factions ? (
+              <ul className="menu bg-base-200 rounded-box w-56">
               {
-                selectedFaction.traits.map((trait, index) => (
-                  <div key={index}>
-                    {/* <p>{trait.symbol}</p> */}
-                    <p className="font-bold my-2">{trait.name}</p>
-                    <p>{trait.description}</p>
-                  </div>
+                factions.map((faction, index) => (
+                  <li key={index}>
+                    <p onClick={() => { setSelectedFaction(faction)} }>{faction.name}</p>
+                  </li>
                 ))
               }
             </ul>
-            <div className="flex space-x-2 mt-4">
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Call sign" 
-                className="input input-bordered w-full max-w-xs" 
-              />
-              <button onClick={fetchData} className="btn btn-primary">Register Agent with {selectedFaction.name}</button>
-              <p>{registrationStatus}</p>
+            ) : null
+          }
+        </div>
+        {
+          selectedFaction ? (
+            <div className="p-4">
+              <h2 className="font-bold text-xl mb-2">{selectedFaction.name}</h2>
+              <p>{selectedFaction.description}</p>
+
+              { selectedFaction.isRecruiting? (
+                  <p className="mt-4">This faction is currently recruiting.</p>
+                ): null
+              }
+
+              <h2 className="mt-4 font-bold text-xl mb-2">Traits</h2>
+              <ul>
+                {
+                  selectedFaction.traits.map((trait, index) => (
+                    <div key={index}>
+                      {/* <p>{trait.symbol}</p> */}
+                      <p className="font-bold my-2">{trait.name}</p>
+                      <p>{trait.description}</p>
+                    </div>
+                  ))
+                }
+              </ul>
+              <div className="flex space-x-2 mt-4">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  placeholder="Call sign" 
+                  className="input input-bordered w-full max-w-xs" 
+                />
+                <button onClick={fetchData} className="btn btn-primary">Register Agent with {selectedFaction.name}</button>
+                <p>{registrationStatus}</p>
+              </div>
             </div>
-          </div>
-        ) : null
-      }
-      
-    </div>
-   
-    
+          ) : null
+        }
+        
+      </div>
+    </main>
   </div>;
 }
 
