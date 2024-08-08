@@ -2,15 +2,48 @@
 
 import { Stage, Layer, Line, Circle, Text } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Konva from 'konva';
 
 function UniverseMap() {
 
+  const searchParams = useSearchParams();
   const stageRef = useRef<Konva.Stage>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
+
+    async function fetchContracts() {
+
+      const callsign = searchParams.get('callsign')
+
+      if (callsign) {
+        const token = localStorage.getItem(callsign)
+
+        if (token) {
+          const options = {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+            };
+      
+            const response = await fetch('https://api.spacetraders.io/v2/my/contracts', options)
+            const result = await response.json();
+      
+            // only handles the first page for now
+            setContracts(result.data);
+        }
+        else {
+          console.error("Agent not found")
+        }
+      }
+      else {
+        console.error("missing callsign param")
+      }
+    }
+
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         if (entry.target === containerRef.current) {

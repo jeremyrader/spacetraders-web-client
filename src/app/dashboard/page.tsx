@@ -7,19 +7,6 @@ import UniverseMap from '@/components/UniverseMap';
 
 function Dashboard() {
 
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const originX = width / 2;
-  const originY = height / 2;
-
-  // Points to plot (example points)
-  const points = [
-    { x: 50, y: 50 },
-    { x: -50, y: -50 },
-    { x: 100, y: -100 },
-    { x: -100, y: 100 },
-  ];
-
   const searchParams = useSearchParams();
 
   interface Agent {
