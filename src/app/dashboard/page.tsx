@@ -3,7 +3,22 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+import UniverseMap from '@/components/UniverseMap';
+
 function Dashboard() {
+
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const originX = width / 2;
+  const originY = height / 2;
+
+  // Points to plot (example points)
+  const points = [
+    { x: 50, y: 50 },
+    { x: -50, y: -50 },
+    { x: 100, y: -100 },
+    { x: -100, y: 100 },
+  ];
 
   const searchParams = useSearchParams();
 
@@ -136,7 +151,7 @@ function Dashboard() {
 
           {
             contract.terms.deliver.map((delivery, index) => (
-              <div className="my-4">
+              <div className="my-4" key={index}>
                 <p>Trade Symbol: {delivery.tradeSymbol}</p>
                 <p>Trade Destination: {delivery.destinationSymbol}</p>
                 <p>Units Required: {delivery.unitsRequired}</p>
@@ -149,9 +164,12 @@ function Dashboard() {
           <p>Fulfilled: {contract.fulfilled ? 'Yes': 'No'}</p>
           <p>Expiration: {contract.expiration}</p>
           <p>Deadline to Accept: {contract.deadlineToAccept}</p>
+
         </div>
       ))
     }
+
+    <UniverseMap></UniverseMap>
 
   </main>
 }
