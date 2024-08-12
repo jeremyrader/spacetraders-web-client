@@ -141,8 +141,6 @@ function UniverseMap({ hq, onSelectMap }) {
     return nebulas;
   });
 
-  // console.log('nebulas', nebulas)
-
   const moveAmount = 10;
 
   // document.addEventListener('keydown', (event) => {
@@ -373,8 +371,6 @@ function UniverseMap({ hq, onSelectMap }) {
     return (scale - 0.005) / (.2 - 0.005); // Linear interpolation
   };
 
-  console.log('selectedStar', selectedStar)
-
   return <div ref={containerRef} className='border-4 border-white'>
     {
       selectedStar ? (
@@ -430,70 +426,6 @@ function UniverseMap({ hq, onSelectMap }) {
         {/* Plot points */}
           {points.map((point, index) => {
             const { x, y, symbol, type, waypoints, color, size } = point;
-
-            // let fill = "white"
-            // let radius = 30
-
-            // let types = [
-            //   'BLACK_HOLE',
-            //   'ORANGE_STAR',
-            //   'BLUE_STAR',
-            //   'RED_STAR',
-            //   'YOUNG_STAR',
-            //   'WHITE_DWARF',
-            //   'HYPERGIANT',
-            //   'UNSTABLE',
-            //   'NEUTRON_STAR'
-            // ]
-
-            // if (type == 'BLACK_HOLE') {
-            //   fill = "gray"
-            //   radius = getRandomInt(5,10)
-            // }
-
-            // if (type == 'ORANGE_STAR') {
-            //   fill = getRandomOrange()
-            //   radius = getRandomInt(15,20)
-            // }
-
-            // if (type == 'BLUE_STAR') {
-            //   fill = getRandomBlue()
-            //   radius = getRandomInt(25,28)
-            // }
-
-            // if (type == 'RED_STAR') {
-            //   fill = getRandomRed()
-            //   radius = getRandomInt(15, 25)
-            // }
-
-            // if (type == 'YOUNG_STAR') {
-            //   fill = getRandomStarColor()
-            //   radius = getRandomInt(20,25)
-            // }
-
-            // if (type == 'WHITE_DWARF') {
-            //   fill = 'white'
-            //   radius = getRandomInt(10,15)
-            // }
-
-            // if (type == 'HYPERGIANT') {
-            //   fill = getRandomStarColor()
-            //   radius = getRandomInt(28,30)
-            // }
-
-            // if (type == 'UNSTABLE') {
-            //   fill = getRandomStarColor()
-            //   radius = 15
-            // }
-
-            // if (type == 'NEUTRON_STAR') {
-            //   fill = "white"
-            //   radius = getRandomInt(10,15)
-            // }
-
-            // if (!types.includes(type)) {
-            //   console.log(type)
-            // }
 
             function calculateColorFill(zoomLevel) {
               if (zoomLevel >= 1) {

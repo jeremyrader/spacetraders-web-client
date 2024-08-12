@@ -39,7 +39,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
       await saveData(result.data)
 
-      if (result.meta.total % result.meta.limit > 0) {
+      if (result.data.length == result.meta.limit) {
         // Respect rate limiting by introducing a delay if necessary
         await new Promise((resolve) => setTimeout(resolve, 700));
         return fetchPaginatedData(page);
@@ -86,7 +86,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       isFetching = false;
     };
 
-    // loadData();
+    loadData();
   }, []);
 
   const getDataFromDB = async (): Promise<any[]> => {
