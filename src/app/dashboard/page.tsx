@@ -1,49 +1,13 @@
 "use client";
 
-import { useState, useEffect, useContext } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
+import fetchResource from '../../utils/v2';
 
 import UniverseMap from '@/components/UniverseMap';
 import SystemMap from '@/components/SystemMap';
 
 function Dashboard() {
-  const searchParams = useSearchParams();
-
-  interface Agent {
-    accountId: string;
-    symbol: string;
-    headquarters: string;
-    credits: number;
-    startingFaction: string;
-    shipCount: number;
-  }
-
-  interface ContractTerms {
-    deadline: string;
-    payment: {
-      onAccepted: number;
-      onFulfilled: number;
-    };
-    deliver: {
-      tradeSymbol: string;
-      destinationSymbol: string;
-      unitsRequired: number;
-      unitsFulfilled: number;
-    }[]
-  }
-
-  interface Contract {
-    id: string;
-    factionSymbol: string;
-    type: string;
-    terms: ContractTerms;
-    accepted: boolean;
-    fulfilled: boolean;
-    expiration: string;
-    deadlineToAccept: string;
-  }
-
   const [agent, setAgent] = useState<Agent | null>(null)
   const [contracts, setContracts] = useState<Contract[]>([])
   const [selectedMap, setSelectedMap] = useState("universe")
@@ -52,62 +16,15 @@ function Dashboard() {
   useEffect(() => {
 
     async function fetchAgent() {
-      const callsign = searchParams.get('callsign')
-
-      if (callsign) {
-        const token = localStorage.getItem(callsign);
-
-        if (token) {
-          const options = {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-          };
-    
-          const response = await fetch('https://api.spacetraders.io/v2/my/agent', options)
-          const result = await response.json();
-    
-          setAgent(result.data);
-        }
-        else {
-          console.error("Agent not found")
-        }
-
-      }
-      else {
-        console.error("missing callsign param")
-      }
+      const result = await fetchResource('my/agent')
+      setAgent(result.data)
     }
 
     async function fetchContracts() {
+      const result = await fetchResource('my/contracts')
 
-      const callsign = searchParams.get('callsign')
-
-      if (callsign) {
-        const token = localStorage.getItem(callsign)
-
-        if (token) {
-          const options = {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-              },
-            };
-      
-            const response = await fetch('https://api.spacetraders.io/v2/my/contracts', options)
-            const result = await response.json();
-      
-            // only handles the first page for now
-            setContracts(result.data);
-        }
-        else {
-          console.error("Agent not found")
-        }
-      }
-      else {
-        console.error("missing callsign param")
-      }
+      // only handles the first page for now
+      setContracts(result.data);
     }
 
     fetchAgent();

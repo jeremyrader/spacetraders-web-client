@@ -2,21 +2,6 @@
 
 import { useRef, useState, useEffect } from 'react';
 
-interface Trait {
-  symbol: string;
-  name: string;
-  description: string;
-}
-
-interface Faction {
-  symbol: string;
-  name: string;
-  description: string;
-  headquarters: string;
-  isRecruiting: boolean;
-  traits: Trait[];
-}
-
 function RegistrationForm() {
   const [registrationStatus, setRegistrationStatus] = useState('');
   const [factions, setFactions] = useState<Faction[]>([])
@@ -25,13 +10,13 @@ function RegistrationForm() {
 
   useEffect(() => {
     async function fetchFactions() {
-      const options = {
+
+      const response = await fetch('https://api.spacetraders.io/v2/factions', {
         headers: {
           'Content-Type': 'application/json',
         },
-      };
-
-      const response = await fetch('https://api.spacetraders.io/v2/factions', options)
+      }
+)
       const result = await response.json();
 
       setFactions(result.data);
@@ -41,7 +26,6 @@ function RegistrationForm() {
   }, []);
 
   async function fetchData() {
-
     const inputValue = inputRef.current?.value;
 
     if (!inputValue) {
@@ -64,6 +48,7 @@ function RegistrationForm() {
     const result = await response.json();
 
     if (result.data) {
+      localStorage.setItem('callsign', result.data.agent.symbol)
       localStorage.setItem(result.data.agent.symbol, result.data.token)
       setRegistrationStatus('Agent successfully registered')
     }

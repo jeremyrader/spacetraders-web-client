@@ -3,21 +3,6 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface Trait {
-  symbol: string;
-  name: string;
-  description: string;
-}
-
-interface Faction {
-  symbol: string;
-  name: string;
-  description: string;
-  headquarters: string;
-  isRecruiting: boolean;
-  traits: Trait[];
-}
-
 function LoginForm() {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
