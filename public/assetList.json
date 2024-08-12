@@ -1,0 +1,208 @@
+{
+  ".DS_Store": "/assets/small planets/.DS_Store",
+  "Gaseous": {
+    ".DS_Store": "/assets/small planets/Gaseous/.DS_Store",
+    "Blue Giant": {
+      "BlueGiant_01-128x128.png": "/assets/small planets/Blue Giant/BlueGiant_01-128x128.png",
+      "BlueGiant_02-128x128.png": "/assets/small planets/Blue Giant/BlueGiant_02-128x128.png",
+      "BlueGiant_03-128x128.png": "/assets/small planets/Blue Giant/BlueGiant_03-128x128.png",
+      "BlueGiant_04-128x128.png": "/assets/small planets/Blue Giant/BlueGiant_04-128x128.png",
+      "BlueGiant_05-128x128.png": "/assets/small planets/Blue Giant/BlueGiant_05-128x128.png"
+    },
+    "Green Giant": {
+      "GreenGiant_01-128x128.png": "/assets/small planets/Green Giant/GreenGiant_01-128x128.png",
+      "GreenGiant_02-128x128.png": "/assets/small planets/Green Giant/GreenGiant_02-128x128.png",
+      "GreenGiant_03-128x128.png": "/assets/small planets/Green Giant/GreenGiant_03-128x128.png",
+      "GreenGiant_04-128x128.png": "/assets/small planets/Green Giant/GreenGiant_04-128x128.png",
+      "GreenGiant_05-128x128.png": "/assets/small planets/Green Giant/GreenGiant_05-128x128.png"
+    },
+    "Orange Giant": {
+      "OrangeGiant_01-128x128.png": "/assets/small planets/Orange Giant/OrangeGiant_01-128x128.png",
+      "OrangeGiant_02-128x128.png": "/assets/small planets/Orange Giant/OrangeGiant_02-128x128.png",
+      "OrangeGiant_03-128x128.png": "/assets/small planets/Orange Giant/OrangeGiant_03-128x128.png",
+      "OrangeGiant_04-128x128.png": "/assets/small planets/Orange Giant/OrangeGiant_04-128x128.png",
+      "OrangeGiant_05-128x128.png": "/assets/small planets/Orange Giant/OrangeGiant_05-128x128.png"
+    },
+    "Red Giant": {
+      "RedGiant_01-128x128.png": "/assets/small planets/Red Giant/RedGiant_01-128x128.png",
+      "RedGiant_02-128x128.png": "/assets/small planets/Red Giant/RedGiant_02-128x128.png",
+      "RedGiant_03-128x128.png": "/assets/small planets/Red Giant/RedGiant_03-128x128.png",
+      "RedGiant_04-128x128.png": "/assets/small planets/Red Giant/RedGiant_04-128x128.png",
+      "RedGiant_05-128x128.png": "/assets/small planets/Red Giant/RedGiant_05-128x128.png"
+    },
+    "Yellow Giant": {
+      "YellowGiant_01-128x128.png": "/assets/small planets/Yellow Giant/YellowGiant_01-128x128.png",
+      "YellowGiant_02-128x128.png": "/assets/small planets/Yellow Giant/YellowGiant_02-128x128.png",
+      "YellowGiant_03-128x128.png": "/assets/small planets/Yellow Giant/YellowGiant_03-128x128.png",
+      "YellowGiant_04-128x128.png": "/assets/small planets/Yellow Giant/YellowGiant_04-128x128.png",
+      "YellowGiant_05-128x128.png": "/assets/small planets/Yellow Giant/YellowGiant_05-128x128.png"
+    }
+  },
+  "Solid": {
+    ".DS_Store": "/assets/small planets/Solid/.DS_Store",
+    "Airless": {
+      "Airless_01-128x128.png": "/assets/small planets/Airless/Airless_01-128x128.png",
+      "Airless_02-128x128.png": "/assets/small planets/Airless/Airless_02-128x128.png",
+      "Airless_03-128x128.png": "/assets/small planets/Airless/Airless_03-128x128.png",
+      "Airless_04-128x128.png": "/assets/small planets/Airless/Airless_04-128x128.png",
+      "Airless_05-128x128.png": "/assets/small planets/Airless/Airless_05-128x128.png"
+    },
+    "Aquamarine": {
+      "Aquamarine_01-128x128.png": "/assets/small planets/Aquamarine/Aquamarine_01-128x128.png",
+      "Aquamarine_02-128x128.png": "/assets/small planets/Aquamarine/Aquamarine_02-128x128.png",
+      "Aquamarine_03-128x128.png": "/assets/small planets/Aquamarine/Aquamarine_03-128x128.png",
+      "Aquamarine_04-128x128.png": "/assets/small planets/Aquamarine/Aquamarine_04-128x128.png",
+      "Aquamarine_05-128x128.png": "/assets/small planets/Aquamarine/Aquamarine_05-128x128.png"
+    },
+    "Arid": {
+      "Arid_01-128x128.png": "/assets/small planets/Arid/Arid_01-128x128.png",
+      "Arid_02-128x128.png": "/assets/small planets/Arid/Arid_02-128x128.png",
+      "Arid_03-128x128.png": "/assets/small planets/Arid/Arid_03-128x128.png",
+      "Arid_04-128x128.png": "/assets/small planets/Arid/Arid_04-128x128.png",
+      "Arid_05-128x128.png": "/assets/small planets/Arid/Arid_05-128x128.png"
+    },
+    "Barren": {
+      "Barren_01-128x128.png": "/assets/small planets/Barren/Barren_01-128x128.png",
+      "Barren_02-128x128.png": "/assets/small planets/Barren/Barren_02-128x128.png",
+      "Barren_03-128x128.png": "/assets/small planets/Barren/Barren_03-128x128.png",
+      "Barren_04-128x128.png": "/assets/small planets/Barren/Barren_04-128x128.png",
+      "Barren_05-128x128.png": "/assets/small planets/Barren/Barren_05-128x128.png"
+    },
+    "Cloudy": {
+      "Cloudy_01-128x128.png": "/assets/small planets/Cloudy/Cloudy_01-128x128.png",
+      "Cloudy_02-128x128.png": "/assets/small planets/Cloudy/Cloudy_02-128x128.png",
+      "Cloudy_03-128x128.png": "/assets/small planets/Cloudy/Cloudy_03-128x128.png",
+      "Cloudy_04-128x128.png": "/assets/small planets/Cloudy/Cloudy_04-128x128.png",
+      "Cloudy_05-128x128.png": "/assets/small planets/Cloudy/Cloudy_05-128x128.png"
+    },
+    "Cratered": {
+      "Cratered_01-128x128.png": "/assets/small planets/Cratered/Cratered_01-128x128.png",
+      "Cratered_02-128x128.png": "/assets/small planets/Cratered/Cratered_02-128x128.png",
+      "Cratered_03-128x128.png": "/assets/small planets/Cratered/Cratered_03-128x128.png",
+      "Cratered_04-128x128.png": "/assets/small planets/Cratered/Cratered_04-128x128.png",
+      "Cratered_05-128x128.png": "/assets/small planets/Cratered/Cratered_05-128x128.png"
+    },
+    "Dry": {
+      "Dry_01-128x128.png": "/assets/small planets/Dry/Dry_01-128x128.png",
+      "Dry_02-128x128.png": "/assets/small planets/Dry/Dry_02-128x128.png",
+      "Dry_03-128x128.png": "/assets/small planets/Dry/Dry_03-128x128.png",
+      "Dry_04-128x128.png": "/assets/small planets/Dry/Dry_04-128x128.png",
+      "Dry_05-128x128.png": "/assets/small planets/Dry/Dry_05-128x128.png"
+    },
+    "Frozen": {
+      "Frozen_01-128x128.png": "/assets/small planets/Frozen/Frozen_01-128x128.png",
+      "Frozen_02-128x128.png": "/assets/small planets/Frozen/Frozen_02-128x128.png",
+      "Frozen_03-128x128.png": "/assets/small planets/Frozen/Frozen_03-128x128.png",
+      "Frozen_04-128x128.png": "/assets/small planets/Frozen/Frozen_04-128x128.png",
+      "Frozen_05-128x128.png": "/assets/small planets/Frozen/Frozen_05-128x128.png"
+    },
+    "Glacial": {
+      "Glacial_01-128x128.png": "/assets/small planets/Glacial/Glacial_01-128x128.png",
+      "Glacial_02-128x128.png": "/assets/small planets/Glacial/Glacial_02-128x128.png",
+      "Glacial_03-128x128.png": "/assets/small planets/Glacial/Glacial_03-128x128.png",
+      "Glacial_04-128x128.png": "/assets/small planets/Glacial/Glacial_04-128x128.png",
+      "Glacial_05-128x128.png": "/assets/small planets/Glacial/Glacial_05-128x128.png"
+    },
+    "Icy": {
+      "Icy_01-128x128.png": "/assets/small planets/Icy/Icy_01-128x128.png",
+      "Icy_02-128x128.png": "/assets/small planets/Icy/Icy_02-128x128.png",
+      "Icy_03-128x128.png": "/assets/small planets/Icy/Icy_03-128x128.png",
+      "Icy_04-128x128.png": "/assets/small planets/Icy/Icy_04-128x128.png",
+      "Icy_05-128x128.png": "/assets/small planets/Icy/Icy_05-128x128.png"
+    },
+    "Lunar": {
+      "Lunar_01-128x128.png": "/assets/small planets/Lunar/Lunar_01-128x128.png",
+      "Lunar_02-128x128.png": "/assets/small planets/Lunar/Lunar_02-128x128.png",
+      "Lunar_03-128x128.png": "/assets/small planets/Lunar/Lunar_03-128x128.png",
+      "Lunar_04-128x128.png": "/assets/small planets/Lunar/Lunar_04-128x128.png",
+      "Lunar_05-128x128.png": "/assets/small planets/Lunar/Lunar_05-128x128.png"
+    },
+    "Lush": {
+      "Lush_01-128x128.png": "/assets/small planets/Lush/Lush_01-128x128.png",
+      "Lush_02-128x128.png": "/assets/small planets/Lush/Lush_02-128x128.png",
+      "Lush_03-128x128.png": "/assets/small planets/Lush/Lush_03-128x128.png",
+      "Lush_04-128x128.png": "/assets/small planets/Lush/Lush_04-128x128.png",
+      "Lush_05-128x128.png": "/assets/small planets/Lush/Lush_05-128x128.png"
+    },
+    "Magma": {
+      "Magma_01-128x128.png": "/assets/small planets/Magma/Magma_01-128x128.png",
+      "Magma_02-128x128.png": "/assets/small planets/Magma/Magma_02-128x128.png",
+      "Magma_03-128x128.png": "/assets/small planets/Magma/Magma_03-128x128.png",
+      "Magma_04-128x128.png": "/assets/small planets/Magma/Magma_04-128x128.png",
+      "Magma_05-128x128.png": "/assets/small planets/Magma/Magma_05-128x128.png"
+    },
+    "Muddy": {
+      "Muddy_01-128x128.png": "/assets/small planets/Muddy/Muddy_01-128x128.png",
+      "Muddy_02-128x128.png": "/assets/small planets/Muddy/Muddy_02-128x128.png",
+      "Muddy_03-128x128.png": "/assets/small planets/Muddy/Muddy_03-128x128.png",
+      "Muddy_04-128x128.png": "/assets/small planets/Muddy/Muddy_04-128x128.png",
+      "Muddy_05-128x128.png": "/assets/small planets/Muddy/Muddy_05-128x128.png"
+    },
+    "Oasis": {
+      "Oasis_01-128x128.png": "/assets/small planets/Oasis/Oasis_01-128x128.png",
+      "Oasis_02-128x128.png": "/assets/small planets/Oasis/Oasis_02-128x128.png",
+      "Oasis_03-128x128.png": "/assets/small planets/Oasis/Oasis_03-128x128.png",
+      "Oasis_04-128x128.png": "/assets/small planets/Oasis/Oasis_04-128x128.png",
+      "Oasis_05-128x128.png": "/assets/small planets/Oasis/Oasis_05-128x128.png"
+    },
+    "Ocean": {
+      "Ocean_01-128x128.png": "/assets/small planets/Ocean/Ocean_01-128x128.png",
+      "Ocean_02-128x128.png": "/assets/small planets/Ocean/Ocean_02-128x128.png",
+      "Ocean_03-128x128.png": "/assets/small planets/Ocean/Ocean_03-128x128.png",
+      "Ocean_04-128x128.png": "/assets/small planets/Ocean/Ocean_04-128x128.png",
+      "Ocean_05-128x128.png": "/assets/small planets/Ocean/Ocean_05-128x128.png"
+    },
+    "Rocky": {
+      "Rocky_01-128x128.png": "/assets/small planets/Rocky/Rocky_01-128x128.png",
+      "Rocky_02-128x128.png": "/assets/small planets/Rocky/Rocky_02-128x128.png",
+      "Rocky_03-128x128.png": "/assets/small planets/Rocky/Rocky_03-128x128.png",
+      "Rocky_04-128x128.png": "/assets/small planets/Rocky/Rocky_04-128x128.png",
+      "Rocky_05-128x128.png": "/assets/small planets/Rocky/Rocky_05-128x128.png"
+    },
+    "Snowy": {
+      "Snowy_01-128x128.png": "/assets/small planets/Snowy/Snowy_01-128x128.png",
+      "Snowy_02-128x128.png": "/assets/small planets/Snowy/Snowy_02-128x128.png",
+      "Snowy_03-128x128.png": "/assets/small planets/Snowy/Snowy_03-128x128.png",
+      "Snowy_04-128x128.png": "/assets/small planets/Snowy/Snowy_04-128x128.png",
+      "Snowy_05-128x128.png": "/assets/small planets/Snowy/Snowy_05-128x128.png"
+    },
+    "Terrestrial": {
+      "Terrestrial_01-128x128.png": "/assets/small planets/Terrestrial/Terrestrial_01-128x128.png",
+      "Terrestrial_02-128x128.png": "/assets/small planets/Terrestrial/Terrestrial_02-128x128.png",
+      "Terrestrial_03-128x128.png": "/assets/small planets/Terrestrial/Terrestrial_03-128x128.png",
+      "Terrestrial_04-128x128.png": "/assets/small planets/Terrestrial/Terrestrial_04-128x128.png",
+      "Terrestrial_05-128x128.png": "/assets/small planets/Terrestrial/Terrestrial_05-128x128.png"
+    },
+    "Tropical": {
+      "Tropical_01-128x128.png": "/assets/small planets/Tropical/Tropical_01-128x128.png",
+      "Tropical_02-128x128.png": "/assets/small planets/Tropical/Tropical_02-128x128.png",
+      "Tropical_03-128x128.png": "/assets/small planets/Tropical/Tropical_03-128x128.png",
+      "Tropical_04-128x128.png": "/assets/small planets/Tropical/Tropical_04-128x128.png",
+      "Tropical_05-128x128.png": "/assets/small planets/Tropical/Tropical_05-128x128.png"
+    }
+  },
+  "Suns": {
+    ".DS_Store": "/assets/small planets/Suns/.DS_Store",
+    "Blue Sun": {
+      "Sun_Blue_01-128x128.png": "/assets/small planets/Blue Sun/Sun_Blue_01-128x128.png",
+      "Sun_Blue_02-128x128.png": "/assets/small planets/Blue Sun/Sun_Blue_02-128x128.png",
+      "Sun_Blue_03-128x128.png": "/assets/small planets/Blue Sun/Sun_Blue_03-128x128.png",
+      "Sun_Blue_04-128x128.png": "/assets/small planets/Blue Sun/Sun_Blue_04-128x128.png",
+      "Sun_Blue_05-128x128.png": "/assets/small planets/Blue Sun/Sun_Blue_05-128x128.png"
+    },
+    "Red Sun": {
+      "Sun_Red_01-128x128.png": "/assets/small planets/Red Sun/Sun_Red_01-128x128.png",
+      "Sun_Red_02-128x128.png": "/assets/small planets/Red Sun/Sun_Red_02-128x128.png",
+      "Sun_Red_03-128x128.png": "/assets/small planets/Red Sun/Sun_Red_03-128x128.png",
+      "Sun_Red_04-128x128.png": "/assets/small planets/Red Sun/Sun_Red_04-128x128.png",
+      "Sun_Red_05-128x128.png": "/assets/small planets/Red Sun/Sun_Red_05-128x128.png"
+    },
+    "Yellow Sun": {
+      "Sun_Yellow_01-128x128.png": "/assets/small planets/Yellow Sun/Sun_Yellow_01-128x128.png",
+      "Sun_Yellow_02-128x128.png": "/assets/small planets/Yellow Sun/Sun_Yellow_02-128x128.png",
+      "Sun_Yellow_03-128x128.png": "/assets/small planets/Yellow Sun/Sun_Yellow_03-128x128.png",
+      "Sun_Yellow_04-128x128.png": "/assets/small planets/Yellow Sun/Sun_Yellow_04-128x128.png",
+      "Sun_Yellow_05-128x128.png": "/assets/small planets/Yellow Sun/Sun_Yellow_05-128x128.png"
+    }
+  }
+}

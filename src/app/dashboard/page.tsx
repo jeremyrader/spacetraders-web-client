@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { DataProvider } from '../../contexts/DataContext';
 
 import UniverseMap from '@/components/UniverseMap';
+import SystemMap from '@/components/SystemMap';
 
 function Dashboard() {
-
   const searchParams = useSearchParams();
 
   interface Agent {
@@ -45,6 +46,8 @@ function Dashboard() {
 
   const [agent, setAgent] = useState<Agent | null>(null)
   const [contracts, setContracts] = useState<Contract[]>([])
+  const [selectedMap, setSelectedMap] = useState("universe")
+  const [selectedSystem, setSelectedSystem] = useState(null)
 
   useEffect(() => {
 
@@ -111,54 +114,77 @@ function Dashboard() {
     fetchContracts();
   }, []);
 
-  return <main className="flex min-h-screen flex-col p-24">
-    Dashboard
+  const handleSelectMap = (map, system) => {
+    setSelectedMap(map)
 
-    <p>Account ID: {agent?.accountId}</p>
-    <p>Symbol: {agent?.symbol}</p>
-    <p>Headquarters: {agent?.headquarters}</p>
-    <p>Credits: {agent?.credits}</p>
-    <p>Starting Faction: {agent?.startingFaction}</p>
-    <p>Ship Count: {agent?.shipCount}</p>
-
-    <p className="mt-8">Contracts:</p>
-
-    {
-      contracts.map((contract, index) => (
-        <div className="mt-4" key={index}>
-          <p>Type: {contract.type}</p>
-          <p>
-            Terms:
-          </p>
-          <p>Deadline: {contract.terms.deadline}</p>
-          <p>Payment on Accept: {contract.terms.payment.onAccepted}</p>
-          <p>Payment on Fulfillment: {contract.terms.payment.onFulfilled}</p>
-
-          <p>Deliveries:</p>
-
-          {
-            contract.terms.deliver.map((delivery, index) => (
-              <div className="my-4" key={index}>
-                <p>Trade Symbol: {delivery.tradeSymbol}</p>
-                <p>Trade Destination: {delivery.destinationSymbol}</p>
-                <p>Units Required: {delivery.unitsRequired}</p>
-                <p>Units Fulfilled: {delivery.unitsFulfilled}</p>
-              </div>
-            ))
-          }
-
-          <p>Accepted: {contract.accepted ? 'Yes': 'No'}</p>
-          <p>Fulfilled: {contract.fulfilled ? 'Yes': 'No'}</p>
-          <p>Expiration: {contract.expiration}</p>
-          <p>Deadline to Accept: {contract.deadlineToAccept}</p>
-
-        </div>
-      ))
+    if (system) {
+      setSelectedSystem(system)
     }
+    else {
+      setSelectedSystem(null)
+    }
+    
+  }
 
-    <UniverseMap></UniverseMap>
+  return <DataProvider>
+    <main className="flex min-h-screen flex-col p-24">
+      Dashboard
+      <div className="mb-24">
+        <p>Account ID: {agent?.accountId}</p>
+        <p>Symbol: {agent?.symbol}</p>
+        <p>Headquarters: {agent?.headquarters}</p>
+        <p>Credits: {agent?.credits}</p>
+        <p>Starting Faction: {agent?.startingFaction}</p>
+        <p>Ship Count: {agent?.shipCount}</p>
 
-  </main>
+        <p className="mt-8">Contracts:</p>
+
+        {
+          contracts.map((contract, index) => (
+            <div className="mt-4" key={index}>
+              <p>Type: {contract.type}</p>
+              <p>
+                Terms:
+              </p>
+              <p>Deadline: {contract.terms.deadline}</p>
+              <p>Payment on Accept: {contract.terms.payment.onAccepted}</p>
+              <p>Payment on Fulfillment: {contract.terms.payment.onFulfilled}</p>
+
+              <p>Deliveries:</p>
+
+              {
+                contract.terms.deliver.map((delivery, index) => (
+                  <div className="my-4" key={index}>
+                    <p>Trade Symbol: {delivery.tradeSymbol}</p>
+                    <p>Trade Destination: {delivery.destinationSymbol}</p>
+                    <p>Units Required: {delivery.unitsRequired}</p>
+                    <p>Units Fulfilled: {delivery.unitsFulfilled}</p>
+                  </div>
+                ))
+              }
+
+              <p>Accepted: {contract.accepted ? 'Yes': 'No'}</p>
+              <p>Fulfilled: {contract.fulfilled ? 'Yes': 'No'}</p>
+              <p>Expiration: {contract.expiration}</p>
+              <p>Deadline to Accept: {contract.deadlineToAccept}</p>
+
+            </div>
+          ))
+        }
+      </div>
+      
+
+      {
+        selectedMap == 'universe' ? (
+          <UniverseMap hq={agent?.headquarters} onSelectMap={handleSelectMap}></UniverseMap>
+        ) : (
+          <SystemMap system={selectedSystem} onSelectMap={handleSelectMap}></SystemMap>
+        )
+      }
+      
+
+    </main>
+  </DataProvider>
 }
 
 export default Dashboard;
