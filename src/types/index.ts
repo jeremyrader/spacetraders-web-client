@@ -46,3 +46,11 @@ interface Agent {
     expiration: string;
     deadlineToAccept: string;
   }
+
+  interface Waypoint {
+    symbol: string;
+    type: string;
+    x: number;
+    y: number;
+    orbitals: any[]
+  }

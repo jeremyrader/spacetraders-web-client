@@ -1,10 +1,12 @@
 "use client";
 
-import { Stage, Layer, Group, Circle, Rect, Text } from 'react-konva';
+import { Layer, Group, Circle, Rect, Text } from 'react-konva';
 import { useState, useRef, useEffect, useContext } from 'react';
 import React from 'react';
 import Konva from 'konva';
 import DataContext from '../contexts/DataContext';
+
+import Map from './Map'
 
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -74,10 +76,8 @@ function getRandomOrange() {
 function UniverseMap({ hq, onSelectMap }) {
   const context = useContext(DataContext);
   const dataContext = useContext(DataContext);
-  const stageRef = useRef<Konva.Stage>(null);
   const layerRef = useRef<Konva.Layer>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
   const [points, setPoints] = useState<any[]>([]);
   const [headquarters, setHeadquarters] = useState<any>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -94,7 +94,6 @@ function UniverseMap({ hq, onSelectMap }) {
     y: 0,
   };
   const massiveCircleRadius = 60000; // Radius of the massive circle
-
 
   let minX= 10 ^ 6
   let minY = 10 ^ 6
@@ -141,85 +140,8 @@ function UniverseMap({ hq, onSelectMap }) {
     return nebulas;
   });
 
-  const moveAmount = 10;
-
-  // document.addEventListener('keydown', (event) => {
-  //   const stage = stageRef.current;
-
-  //   if (stage) {
-
-  //     const key = event.key;
-
-  //     // Get the current position of the stage
-  //     const position = stage.position();
-
-  //     switch (key) {
-  //       case 'w': // Move up
-  //         stage.position({ x: position.x, y: position.y + moveAmount });
-  //         break;
-  //       case 'a': // Move left
-  //         stage.position({ x: position.x + moveAmount, y: position.y });
-  //         break;
-  //       case 's': // Move down
-  //         stage.position({ x: position.x, y: position.y - moveAmount });
-  //         break;
-  //       case 'd': // Move right
-  //         stage.position({ x: position.x - moveAmount, y: position.y });
-  //         break;
-  //     }
-  //   }
-  // });
-
   if (!context) {
     throw new Error('DataContext must be used within a DataProvider');
-  }
-
-  const handleWheel = (e) => {
-    e.evt.preventDefault();
-    
-    const scaleBy = 1.1;  // Zoom factor
-    const stage = stageRef.current;
-
-    if (stage) {
-
-      const oldScale = stage.scaleX();
-      // Determine the new scale factor based on scroll direction
-      let newScale = oldScale;
-      if (e.evt.deltaY < 0) {
-        // Zoom in (scrolling up)
-        newScale = oldScale * scaleBy;
-      } else if (e.evt.deltaY > 0) {
-        // Zoom out (scrolling down)
-        newScale = oldScale / scaleBy;
-      }
-
-      newScale = Math.min(newScale, 1)
-
-      // Center of the screen in stage coordinates
-      const center = {
-        x: stageSize.width / 2,
-        y: stageSize.height / 2,
-      };
-      
-      // Center point in stage coordinates considering the current scale
-      const centerPointTo = {
-        x: (center.x - stage.x()) / oldScale,
-        y: (center.y - stage.y()) / oldScale,
-      };
-      
-      // Calculate the new position to maintain the center point
-      const newPos = {
-        x: center.x - centerPointTo.x * newScale,
-        y: center.y - centerPointTo.y * newScale,
-      };
-      setZoomLevel(newScale)
-      // Apply the new scale and position
-      stage.scale({ x: newScale, y: newScale });
-      stage.position(newPos);
-      
-      stage.batchDraw();
-
-    }
   }
 
   const handleStarClick = (star, index) => {
@@ -231,22 +153,7 @@ function UniverseMap({ hq, onSelectMap }) {
     onSelectMap('system', star)
   }
 
-
   useEffect(() => {
-    const stage = stageRef.current;
-    
-    if (stage) {
-      // Set initial position so that (0,0) is in the center of the canvas
-      stage.position({
-        x: stageSize.width / 2, // 91
-        y: stageSize.height / 2, // -12
-      });
-
-      // galaxy view
-      // stage.scale({ x: .005, y: .005 });
-
-      stage.batchDraw();
-    }
 
     const fetchData = async (headq) => {
       if (dataContext) {
@@ -341,28 +248,8 @@ function UniverseMap({ hq, onSelectMap }) {
       }
     };
 
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (entry.target === containerRef.current) {
-          const { width, height } = entry.contentRect;
-          setStageSize({ width, height });
-          // setOriginX(width / 2)
-          // setOriginY(height / 2)
-        }
-      }
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
     fetchData(hq);
 
-    return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
-      }
-    };
   }, [dataContext]);
 
   const calculateOpacity = (scale) => {
@@ -377,18 +264,16 @@ function UniverseMap({ hq, onSelectMap }) {
         <button onClick={() => handleEnterSystemClick(selectedStar)} className="btn btn-primary">View System Map</button>
       ) : null
     }
-    <Stage
-      width={stageSize.width}
-      height={window.innerHeight}
-      style={{ backgroundColor: 'black' }}
-      ref={stageRef}
-      onWheel={handleWheel}
-      draggable
+    <Map
+      containerRef={containerRef}
+      maxZoom={1}
+      onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
     >
+
       {/* Background Nebula Layer */}
       <Layer>
         {/* Black background */}
-        <Rect width={stageSize.width} height={stageSize.height} fill="black" />
+        {/* <Rect width={stageSize.width} height={stageSize.height} fill="black" /> */}
 
         {/* Render nebulas */}
         {nebulas.map((nebula, index) => (
@@ -464,7 +349,7 @@ function UniverseMap({ hq, onSelectMap }) {
                           visible: true,
                           x: x + 20,
                           y: -y + 30, // Position slightly above the point
-                          text: `Name: ${symbol}\nWaypoints: ${waypoints.length}\nType: ${type}\n`,
+                          text: `Name: ${symbol}\nWaypoints: ${waypoints.length}\nType: ${type}\n${x}, ${-y}`,
                         });
                       }
                     }
@@ -503,7 +388,7 @@ function UniverseMap({ hq, onSelectMap }) {
             </Group>
           )}
       </Layer>
-    </Stage>
+    </Map>
   </div>
 }
 
