@@ -1,15 +1,22 @@
 "use client";
 
-import { Layer, Circle } from 'react-konva';
+import { Layer } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 
 import Map from './Map'
 import Waypoint from '@/components/Waypoint'
+import Orbit from '@/components/Orbit'
+import SystemStar from '@/components/SystemStar'
 
 import fetchResource from '../utils/v2'
 
-function SystemMap({system, onSelectMap}) {
+interface SystemMapProps {
+  system: any;
+  onSelectMap: Function;
+}
+
+function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -29,17 +36,16 @@ function SystemMap({system, onSelectMap}) {
 
   }, []);
 
+  let { color } = system
 
-  let { type, color, size } = system
-
-  const orbitalWaypoints = system.waypoints.filter(waypoint => {
+  const orbitals = system.waypoints.filter((waypoint: Waypoint) => {
     return waypoint.orbitals
-  }).reduce((acc, waypoint) => {
+  }).reduce((acc: Orbital[], waypoint: Waypoint) => {
     return acc.concat(waypoint.orbitals);
   }, []);
 
-  const waypoints = system.waypoints.filter(waypoint => {
-    return !orbitalWaypoints.find(orbitalWaypoint => orbitalWaypoint.symbol == waypoint.symbol)
+  const nonOrbitalWaypoints = system.waypoints.filter((waypoint: Waypoint) => {
+    return !orbitals.find((orbital: Orbital) => orbital.symbol == waypoint.symbol)
   })
 
   return <div ref={containerRef} className='border-4 border-white'>
@@ -49,61 +55,56 @@ function SystemMap({system, onSelectMap}) {
       maxZoom={1.5}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
     >
+      {/* Orbits Layer */}
       <Layer>
         {
-          waypoints.map((waypoint, index) => {
+          nonOrbitalWaypoints.map((nonOrbitalWaypoint: Waypoint, index: number) => {
+
+            let { x, y, type } = nonOrbitalWaypoint
 
             let drawOrbit = false
 
-            if (['PLANET', 'GAS_GIANT', 'JUMP_GATE'].includes(waypoint.type)) {
+            if (['PLANET', 'GAS_GIANT', 'JUMP_GATE'].includes(type)) {
               drawOrbit = true
             }
 
-            const distanceFromOrigin = Math.sqrt(waypoint.x ** 2 + waypoint.y ** 2);
+            const distanceFromOrigin = Math.sqrt(x ** 2 + y ** 2);
 
             return drawOrbit ? (
               <React.Fragment key={index}>
-                { waypoint.orbitals.map((orbital, index) => {
-                    <Circle
-                      key={'waypoint-orbit-' + index}
-                      x={waypoint.x}
-                      y={-waypoint.y}
-                      radius={5 + 1}
-                      stroke="gray" // Circle outline color
-                      strokeWidth={1}
-                      fill="transparent" // No fill color
+                { nonOrbitalWaypoint.orbitals.map((orbital: Orbital, index: number) => (
+                    <Orbit 
+                      key={'orbital-' + index}
+                      x={x}
+                      y={y}
+                      radius={6}
                     />
-                  })
+                  ))
                 }
-                <Circle
-                  key={'waypoint-orbital-orbit-' + index}
+                <Orbit 
+                  key={'waypoint-' + index}
                   x={0}
                   y={0}
                   radius={distanceFromOrigin}
-                  stroke="gray" // Circle outline color
-                  strokeWidth={1}
-                  fill="transparent" // No fill color
                 />
                 </React.Fragment>
             ) : null
           })
         }
       </Layer>
+
+      {/* Waypoints Layer */}
       <Layer>
-      <Circle
-        x={0}
-        y={0}
-        radius={800}
-        // fill={fill}
-        // opacity={(Math.random() * 0.7 + 0.3) * .5} 
-        fillRadialGradientStartPoint={{ x: 0, y: 0 }}
-        fillRadialGradientStartRadius={0}
-        fillRadialGradientEndPoint={{ x: 0, y: 0 }}
-        fillRadialGradientEndRadius={800}
-        fillRadialGradientColorStops={[.001, 'white', .01, color, .8, 'rgba(0, 0, 255, 0)']}
-      />
+        {/* System Star */}
+        <SystemStar
+          x={0}
+          y={0}
+          radius={800}
+          color={color}
+        />
+        {/* System Waypoints*/}
         {
-          waypoints.map((waypoint: Waypoint, index: number) => {
+          nonOrbitalWaypoints.map((waypoint: Waypoint, index: number) => {
             return <Waypoint key={index} waypoint={waypoint} zoomLevel={zoomLevel} />
           })
         }

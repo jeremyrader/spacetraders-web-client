@@ -1,22 +1,24 @@
 "use client";
 
-import { Layer, Group, Circle, Rect, Text } from 'react-konva';
+import { Layer, Circle } from 'react-konva';
 import { useState, useRef, useEffect, useContext } from 'react';
 import React from 'react';
 import Konva from 'konva';
 import DataContext from '../contexts/DataContext';
 
 import Map from './Map'
+import System from './System'
+import Nebula from './Nebula'
 
-function getRandomInt(min, max) {
+function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function getRandomFloat(min, max) {
+function getRandomFloat(min: number, max: number) {
   return Math.random() * (max - min) + min;
 }
 
-function getRandomPointInCircle(radius) {
+function getRandomPointInCircle(radius: number) {
   const angle = Math.random() * Math.PI * 2; // Random angle
   const r = radius * Math.sqrt(Math.random()); // Random radius within the circle
   return {
@@ -73,21 +75,19 @@ function getRandomOrange() {
   return `rgb(${red}, ${green}, ${blue})`;
 }
 
-function UniverseMap({ hq, onSelectMap }) {
+interface UniverseMapProps {
+  onSelectMap: Function;
+}
+
+const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const context = useContext(DataContext);
   const dataContext = useContext(DataContext);
   const layerRef = useRef<Konva.Layer>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [points, setPoints] = useState<any[]>([]);
-  const [headquarters, setHeadquarters] = useState<any>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [tooltip, setTooltip] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    text: ''
-  });
-  const [selectedStar, setSelectedStar] = useState<any>(null);
+
+  const [selectedStar, setSelectedStar] = useState<System | null>(null);
 
   const massiveCircleCenter = {
     x: 0,
@@ -95,26 +95,7 @@ function UniverseMap({ hq, onSelectMap }) {
   };
   const massiveCircleRadius = 60000; // Radius of the massive circle
 
-  let minX= 10 ^ 6
-  let minY = 10 ^ 6
-  let maxX = -10 ^ 6
-  let maxY = -10 ^ 6
-
-  points.forEach(point => {
-    if (point.x < minX) {
-      minX = point.x
-    }
-    if (point.y < minY) {
-      minY = point.y
-    }
-    if (point.x > maxX) {
-      maxX = point.x
-    }
-    if (point.y > maxY) {
-      maxY = point.y
-    }
-  })
-
+  // TODO: Handle at ingestion time
   // Generate nebulas only once and store in state
   const [nebulas] = useState(() => {
     const nebulas = [];
@@ -144,28 +125,22 @@ function UniverseMap({ hq, onSelectMap }) {
     throw new Error('DataContext must be used within a DataProvider');
   }
 
-  const handleStarClick = (star, index) => {
-    // onSelectMap('system', star)
+  const handleStarClick = (star: System) => {
     setSelectedStar(star);
   };
 
-  const handleEnterSystemClick = (star) => {
+  const handleEnterSystemClick = (star: System) => {
     onSelectMap('system', star)
   }
 
   useEffect(() => {
 
-    const fetchData = async (headq) => {
+    const fetchData = async () => {
       if (dataContext) {
         try {
           const dbData = await dataContext.getDataFromDB();
 
-          let hq = dbData.find(data => data.symbol === headq)
-
-          if (hq) {
-            setHeadquarters(hq)
-          }
-
+          // TODO: handle this at ingestion time
           dbData.forEach(datum => {
             const { x, y, symbol, type, waypoints } = datum;
 
@@ -248,15 +223,9 @@ function UniverseMap({ hq, onSelectMap }) {
       }
     };
 
-    fetchData(hq);
+    fetchData();
 
   }, [dataContext]);
-
-  const calculateOpacity = (scale) => {
-    if (scale >= 1) return 1;
-    if (scale <= 0.02) return 0;
-    return (scale - 0.005) / (.2 - 0.005); // Linear interpolation
-  };
 
   return <div ref={containerRef} className='border-4 border-white'>
     {
@@ -269,31 +238,23 @@ function UniverseMap({ hq, onSelectMap }) {
       maxZoom={1}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
     >
-
       {/* Background Nebula Layer */}
       <Layer>
-        {/* Black background */}
-        {/* <Rect width={stageSize.width} height={stageSize.height} fill="black" /> */}
-
-        {/* Render nebulas */}
-        {nebulas.map((nebula, index) => (
-          <Circle
-            key={index}
-            x={nebula.x}
-            y={nebula.y}
-            radius={nebula.radius}
-            opacity={calculateOpacity(zoomLevel)}
-            fillRadialGradientStartPoint={{ x: 0, y: 0 }}
-            fillRadialGradientStartRadius={0}
-            fillRadialGradientEndPoint={{ x: 0, y: 0 }}
-            fillRadialGradientEndRadius={nebula.radius}
-            fillRadialGradientColorStops={[
-              0, nebula.color1, // Center color
-              1, nebula.color2, // Fade to transparent
-            ]}
-          />
-        ))}
+        {
+          nebulas.map((nebula, index) => (
+            <Nebula
+              key={index}
+              x={nebula.x}
+              y={nebula.y}
+              radius={nebula.radius}
+              color1={nebula.color1}
+              color2={nebula.color2}
+              zoomLevel={zoomLevel}
+            />
+          ))
+        }
       </Layer>
+      {/* Selected star */}
       <Layer>
       {
         selectedStar && (
@@ -307,86 +268,20 @@ function UniverseMap({ hq, onSelectMap }) {
           />
         )}
       </Layer>
+      {/* System stars */}
       <Layer ref={layerRef}>
-        {/* Plot points */}
-          {points.map((point, index) => {
-            const { x, y, symbol, type, waypoints, color, size } = point;
-
-            function calculateColorFill(zoomLevel) {
-              if (zoomLevel >= 1) {
-                return .5
-              }
-
-              if (zoomLevel <= .03) {
-                return .3
-              }
-
-              return .5
-            }
-
-            const stops = [.3, calculateColorFill(zoomLevel), 1]
-    
-            return (
-              <React.Fragment key={index}>
-                <Circle
+          {
+            points.map((point, index) => {
+              return (
+                <System
                   key={index}
-                  x={x}
-                  y={-y}
-                  radius={size}
-                  // fill={fill}
-                  // opacity={(Math.random() * 0.7 + 0.3) * .5} 
-                  fillRadialGradientStartPoint={{ x: 0, y: 0 }}
-                  fillRadialGradientStartRadius={0}
-                  fillRadialGradientEndPoint={{ x: 0, y: 0 }}
-                  fillRadialGradientEndRadius={size}
-                  fillRadialGradientColorStops={[stops[0], 'white', stops[1], color, stops[2], 'rgba(0, 0, 255, 0)']}
-                  onMouseEnter={(e) => {
-                    const stage = e.target.getStage();
-                    if (stage) {
-                      const pointerPosition = stage.getPointerPosition();
-                      if (pointerPosition) {
-                        setTooltip({
-                          visible: true,
-                          x: x + 20,
-                          y: -y + 30, // Position slightly above the point
-                          text: `Name: ${symbol}\nWaypoints: ${waypoints.length}\nType: ${type}\n${x}, ${-y}`,
-                        });
-                      }
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    setTooltip({
-                      ...tooltip,
-                      visible: false,
-                    });
-                  }}
-                  onClick={() => handleStarClick(point, index)}
+                  system={point}
+                  zoomLevel={zoomLevel}
+                  onSystemClick={handleStarClick}
                 />
-              </React.Fragment>
-            )
-          })}
-
-        {/* Tooltip */}
-          {tooltip.visible && (
-            <Group x={tooltip.x} y={tooltip.y}>
-              <Rect
-                width={150}
-                height={100}
-                fill="lightblue"
-                cornerRadius={5}
-                shadowBlur={5}
-              />
-              <Text
-                text={tooltip.text}
-                fontSize={14}
-                x={5} // Padding inside the box
-                y={5}
-                width={150}
-                height={100}
-                fill="black"
-              />
-            </Group>
-          )}
+              )
+            })
+          }
       </Layer>
     </Map>
   </div>

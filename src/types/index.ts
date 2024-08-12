@@ -47,10 +47,25 @@ interface Agent {
     deadlineToAccept: string;
   }
 
+  interface Orbital {
+    symbol: string;
+  }
+
   interface Waypoint {
     symbol: string;
     type: string;
     x: number;
     y: number;
-    orbitals: any[]
+    orbitals: Orbital[]
+  }
+
+  interface System {
+    symbol: string;
+    type: string;
+    x: number;
+    y: number;
+    size: number;
+    color: string;
+    orbitals: Orbital[]
+    waypoints: Waypoint[]
   }

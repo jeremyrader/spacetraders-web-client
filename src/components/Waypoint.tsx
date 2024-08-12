@@ -1,8 +1,7 @@
 'use client'
 
 import { Circle, Rect, Group, Text } from 'react-konva';
-import { Fragment } from 'react';
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 
 function generatePointsOnCircle(radius: number, numberOfPoints: number) {
   const points = [];
@@ -76,7 +75,7 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
     <Fragment>
       <Circle
         x={waypoint.x}
-        y={-waypoint.y}
+        y={-waypoint.y} // down on HTML canvas is positive
         radius={radius}
         fillRadialGradientStartPoint={{ x: 0, y: 0 }}
         fillRadialGradientStartRadius={0}
@@ -92,7 +91,7 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
                 visible: true,
                 x: waypoint.x + (20 / zoomLevel),
                 y: -waypoint.y + (30 / zoomLevel),
-                text: `Name: ${waypoint.symbol}\nOrbitals: ${waypoint.orbitals.length}\nType: ${waypoint.type}\n`,
+                text: `Name: ${waypoint.symbol}\nOrbitals: ${waypoint.orbitals.length}\nType: ${waypoint.type}`,
               });
             }
           }

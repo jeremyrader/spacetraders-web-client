@@ -11,7 +11,7 @@ function Dashboard() {
   const [agent, setAgent] = useState<Agent | null>(null)
   const [contracts, setContracts] = useState<Contract[]>([])
   const [selectedMap, setSelectedMap] = useState("universe")
-  const [selectedSystem, setSelectedSystem] = useState(null)
+  const [selectedSystem, setSelectedSystem] = useState<System |  null>(null)
 
   useEffect(() => {
 
@@ -31,7 +31,7 @@ function Dashboard() {
     fetchContracts();
   }, []);
 
-  const handleSelectMap = (map, system) => {
+  const handleSelectMap = (map: string, system: System) => {
     setSelectedMap(map)
 
     if (system) {
@@ -93,7 +93,7 @@ function Dashboard() {
 
       {
         selectedMap == 'universe' ? (
-          <UniverseMap hq={agent?.headquarters} onSelectMap={handleSelectMap}></UniverseMap>
+          <UniverseMap onSelectMap={handleSelectMap}></UniverseMap>
         ) : (
           <SystemMap system={selectedSystem} onSelectMap={handleSelectMap}></SystemMap>
         )
