@@ -9,7 +9,7 @@ import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
 
-import { fetchResource } from '../utils/v2'
+import { fetchResourcePaginated } from '../utils/v2'
 
 interface SystemMapProps {
   system: any;
@@ -25,16 +25,17 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     onSelectMap('universe')
   };
 
-  useEffect(() => {
+  // waypoints should be fetched in the background
+  // useEffect(() => {
 
-    async function fetchWaypoints() {
-      const result = await fetchResource(`systems/${system.symbol}/waypoints`)
-      console.log(result.data)
-    }
+  //   async function fetchWaypoints() {
+  //     const symbolParts = system.symbol.split('-')
+  //     const result = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
+  //   }
 
-    fetchWaypoints()
+  //   fetchWaypoints()
 
-  }, []);
+  // }, []);
 
   let { color } = system
 
@@ -54,6 +55,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       containerRef={containerRef}
       maxZoom={1.5}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
+      mapCenter={{x: 0, y: 0}}
     >
       {/* Orbits Layer */}
       <Layer>
