@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
-import fetchResource from '../../utils/v2';
+import { fetchResource } from '../../utils/v2';
 
 import UniverseMap from '@/components/UniverseMap';
 import SystemMap from '@/components/SystemMap';
@@ -22,7 +22,6 @@ function Dashboard() {
 
     async function fetchContracts() {
       const result = await fetchResource('my/contracts')
-
       // only handles the first page for now
       setContracts(result.data);
     }

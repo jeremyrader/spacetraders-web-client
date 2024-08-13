@@ -9,7 +9,7 @@ import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
 
-import fetchResource from '../utils/v2'
+import { fetchResource } from '../utils/v2'
 
 interface SystemMapProps {
   system: any;

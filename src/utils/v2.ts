@@ -1,4 +1,6 @@
-async function fetchResource(endpoint: string) {
+import { rateLimiter, burstLimiter } from '../utils/ratelimiter'
+
+export async function fetchResource(endpoint: string) {
   const callsign = localStorage.getItem('callsign')
 
   if (callsign) {
@@ -27,4 +29,52 @@ async function fetchResource(endpoint: string) {
   }
 }
 
-export default fetchResource
+export async function fetchResourcePaginated (url: string, page: number = 1, results: any = []): Promise<any> {
+  const callsign = localStorage.getItem('callsign')
+
+  if (callsign) {
+
+    const token = localStorage.getItem(callsign);
+    if (token) {
+      const options = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      };
+  
+      try {
+        const result = await burstLimiter.scheduleRequest(() =>
+          rateLimiter.scheduleRequest(() =>
+            fetch(`https://api.spacetraders.io/v2/${url}?page=${page}`, options).then(res => res.json())
+          )
+        );
+
+        console.log('result', result)
+
+        let concatenated = [...results, ...result.data]
+
+        page++
+
+        if (result.data.length == result.meta.limit) {
+          // Respect rate limiting by introducing a delay if necessary
+          await new Promise((resolve) => setTimeout(resolve, 700));
+          return await fetchResourcePaginated(url, page, concatenated);
+        }
+        return concatenated
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+      }
+
+    }
+    else {
+      console.error(`No agent found with callsign ${callsign} `)
+    }
+
+  }
+  else {
+    console.error('No agent selected')
+  }
+};
