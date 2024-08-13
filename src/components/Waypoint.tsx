@@ -35,7 +35,7 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
   let fill = 'white'
   let drawOrbit = false
 
-  if (waypoint.type == 'ASTEROID') {
+  if (waypoint.type == 'ASTEROID' || waypoint.type == 'ENGINEERED_ASTEROID') {
     fill = 'gray'
     radius = 2
   }
