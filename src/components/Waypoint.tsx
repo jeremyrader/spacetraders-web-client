@@ -19,10 +19,11 @@ function generatePointsOnCircle(radius: number, numberOfPoints: number) {
 
 interface WaypointProps {
   waypoint: Waypoint;
+  orbitalWaypoints: Waypoint[]
   zoomLevel: number;
 }
 
-const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
+const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
 
   const [tooltip, setTooltip] = useState({
     visible: false,
@@ -31,11 +32,11 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
     text: ''
   });
 
-  let radius = 30
+  let radius = 1
   let fill = 'white'
   let drawOrbit = false
 
-  if (waypoint.type == 'ASTEROID' || waypoint.type == 'ENGINEERED_ASTEROID') {
+  if (['ASTEROID', 'ENGINEERED_ASTEROID', 'ASTEROID_BASE'].includes(waypoint.type)) {
     fill = 'gray'
     radius = 2
   }
@@ -57,7 +58,7 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
     drawOrbit = true
   }
 
-  if (waypoint.type == 'JUMP_GATE') {
+  if (waypoint.type == 'JUMP_GATE' || waypoint.type == 'FUEL_STATION') {
     fill = 'blue'
     radius = 2
     drawOrbit = true
@@ -65,10 +66,9 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
 
   let orbitalRadius = 1
 
-  let orbitals = []
+  let orbitalCoordinates: {x: number; y: number;}[] = []
   if (waypoint.orbitals.length > 0) {
-
-    orbitals = generatePointsOnCircle(5 + orbitalRadius, waypoint.orbitals.length);
+    orbitalCoordinates = generatePointsOnCircle(5 + orbitalRadius, waypoint.orbitals.length);
   }
 
   return (
@@ -104,28 +104,25 @@ const Waypoint = ({waypoint, zoomLevel}: WaypointProps) => {
         }}
       />
       {
-        waypoint.orbitals.map((orbital, index) => {
-
+        orbitalWaypoints.map((orbital, index) => {
           return (
             <Fragment key={index}>
               <Circle
                 key={index}
-                x={waypoint.x + orbitals[index].x}
-                y={-waypoint.y + orbitals[index].y}
+                x={waypoint.x + orbitalCoordinates[index].x}
+                y={-waypoint.y + orbitalCoordinates[index].y}
                 radius={1}
                 fill="white"
                 onMouseEnter={(e) => {
                   const stage = e.target.getStage();
                   if (stage) {
-
-                    let waypointInfo = system.waypoints.find(waypoint => waypoint.symbol == orbital.symbol)
                     const pointerPosition = stage.getPointerPosition();
                     if (pointerPosition) {
                       setTooltip({
                         visible: true,
-                        x: waypoint.x + orbitals[index].x + (20 / zoomLevel),
-                        y: -waypoint.y + orbitals[index].y + (30 / zoomLevel), // Position slightly above the point
-                        text: `Name: ${orbital.symbol}\n\nType: ${waypointInfo.type}`,
+                        x: waypoint.x + orbitalCoordinates[index].x + (20 / zoomLevel),
+                        y: -waypoint.y + orbitalCoordinates[index].y + (30 / zoomLevel), // Position slightly above the point
+                        text: `Name: ${orbital.symbol}\n\nType: ${orbital.type}`,
                       });
                     }
                   }

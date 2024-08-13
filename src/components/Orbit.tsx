@@ -11,7 +11,7 @@ const Orbit = ({x, y, radius}: OrbitProps) => {
   return (
     <Circle
       x={x}
-      y={y}
+      y={-y}
       radius={radius}
       stroke="gray"
       strokeWidth={1}

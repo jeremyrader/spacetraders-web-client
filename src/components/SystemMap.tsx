@@ -107,7 +107,12 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         {/* System Waypoints*/}
         {
           nonOrbitalWaypoints.map((waypoint: Waypoint, index: number) => {
-            return <Waypoint key={index} waypoint={waypoint} zoomLevel={zoomLevel} />
+
+            let orbitalWaypoints = waypoint.orbitals.map(orbital => {
+              return system.waypoints.find((waypoint: Waypoint) => waypoint.symbol == orbital.symbol)
+            })
+
+            return <Waypoint key={index} waypoint={waypoint} orbitalWaypoints={orbitalWaypoints} zoomLevel={zoomLevel} />
           })
         }
       </Layer>

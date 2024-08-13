@@ -136,11 +136,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   useEffect(() => {
 
     const fetchData = async () => {
-      
       if (dataContext) {
-
-        const mapCenterSymbol = localStorage.getItem('map-center-symbol')
-
         try {
           const dbData = await dataContext.getDataFromDB();
 
@@ -219,12 +215,16 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
           setPoints(dbData);
 
-          const mapCenter = dbData.find(datum => datum.symbol = mapCenterSymbol)
+          const mapCenterSymbol = localStorage.getItem('map-center-symbol')
 
-          if (mapCenter) {
-            setMapCenter({x: mapCenter.x, y: mapCenter.y})
+          if (mapCenterSymbol) {
+            const symbolParts = mapCenterSymbol.split('-')
+            const mapCenter = dbData.find(datum => datum.symbol == `${symbolParts[0]}-${symbolParts[1]}`)
+
+            if (mapCenter) {
+              setMapCenter({x: mapCenter.x, y: mapCenter.y})
+            }
           }
-
         } catch (error) {
           console.error('Error fetching data from IndexedDB:', error);
         } finally {
