@@ -50,8 +50,6 @@ export async function fetchResourcePaginated (url: string, page: number = 1, res
           )
         );
 
-        console.log('result', result)
-
         let concatenated = [...results, ...result.data]
 
         page++
