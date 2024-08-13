@@ -3,14 +3,23 @@
 import { useState, useEffect } from 'react';
 import { Fragment } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
-import { fetchResource, fetchResourcePaginated } from '../../utils/v2';
+import { fetchResource, fetchResourcePaginated, postRequest } from '../../utils/v2';
 
 function Dashboard() {
   const [agent, setAgent] = useState<Agent | null>(null)
   const [contracts, setContracts] = useState<Contract[]>([])
+  const [refresh, setRefresh] = useState(false);
+
+  const handleAcceptContract = async (contractId: string) => {
+    const response = await postRequest(`my/contracts/${contractId}/accept`)
+    console.log('response', response)
+
+    // refresh if the status is okay
+    // setRefresh(!refresh);
+    
+  }
 
   useEffect(() => {
-
     async function fetchAgent() {
       const result = await fetchResource('my/agent')
       setAgent(result.data)
@@ -23,7 +32,7 @@ function Dashboard() {
 
     fetchAgent();
     fetchContracts();
-  }, []);
+  }, [refresh]);
 
   return <DataProvider>
     <main className="flex min-h-screen flex-col p-24">
@@ -47,6 +56,7 @@ function Dashboard() {
                 <th>Fulfilled</th>
                 <th>Expiration</th>
                 <th>Deadline to Fulfill</th>
+                <th>Actions</th>
             </tr>
             </thead>
               <tbody>
@@ -59,6 +69,17 @@ function Dashboard() {
                           <th>{contract.fulfilled ? 'Yes': 'No'}</th>
                           <th>{contract.expiration}</th>
                           <th>{contract.deadlineToAccept}</th>
+                          <th>
+                            {
+                              !contract.accepted ? (
+                                <button className="btn" onClick={() => {
+                                  handleAcceptContract(contract.id)
+                                }}>
+                                  Accept
+                                </button>
+                              ) : null
+                            }
+                          </th>
                         </tr>
                         <tr>
                           <th colSpan={5}>

@@ -76,3 +76,32 @@ export async function fetchResourcePaginated (url: string, page: number = 1, res
     console.error('No agent selected')
   }
 };
+
+export async function postRequest(endpoint: string) {
+
+  const callsign = localStorage.getItem('callsign')
+
+  if (callsign) {
+
+    const token = localStorage.getItem(callsign);
+    if (token) {
+      const response = await fetch(`https://api.spacetraders.io/v2/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      return response
+    }
+    else {
+      console.error(`No agent found with callsign ${callsign} `)
+    }
+
+  }
+  else {
+    console.error('No agent selected')
+  }
+
+}
