@@ -86,7 +86,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [points, setPoints] = useState<any[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1);
-
+  const [mapCenter, setMapCenter] = useState({x: 0, y: 0});
   const [selectedStar, setSelectedStar] = useState<System | null>(null);
 
   const massiveCircleCenter = {
@@ -136,7 +136,11 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   useEffect(() => {
 
     const fetchData = async () => {
+      
       if (dataContext) {
+
+        const mapCenterSymbol = localStorage.getItem('map-center-symbol')
+
         try {
           const dbData = await dataContext.getDataFromDB();
 
@@ -213,9 +217,14 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
           })
 
-
           setPoints(dbData);
-          
+
+          const mapCenter = dbData.find(datum => datum.symbol = mapCenterSymbol)
+
+          if (mapCenter) {
+            setMapCenter({x: mapCenter.x, y: mapCenter.y})
+          }
+
         } catch (error) {
           console.error('Error fetching data from IndexedDB:', error);
         } finally {
@@ -237,6 +246,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       containerRef={containerRef}
       maxZoom={1}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
+      mapCenter={mapCenter}
     >
       {/* Background Nebula Layer */}
       <Layer>

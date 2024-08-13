@@ -8,6 +8,10 @@ interface MapProps {
   children: ReactNode;
   maxZoom: number;
   onZoom: any;
+  mapCenter: {
+    x: number;
+    y: number;
+  }
 }
 
 const moveAmount = 10;
@@ -39,7 +43,7 @@ const moveAmount = 10;
 //   }
 // });
 
-const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom }) => {
+const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapCenter = {x: 0, y: 0} }) => {
   const stageRef = useRef<Konva.Stage>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -96,19 +100,19 @@ const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom }) =>
 
   useEffect(() => {
     const stage = stageRef.current;
-    
-    if (stage) {
-      // Set initial position so that (0,0) is in the center of the canvas
-      stage.position({
-        x: stageSize.width / 2,
-        y: stageSize.height / 2,
-      });
 
-      stage.scale({ x: 0.5, y: 0.5 });
+    if (stage) {
+      // Set initial position so that the saved map center is in the center of the canvas
+      // The faction headquarters is the default
+
+      stage.position({
+        x: (stageSize.width / 2) - mapCenter.x,
+        y: (stageSize.height / 2) + mapCenter.y,
+      });
 
       stage.batchDraw();
     }
-  }, [stageSize]);
+  }, [stageSize, mapCenter]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {

@@ -18,6 +18,8 @@ function Dashboard() {
     async function fetchAgent() {
       const result = await fetchResource('my/agent')
       setAgent(result.data)
+
+      localStorage.setItem('map-center-symbol', result.data.headquarters)
     }
 
     fetchAgent();
