@@ -25,11 +25,39 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [selectedWaypoint, setSelectedWaypoint] = useState<WaypointWithTraits | null>(null);
   const [traits, setTraits] = useState<Trait[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const fetchWaypoints = async(manual: boolean = false) => {
+
+    setIsLoading(true)
+    // check the db for the first waypoint in the list
+    // this avoids fetching waypoints every time the system is loaded
+    // I'd like to find a better way to do this in case the system was only
+    // partially loaded before
+    const firstWaypoint = await getObject('waypointStore', system.waypoints[0].symbol)
+
+    if (!firstWaypoint || manual) {
+      const symbolParts = system.symbol.split('-')
+      const results = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
+      saveData('waypointStore', results)
+    }
+    setIsLoading(false)
+  }
 
   const SystemMapControls = () => {
     return (
       <MapControls onSelectMap={onSelectMap}>
-        <button onClick={handleSelectBack} className="btn btn-primary">Back to Galaxy Map</button>
+        <button onClick={handleSelectBack} className="btn btn-primary mr-2">Back to Galaxy Map</button>
+        <button onClick={() => {fetchWaypoints(true) }} className="btn btn-primary">Rescan System</button>
+        {
+          isLoading ? (
+            <>
+              <span>Loading waypoints...</span>
+              <span className="loading loading-spinner loading-md"></span>
+            </>
+          ): null
+        }
+        
         {
           traits.map((trait: Trait, index: number) => {
             return (
@@ -53,24 +81,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }
 
   useEffect(() => {
-    
-    async function fetchWaypoints() {
-
-      // check the db for the first waypoint in the list
-      // this avoids fetching waypoints every time the system is loaded
-      // I'd like to find a better way to do this in case the system was only
-      // partially loaded before
-      const firstWaypoint = await getObject('waypointStore', system.waypoints[0].symbol)
-
-      if (!firstWaypoint) {
-        const symbolParts = system.symbol.split('-')
-        const results = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
-        saveData('waypointStore', results)
-      }
-    }
-
     fetchWaypoints()
-
   }, [system]);
 
   let { color } = system

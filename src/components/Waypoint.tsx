@@ -79,7 +79,11 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
 
     async function getWaypointTraits() {
       const waypointData = await getObject('waypointStore', waypoint.symbol)
-      setTraits((waypointData.traits))
+      
+      if (waypointData) {
+        setTraits((waypointData.traits))
+      }
+      
     }
 
     getWaypointTraits()
