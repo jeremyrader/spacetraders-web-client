@@ -57,7 +57,14 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
             </>
           ): null
         }
-        
+        {
+          selectedWaypoint ? (
+            <>
+              <p>Symbol: {selectedWaypoint.symbol}</p>
+              <p>Type: {selectedWaypoint.type}</p>
+            </>
+          ) : null
+        }
         {
           traits.map((trait: Trait, index: number) => {
             return (

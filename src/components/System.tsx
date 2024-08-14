@@ -3,8 +3,6 @@
 import { Circle, Rect, Text, Group } from 'react-konva';
 import { useState, Fragment } from 'react';
 
-import Tooltip from './Tooltip';
-
 interface SystemProps {
   system: System;
   zoomLevel: number;
@@ -12,12 +10,6 @@ interface SystemProps {
 }
 
 const System = ({system, zoomLevel, onSystemClick}: SystemProps) => {
-  const [tooltip, setTooltip] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    text: ''
-  });
 
   function calculateColorFill(zoomLevel: number) {
     if (zoomLevel >= 1) {
@@ -45,38 +37,8 @@ const System = ({system, zoomLevel, onSystemClick}: SystemProps) => {
         fillRadialGradientEndPoint={{ x: 0, y: 0 }}
         fillRadialGradientEndRadius={system.size}
         fillRadialGradientColorStops={[.3, 'white', calculateColorFill(zoomLevel), color, 1, 'rgba(0, 0, 255, 0)']}
-        onMouseEnter={(event) => {
-          const stage = event.target.getStage();
-          if (stage) {
-              const pointerPosition = stage.getPointerPosition();
-              if (pointerPosition) {
-              setTooltip({
-                  visible: true,
-                  x: x + (20 / zoomLevel),
-                  y: -y + (20 / zoomLevel),
-                  text: `Name: ${symbol}\nWaypoints: ${waypoints.length}\nType: ${type}`,
-              });
-              }
-          }
-        }}
-        onMouseLeave={() => {
-          setTooltip({
-              ...tooltip,
-              visible: false,
-          });
-        }}
         onClick={() => onSystemClick(system)}
       />
-      {/* Tooltip */}
-      {
-        tooltip.visible && (
-          <Tooltip
-            x={tooltip.x}
-            y={tooltip.y}
-            text={tooltip.text}
-          />
-        )
-      }
     </Fragment>
   )
 }

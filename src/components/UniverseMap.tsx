@@ -141,6 +141,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     return (
       <MapControls onSelectMap={onSelectMap}>
         <button disabled={!selectedStar} onClick={() => handleEnterSystemClick(selectedStar)} className="btn btn-primary">View System Map</button>
+        <p>{selectedStar?.symbol}</p>
       </MapControls>
     )
   }

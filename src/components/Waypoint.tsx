@@ -26,14 +26,6 @@ interface WaypointProps {
 }
 
 const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: WaypointProps) => {
-
-  const [tooltip, setTooltip] = useState({
-    visible: false,
-    x: 0,
-    y: 0,
-    text: ''
-  });
-
   const [traits, setTraits] = useState<Trait[]>([])
 
   let radius = 1
@@ -90,19 +82,6 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
 
   }, []);
 
-  const getTooltipText = ({ symbol, type}: Waypoint) => {
-    const text = `
-      Name: ${symbol}\n
-      Type: ${type}\n
-      ${
-        traits.map((trait) => {
-          return `${trait.symbol}\n`
-        }).join('')
-      }
-      `
-      return text
-  }
-
   return (
     <Fragment>
       <Circle
@@ -114,26 +93,6 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
         fillRadialGradientEndPoint={{ x: 0, y: 0 }}
         fillRadialGradientEndRadius={radius}
         fillRadialGradientColorStops={[0, '#258dbe', 1, '#25be49']}
-        onMouseEnter={(e) => {
-          const stage = e.target.getStage();
-          if (stage) {
-            const pointerPosition = stage.getPointerPosition();
-            if (pointerPosition) {
-              setTooltip({
-                visible: true,
-                x: waypoint.x + (20 / zoomLevel),
-                y: -waypoint.y + (30 / zoomLevel),
-                text: `Name: ${waypoint.symbol}\nOrbitals: ${waypoint.orbitals.length}\nType: ${waypoint.type}`,
-              });
-            }
-          }
-        }}
-        onMouseLeave={() => {
-          setTooltip({
-            ...tooltip,
-            visible: false,
-          });
-        }}
         onClick={() => {
           onWaypointClick(waypoint)
         }}
@@ -148,26 +107,6 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
                 y={-waypoint.y + orbitalCoordinates[index].y}
                 radius={1}
                 fill="white"
-                onMouseEnter={(e) => {
-                  const stage = e.target.getStage();
-                  if (stage) {
-                    const pointerPosition = stage.getPointerPosition();
-                    if (pointerPosition) {
-                      setTooltip({
-                        visible: true,
-                        x: waypoint.x + orbitalCoordinates[index].x + (20 / zoomLevel),
-                        y: -waypoint.y + orbitalCoordinates[index].y + (30 / zoomLevel), // Position slightly above the point
-                        text: getTooltipText(waypoint),
-                      });
-                    }
-                  }
-                }}
-                onMouseLeave={() => {
-                  setTooltip({
-                    ...tooltip,
-                    visible: false,
-                  });
-                }}
                 onClick={() => { 
                   // adjust coordinates so that when the waypoint is clicked it has
                   // a circle rendered at the right spot indicating is was selected
@@ -179,29 +118,6 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
             </Fragment>
           )
         })
-      }
-      {/* Tooltip */}
-      {
-        tooltip.visible && (
-          <Group x={tooltip.x} y={tooltip.y}>
-            <Rect
-              width={150}
-              height={100}
-              fill="lightblue"
-              cornerRadius={5}
-              shadowBlur={5}
-            />
-            <Text
-              text={tooltip.text}
-              fontSize={14}
-              x={5} // Padding inside the box
-              y={5}
-              width={150}
-              height={100}
-              fill="black"
-            />
-          </Group>
-        )
       }
     </Fragment>
   )
