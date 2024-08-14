@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useRef, useState, useEffect } from 'react';
 
@@ -48,8 +48,8 @@ function RegistrationForm() {
     const result = await response.json();
 
     if (result.data) {
-      localStorage.setItem('callsign', result.data.agent.symbol)
-      localStorage.setItem(result.data.agent.symbol, result.data.token)
+      window.localStorage.setItem('callsign', result.data.agent.symbol)
+      window.localStorage.setItem(result.data.agent.symbol, result.data.token)
       setRegistrationStatus('Agent successfully registered')
     }
     else {

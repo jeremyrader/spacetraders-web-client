@@ -1,7 +1,11 @@
+'use client'
+
 import React, { ReactNode } from 'react';
 import Konva from 'konva';
 import { Stage } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
+
+import MapControls from './MapControls';
 
 interface MapProps {
   containerRef: any;
@@ -12,6 +16,7 @@ interface MapProps {
     x: number;
     y: number;
   }
+  MapControls: React.ComponentType
 }
 
 const moveAmount = 10;
@@ -43,7 +48,7 @@ const moveAmount = 10;
 //   }
 // });
 
-const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapCenter = {x: 0, y: 0} }) => {
+const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapCenter = {x: 0, y: 0}, MapControls }) => {
   const stageRef = useRef<Konva.Stage>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -136,16 +141,20 @@ const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapC
   }, []);
 
   return (
-    <Stage
-      ref={stageRef}
-      width={stageSize.width}
-      height={window.innerHeight}
-      style={{ backgroundColor: 'black' }}
-      onWheel={handleWheel}
-      draggable
-    >
-      {children}
-    </Stage>
+    <div className="relative">
+      <Stage
+        ref={stageRef}
+        width={stageSize.width}
+        height={window.innerHeight}
+        style={{ backgroundColor: 'black' }}
+        onWheel={handleWheel}
+        draggable
+      >
+        {children}
+      </Stage>
+      {/* Fixed text */}
+      <MapControls />
+   </div>
   );
 };
 

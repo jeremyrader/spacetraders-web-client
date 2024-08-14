@@ -1,10 +1,10 @@
 import { rateLimiter, burstLimiter } from '../utils/ratelimiter'
 
 export async function fetchResource(endpoint: string) {
-  const callsign = localStorage.getItem('callsign')
+  const callsign = window.localStorage.getItem('callsign')
 
   if (callsign) {
-    const token = localStorage.getItem(callsign);
+    const token = window.localStorage.getItem(callsign);
 
     if (token) {
       const options = {
@@ -30,11 +30,11 @@ export async function fetchResource(endpoint: string) {
 }
 
 export async function fetchResourcePaginated (url: string, page: number = 1, results: any = []): Promise<any> {
-  const callsign = localStorage.getItem('callsign')
+  const callsign = window.localStorage.getItem('callsign')
 
   if (callsign) {
 
-    const token = localStorage.getItem(callsign);
+    const token = window.localStorage.getItem(callsign);
     if (token) {
       const options = {
         headers: {
@@ -79,11 +79,11 @@ export async function fetchResourcePaginated (url: string, page: number = 1, res
 
 export async function postRequest(endpoint: string) {
 
-  const callsign = localStorage.getItem('callsign')
+  const callsign = window.localStorage.getItem('callsign')
 
   if (callsign) {
 
-    const token = localStorage.getItem(callsign);
+    const token = window.localStorage.getItem(callsign);
     if (token) {
       const response = await fetch(`https://api.spacetraders.io/v2/${endpoint}`, {
         method: 'POST',

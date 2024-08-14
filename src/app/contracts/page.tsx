@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useState, useEffect } from 'react';
 import { Fragment } from 'react';
@@ -12,7 +12,6 @@ function Dashboard() {
 
   const handleAcceptContract = async (contractId: string) => {
     const response = await postRequest(`my/contracts/${contractId}/accept`)
-    console.log('response', response)
 
     // refresh if the status is okay
     // setRefresh(!refresh);

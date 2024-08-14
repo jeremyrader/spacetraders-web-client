@@ -1,10 +1,11 @@
+'use client'
 
 import { Group, Rect, Text } from 'react-konva';
 
 interface TooltipProps {
   x: number;
   y: number;
-  text: string
+  text: string;
 }
 
 const Tooltip = ({x, y, text}: TooltipProps) => {

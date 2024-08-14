@@ -1,7 +1,8 @@
 'use client'
 
 import { Circle, Rect, Group, Text } from 'react-konva';
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
+import { getObject } from '../utils/indexeddb';
 
 function generatePointsOnCircle(radius: number, numberOfPoints: number) {
   const points = [];
@@ -21,9 +22,10 @@ interface WaypointProps {
   waypoint: Waypoint;
   orbitalWaypoints: Waypoint[]
   zoomLevel: number;
+  onWaypointClick: Function;
 }
 
-const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
+const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: WaypointProps) => {
 
   const [tooltip, setTooltip] = useState({
     visible: false,
@@ -31,6 +33,8 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
     y: 0,
     text: ''
   });
+
+  const [traits, setTraits] = useState<Trait[]>([])
 
   let radius = 1
   let fill = 'white'
@@ -71,6 +75,30 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
     orbitalCoordinates = generatePointsOnCircle(5 + orbitalRadius, waypoint.orbitals.length);
   }
 
+  useEffect(() => {
+
+    async function getWaypointTraits() {
+      const waypointData = await getObject('waypointStore', waypoint.symbol)
+      setTraits((waypointData.traits))
+    }
+
+    getWaypointTraits()
+
+  }, []);
+
+  const getTooltipText = ({ symbol, type}: Waypoint) => {
+    const text = `
+      Name: ${symbol}\n
+      Type: ${type}\n
+      ${
+        traits.map((trait) => {
+          return `${trait.symbol}\n`
+        }).join('')
+      }
+      `
+      return text
+  }
+
   return (
     <Fragment>
       <Circle
@@ -102,6 +130,9 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
             visible: false,
           });
         }}
+        onClick={() => {
+          onWaypointClick(waypoint)
+        }}
       />
       {
         orbitalWaypoints.map((orbital, index) => {
@@ -122,7 +153,7 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
                         visible: true,
                         x: waypoint.x + orbitalCoordinates[index].x + (20 / zoomLevel),
                         y: -waypoint.y + orbitalCoordinates[index].y + (30 / zoomLevel), // Position slightly above the point
-                        text: `Name: ${orbital.symbol}\n\nType: ${orbital.type}`,
+                        text: getTooltipText(waypoint),
                       });
                     }
                   }
@@ -132,6 +163,13 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel}: WaypointProps) => {
                     ...tooltip,
                     visible: false,
                   });
+                }}
+                onClick={() => { 
+                  // adjust coordinates so that when the waypoint is clicked it has
+                  // a circle rendered at the right spot indicating is was selected
+                  orbital.x = waypoint.x + orbitalCoordinates[index].x
+                  orbital.y = waypoint.y + orbitalCoordinates[index].y
+                  onWaypointClick(orbital)
                 }}
               />
             </Fragment>

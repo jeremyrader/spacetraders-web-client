@@ -59,6 +59,15 @@ interface Agent {
     orbitals: Orbital[]
   }
 
+  interface WaypointWithTraits {
+    symbol: string;
+    type: string;
+    x: number;
+    y: number;
+    orbitals: Orbital[];
+    traits: Trait[];
+  }
+
   interface System {
     symbol: string;
     type: string;

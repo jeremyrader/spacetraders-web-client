@@ -8,7 +8,7 @@ import Navbar from '@/components/Navbar';
 
 export default function Home() {
 
-  const callsign = localStorage.getItem('callsign')
+  const callsign = window.localStorage.getItem('callsign')
 
   return (
     <DataProvider>

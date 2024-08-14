@@ -1,3 +1,4 @@
+'use client'
 
 import { Circle, Rect, Text, Group } from 'react-konva';
 import { useState, Fragment } from 'react';

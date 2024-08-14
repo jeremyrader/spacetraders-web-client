@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { useState, useEffect } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
@@ -9,7 +9,6 @@ import SystemMap from '@/components/SystemMap';
 
 function Dashboard() {
   const [agent, setAgent] = useState<Agent | null>(null)
-  const [contracts, setContracts] = useState<Contract[]>([])
   const [selectedMap, setSelectedMap] = useState("universe")
   const [selectedSystem, setSelectedSystem] = useState<System |  null>(null)
 
@@ -19,7 +18,7 @@ function Dashboard() {
       const result = await fetchResource('my/agent')
       setAgent(result.data)
 
-      localStorage.setItem('map-center-symbol', result.data.headquarters)
+      window.localStorage.setItem('map-center-symbol', result.data.headquarters)
     }
 
     fetchAgent();

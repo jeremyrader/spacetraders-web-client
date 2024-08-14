@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { saveData, getData, saveState, getState, getTimestamp, setTimestamp } from '../utils/indexeddb';
 import { rateLimiter, burstLimiter } from '../utils/ratelimiter'
 
@@ -22,11 +22,10 @@ const isErrorWithMessage = (error: unknown): error is { message: string } => {
 };
 
 export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
-  const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPaginatedData = async (page: number): Promise<void> => {
+  const fetchSystemsData = async (page: number): Promise<void> => {
     try {
       const result = await burstLimiter.scheduleRequest(() =>
         rateLimiter.scheduleRequest(() =>
@@ -34,15 +33,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         )
       );
 
-      await saveState(page); // Save the current page and accumulated data
-      page++
-
-      await saveData(result.data)
+      await saveState(page);
+      await saveData('dataStore', result.data)
 
       if (result.data.length == result.meta.limit) {
-        // Respect rate limiting by introducing a delay if necessary
-        await new Promise((resolve) => setTimeout(resolve, 700));
-        return fetchPaginatedData(page);
+        return fetchSystemsData(page + 1);
       }
       else {
         await setTimestamp(Date.now()); // Save timestamp to local storage
@@ -54,45 +49,48 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    const loadData = async () => {
-      if (isFetching) return;
-      isFetching = true;
+  const loadData = async () => {
+    if (isFetching) return;
+    isFetching = true;
 
-      const savedData = await getData();
-      const savedState = await getState();
-      const savedTimestamp = await getTimestamp();
-      const isCacheValid = savedTimestamp && (Date.now() - savedTimestamp) < CACHE_EXPIRATION;
+    const savedData = await getData('dataStore');
+    const savedState = await getState();
+    const savedTimestamp = await getTimestamp();
+    const isCacheValid = savedTimestamp && (Date.now() - savedTimestamp) < CACHE_EXPIRATION;
 
-      const { currentPage } = savedState || { currentPage: 1 };
+    const { currentSystemsPage } = savedState || { currentSystemsPage: 1 };
 
-      if (savedData.length > 0 && isCacheValid) {
-        setData(savedData);
-        setIsLoading(false);
-      } else {
-        try {
-          await fetchPaginatedData(currentPage);
-        } catch (err) {
-          if (isErrorWithMessage(err)) {
-            setError(err.message);
-          } else {
-            setError('An unknown error occurred');
-          }
-        } finally {
-          setIsLoading(false);
+    if (savedData.length > 0 && isCacheValid) {
+      setIsLoading(false);
+    } else {
+      try {
+        await fetchSystemsData(currentSystemsPage);
+      } catch (err) {
+        if (isErrorWithMessage(err)) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
         }
+      } finally {
+        setIsLoading(false);
       }
-
-      isFetching = false;
-    };
-
-    loadData();
-  }, []);
+    }
+  }
 
   const getDataFromDB = async (): Promise<any[]> => {
-    const dbData = await getData();
+    const dbData = await getData('dataStore');
     return dbData;
   };
+
+
+  useEffect(() => {
+
+    // Load initial data after reset
+    if (false) {
+      loadData()
+    }
+    
+  }, []);
 
   return (
     <DataContext.Provider value={{ getDataFromDB, isLoading, error }}>

@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,7 +14,7 @@ function LoginForm() {
     const callsign = inputRef.current?.value;
 
     if (callsign) {
-      const token = localStorage.getItem(callsign)
+      const token = window.localStorage.getItem(callsign)
       if (token) {
         router.push(`/dashboard?callsign=${callsign}`);
       }

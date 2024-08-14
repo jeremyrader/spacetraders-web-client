@@ -1,13 +1,16 @@
-"use client";
+'use client'
 
-import { Layer } from 'react-konva';
+import { Layer, Circle } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 
 import Map from './Map'
+import MapControls from './MapControls';
 import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
+
+import { getObject, getData, saveData } from '../utils/indexeddb';
 
 import { fetchResourcePaginated } from '../utils/v2'
 
@@ -20,22 +23,55 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [selectedWaypoint, setSelectedWaypoint] = useState<WaypointWithTraits | null>(null);
+  const [traits, setTraits] = useState<Trait[]>([])
+
+  const SystemMapControls = () => {
+    return (
+      <MapControls onSelectMap={onSelectMap}>
+        <button onClick={handleSelectBack} className="btn btn-primary">Back to Galaxy Map</button>
+        {
+          traits.map((trait: Trait, index: number) => {
+            return (
+              <p key={index}>{trait.name}</p>
+            )
+          })
+        }
+      </MapControls>
+    )
+  }
 
   const handleSelectBack = () => {
     onSelectMap('universe')
   };
 
-  // waypoints should be fetched in the background
-  // useEffect(() => {
+  const handleWaypointClick = async (waypoint: WaypointWithTraits) => {
+    setSelectedWaypoint(waypoint)
 
-  //   async function fetchWaypoints() {
-  //     const symbolParts = system.symbol.split('-')
-  //     const result = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
-  //   }
+    const waypointData = await getObject('waypointStore', waypoint.symbol)
+    setTraits(waypointData.traits)
+  }
 
-  //   fetchWaypoints()
+  useEffect(() => {
+    
+    async function fetchWaypoints() {
 
-  // }, []);
+      // check the db for the first waypoint in the list
+      // this avoids fetching waypoints every time the system is loaded
+      // I'd like to find a better way to do this in case the system was only
+      // partially loaded before
+      const firstWaypoint = await getObject('waypointStore', system.waypoints[0].symbol)
+
+      if (!firstWaypoint) {
+        const symbolParts = system.symbol.split('-')
+        const results = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
+        saveData('waypointStore', results)
+      }
+    }
+
+    fetchWaypoints()
+
+  }, [system]);
 
   let { color } = system
 
@@ -45,17 +81,20 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     return acc.concat(waypoint.orbitals);
   }, []);
 
-  const nonOrbitalWaypoints = system.waypoints.filter((waypoint: Waypoint) => {
-    return !orbitals.find((orbital: Orbital) => orbital.symbol == waypoint.symbol)
-  })
+  const nonOrbitalWaypoints = 
+    system.waypoints
+      .filter((systemWaypoint: Waypoint) => {
+        return !orbitals.find((orbital: Orbital) => orbital.symbol == systemWaypoint.symbol)
+      })
 
   return <div ref={containerRef} className='border-4 border-white'>
-    <button onClick={handleSelectBack} className="btn btn-primary">Back to System Map</button>
+    
     <Map
       containerRef={containerRef}
       maxZoom={1.5}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
       mapCenter={{x: 0, y: 0}}
+      MapControls={SystemMapControls}
     >
       {/* Orbits Layer */}
       <Layer>
@@ -106,15 +145,33 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         />
         {/* System Waypoints*/}
         {
-          nonOrbitalWaypoints.map((waypoint: Waypoint, index: number) => {
+          nonOrbitalWaypoints.map((systemWaypoint: Waypoint, index: number) => {
 
-            let orbitalWaypoints = waypoint.orbitals.map(orbital => {
+            let orbitalWaypoints = systemWaypoint.orbitals.map(orbital => {
               return system.waypoints.find((waypoint: Waypoint) => waypoint.symbol == orbital.symbol)
             })
 
-            return <Waypoint key={index} waypoint={waypoint} orbitalWaypoints={orbitalWaypoints} zoomLevel={zoomLevel} />
+            return <Waypoint
+              key={index}
+              waypoint={systemWaypoint}
+              orbitalWaypoints={orbitalWaypoints}
+              zoomLevel={zoomLevel}
+              onWaypointClick={handleWaypointClick}
+            />
           })
         }
+        {/* Outline */}
+        {
+          selectedWaypoint && (
+            <Circle
+              x={selectedWaypoint.x}
+              y={-selectedWaypoint.y}
+              radius={10}
+              stroke="white"
+              strokeWidth={2}
+              opacity={0.5}
+            />
+        )}
       </Layer>
     </Map>
   </div>

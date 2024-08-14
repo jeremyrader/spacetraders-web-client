@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { Layer, Circle } from 'react-konva';
 import { useState, useRef, useEffect, useContext } from 'react';
@@ -7,6 +7,7 @@ import Konva from 'konva';
 import DataContext from '../contexts/DataContext';
 
 import Map from './Map'
+import MapControls from './MapControls';
 import System from './System'
 import Nebula from './Nebula'
 
@@ -129,8 +130,19 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     setSelectedStar(star);
   };
 
-  const handleEnterSystemClick = (star: System) => {
-    onSelectMap('system', star)
+  const handleEnterSystemClick = (star: System | null) => {
+
+    if (star) {
+      onSelectMap('system', star)
+    }
+  }
+
+  const UniverseMapControls = () => {
+    return (
+      <MapControls onSelectMap={onSelectMap}>
+        <button disabled={!selectedStar} onClick={() => handleEnterSystemClick(selectedStar)} className="btn btn-primary">View System Map</button>
+      </MapControls>
+    )
   }
 
   useEffect(() => {
@@ -215,7 +227,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
           setPoints(dbData);
 
-          const mapCenterSymbol = localStorage.getItem('map-center-symbol')
+          const mapCenterSymbol = window.localStorage.getItem('map-center-symbol')
 
           if (mapCenterSymbol) {
             const symbolParts = mapCenterSymbol.split('-')
@@ -237,16 +249,12 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   }, [dataContext]);
 
   return <div ref={containerRef} className='border-4 border-white'>
-    {
-      selectedStar ? (
-        <button onClick={() => handleEnterSystemClick(selectedStar)} className="btn btn-primary">View System Map</button>
-      ) : null
-    }
     <Map
       containerRef={containerRef}
       maxZoom={1}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
       mapCenter={mapCenter}
+      MapControls={UniverseMapControls}
     >
       {/* Background Nebula Layer */}
       <Layer>
@@ -280,18 +288,18 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       </Layer>
       {/* System stars */}
       <Layer ref={layerRef}>
-          {
-            points.map((point, index) => {
-              return (
-                <System
-                  key={index}
-                  system={point}
-                  zoomLevel={zoomLevel}
-                  onSystemClick={handleStarClick}
-                />
-              )
-            })
-          }
+        {
+          points.map((point, index) => {
+            return (
+              <System
+                key={index}
+                system={point}
+                zoomLevel={zoomLevel}
+                onSystemClick={handleStarClick}
+              />
+            )
+          })
+        }
       </Layer>
     </Map>
   </div>
