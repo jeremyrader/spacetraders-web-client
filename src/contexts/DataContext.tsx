@@ -34,7 +34,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       );
 
       await saveState(page);
-      await saveData('systemStore', result.data)
+      await saveData('systemsStore', result.data)
 
       if (result.data.length == result.meta.limit) {
         return fetchSystemsData(page + 1);
