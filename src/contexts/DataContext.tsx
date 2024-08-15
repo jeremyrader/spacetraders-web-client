@@ -34,7 +34,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       );
 
       await saveState(page);
-      await saveData('dataStore', result.data)
+      await saveData('systemStore', result.data)
 
       if (result.data.length == result.meta.limit) {
         return fetchSystemsData(page + 1);
@@ -53,7 +53,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     if (isFetching) return;
     isFetching = true;
 
-    const savedData = await getData('dataStore');
+    const savedData = await getData('systemsStore');
     const savedState = await getState();
     const savedTimestamp = await getTimestamp();
     const isCacheValid = savedTimestamp && (Date.now() - savedTimestamp) < CACHE_EXPIRATION;
@@ -78,7 +78,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   }
 
   const getDataFromDB = async (): Promise<any[]> => {
-    const dbData = await getData('dataStore');
+    const dbData = await getData('systemsStore');
     return dbData;
   };
 
