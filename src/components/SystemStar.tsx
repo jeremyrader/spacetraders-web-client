@@ -1,15 +1,14 @@
-'use client'
 
 import { Circle } from 'react-konva';
 
-interface SystemStarProps {
+interface OrbitProps {
   x: number;
   y: number;
   radius: number;
   color: string;
 }
 
-const SystemStar = ({x, y, radius, color}: SystemStarProps) => {
+const Orbit = ({x, y, radius, color}: OrbitProps) => {
   return (
     <Circle
       x={x}
@@ -24,4 +23,4 @@ const SystemStar = ({x, y, radius, color}: SystemStarProps) => {
   )
 }
 
-export default SystemStar
+export default Orbit

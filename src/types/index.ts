@@ -57,15 +57,17 @@ interface Agent {
     x: number;
     y: number;
     orbitals: Orbital[]
-  }
-
-  interface WaypointWithTraits {
-    symbol: string;
-    type: string;
-    x: number;
-    y: number;
-    orbitals: Orbital[];
-    traits: Trait[];
+    traits: Trait[]
+    orbits: string
+    modifiers: any[]
+    chart: {
+      submittedBy: string;
+      submittedOn: string;
+    }
+    faction: {
+      symbol: string;
+    }
+    isUnderConstruction: boolean;
   }
 
   interface System {
@@ -73,8 +75,6 @@ interface Agent {
     type: string;
     x: number;
     y: number;
-    size: number;
-    color: string;
     orbitals: Orbital[]
     waypoints: Waypoint[]
   }

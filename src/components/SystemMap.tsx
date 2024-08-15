@@ -10,7 +10,7 @@ import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
 
-import { getObject, getData, saveData } from '../utils/indexeddb';
+import { getObject, saveData } from '../utils/indexeddb';
 
 import { fetchResourcePaginated } from '../utils/v2'
 
@@ -23,7 +23,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [selectedWaypoint, setSelectedWaypoint] = useState<WaypointWithTraits | null>(null);
+  const [selectedWaypoint, setSelectedWaypoint] = useState<Waypoint | null>(null);
   const [traits, setTraits] = useState<Trait[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -80,7 +80,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     onSelectMap('universe')
   };
 
-  const handleWaypointClick = async (waypoint: WaypointWithTraits) => {
+  const handleWaypointClick = async (waypoint: Waypoint) => {
     setSelectedWaypoint(waypoint)
 
     const waypointData = await getObject('waypointStore', waypoint.symbol)
@@ -106,7 +106,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       })
 
   return <div ref={containerRef} className='border-4 border-white'>
-    
     <Map
       containerRef={containerRef}
       maxZoom={1.5}
@@ -159,7 +158,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           x={0}
           y={0}
           radius={800}
-          color={color}
+          color={"white"} // hard code for now. TODO: pull in color from systm
         />
         {/* System Waypoints*/}
         {

@@ -29,53 +29,6 @@ function getRandomPointInCircle(radius: number) {
   };
 }
 
-// Function to randomly choose a color spectrum and generate a star color
-function getRandomStarColor() {
-  const spectrum = getRandomInt(1, 3); // Randomly choose between 1 and 3
-  switch (spectrum) {
-    case 1:
-      return getRandomBlue();
-    case 2:
-      return getRandomRed();
-    case 3:
-      return getRandomYellow();
-    default:
-      return 'white';
-  }
-}
-
-// Function to generate a random blue color
-function getRandomBlue() {
-  const blue = getRandomInt(200, 255);
-  const green = getRandomInt(100, 180);
-  const red = getRandomInt(0, 100);
-  return `rgb(${red}, ${green}, ${blue})`;
-}
-
-// Function to generate a random red color
-function getRandomRed() {
-  const red = getRandomInt(200, 255);
-  const green = getRandomInt(0, 100);
-  const blue = getRandomInt(0, 100);
-  return `rgb(${red}, ${green}, ${blue})`;
-}
-
-// Function to generate a random yellow color
-function getRandomYellow() {
-  const red = getRandomInt(200, 255);
-  const green = getRandomInt(200, 255);
-  const blue = getRandomInt(0, 100);
-  return `rgb(${red}, ${green}, ${blue})`;
-}
-
-// Function to generate a random orange color
-function getRandomOrange() {
-  const red = getRandomInt(200, 255);
-  const green = getRandomInt(100, 150);
-  const blue = getRandomInt(0, 50);
-  return `rgb(${red}, ${green}, ${blue})`;
-}
-
 interface UniverseMapProps {
   onSelectMap: Function;
 }
@@ -85,7 +38,8 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const dataContext = useContext(DataContext);
   const layerRef = useRef<Konva.Layer>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [points, setPoints] = useState<any[]>([]);
+  const [systems, setSystems] = useState<any[]>([]);
+  const [systemsRenderData, setSystemsRenderData] = useState<any[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [mapCenter, setMapCenter] = useState({x: 0, y: 0});
   const [selectedStar, setSelectedStar] = useState<System | null>(null);
@@ -131,7 +85,6 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   };
 
   const handleEnterSystemClick = (star: System | null) => {
-
     if (star) {
       onSelectMap('system', star)
     }
@@ -148,91 +101,18 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
   useEffect(() => {
 
-    const fetchData = async () => {
+    const getSystems = async () => {
       if (dataContext) {
         try {
-          const dbData = await dataContext.getDataFromDB();
+          const systems = await dataContext.getSystems();
 
-          // TODO: handle this at ingestion time
-          dbData.forEach(datum => {
-            const { x, y, symbol, type, waypoints } = datum;
-
-            let fill = "white"
-            let radius = 30
-
-            let types = [
-              'BLACK_HOLE',
-              'ORANGE_STAR',
-              'BLUE_STAR',
-              'RED_STAR',
-              'YOUNG_STAR',
-              'WHITE_DWARF',
-              'HYPERGIANT',
-              'UNSTABLE',
-              'NEUTRON_STAR'
-            ]
-
-            if (type == 'BLACK_HOLE') {
-              fill = "gray"
-              radius = getRandomInt(5,10)
-            }
-
-            if (type == 'ORANGE_STAR') {
-              fill = getRandomOrange()
-              radius = getRandomInt(15,20)
-            }
-
-            if (type == 'BLUE_STAR') {
-              fill = getRandomBlue()
-              radius = getRandomInt(25,28)
-            }
-
-            if (type == 'RED_STAR') {
-              fill = getRandomRed()
-              radius = getRandomInt(15, 25)
-            }
-
-            if (type == 'YOUNG_STAR') {
-              fill = getRandomStarColor()
-              radius = getRandomInt(20,25)
-            }
-
-            if (type == 'WHITE_DWARF') {
-              fill = 'white'
-              radius = getRandomInt(10,15)
-            }
-
-            if (type == 'HYPERGIANT') {
-              fill = getRandomStarColor()
-              radius = getRandomInt(28,30)
-            }
-
-            if (type == 'UNSTABLE') {
-              fill = getRandomStarColor()
-              radius = 15
-            }
-
-            if (type == 'NEUTRON_STAR') {
-              fill = "white"
-              radius = getRandomInt(10,15)
-            }
-
-            if (!types.includes(type)) {
-              console.log(type)
-            }
-
-            datum.color = fill
-            datum.size = radius
-
-          })
-
-          setPoints(dbData);
+          setSystems(systems);
 
           const mapCenterSymbol = window.localStorage.getItem('map-center-symbol')
 
           if (mapCenterSymbol) {
             const symbolParts = mapCenterSymbol.split('-')
-            const mapCenter = dbData.find(datum => datum.symbol == `${symbolParts[0]}-${symbolParts[1]}`)
+            const mapCenter = systems.find(system => system.symbol == `${symbolParts[0]}-${symbolParts[1]}`)
 
             if (mapCenter) {
               setMapCenter({x: mapCenter.x, y: mapCenter.y})
@@ -245,7 +125,25 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       }
     };
 
-    fetchData();
+    getSystems();
+
+  }, [dataContext]);
+
+  useEffect(() => {
+
+    const getSystemsRenderData = async () => {
+      if (dataContext) {
+        try {
+          const systemsRenderData = await dataContext.getSystemsRenderData();
+          setSystemsRenderData(systemsRenderData)
+        } catch (error) {
+          console.error('Error fetching data from IndexedDB:', error);
+        } finally {
+        }
+      }
+    };
+
+    getSystemsRenderData();
 
   }, [dataContext]);
 
@@ -290,15 +188,20 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       {/* System stars */}
       <Layer ref={layerRef}>
         {
-          points.map((point, index) => {
-            return (
-              <System
-                key={index}
-                system={point}
-                zoomLevel={zoomLevel}
-                onSystemClick={handleStarClick}
-              />
-            )
+          systems.map((system, index) => {
+            const systemRenderData = systemsRenderData.find(data => data.symbol == system.symbol)
+
+            if (systemRenderData) {
+              return (
+                <System
+                  key={index}
+                  system={system}
+                  systemRenderData={systemRenderData}
+                  zoomLevel={zoomLevel}
+                  onSystemClick={handleStarClick}
+                />
+              )
+            }
           })
         }
       </Layer>
