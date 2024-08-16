@@ -77,7 +77,7 @@ export async function fetchResourcePaginated (url: string, page: number = 1, res
   }
 };
 
-export async function postRequest(endpoint: string) {
+export async function postRequest(endpoint: string, body: any) {
 
   const callsign = window.localStorage.getItem('callsign')
 
@@ -90,7 +90,8 @@ export async function postRequest(endpoint: string) {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        }
+        },
+        body: JSON.stringify(body),
       })
 
       return response

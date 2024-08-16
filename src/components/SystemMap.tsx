@@ -9,9 +9,9 @@ import MapControls from './MapControls';
 import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
+import ShipyardUI from './ShipyardUI';
 
-import { getObject, getData, getDataByKeyPrefix, saveData } from '../utils/indexeddb';
-
+import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
 
 interface SystemMapProps {
@@ -70,6 +70,9 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }
 
   const SystemMapControls = () => {
+
+    const hasShipyard = traits.find((trait: Trait) => trait.symbol == 'SHIPYARD')
+
     return (
       <MapControls onSelectMap={onSelectMap}>
         <button onClick={handleSelectBack} className="btn btn-primary mr-2">Back to Galaxy Map</button>
@@ -86,20 +89,29 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
             </>
           ): null
         }
+        
         {
-          selectedWaypoint ? (
+          selectedWaypoint && hasShipyard ? (
+            <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
+          ) : (
             <>
-              <p>Symbol: {selectedWaypoint.symbol}</p>
-              <p>Type: {selectedWaypoint.type}</p>
+              {
+                selectedWaypoint ? (
+                  <>
+                    <p>Symbol: {selectedWaypoint.symbol}</p>
+                    <p>Type: {selectedWaypoint.type}</p>
+                  </>
+                ) : null
+              }
+              {
+                traits.map((trait: Trait, index: number) => {
+                  return (
+                    <p key={index}>{trait.name}</p>
+                  )
+                })
+              }
             </>
-          ) : null
-        }
-        {
-          traits.map((trait: Trait, index: number) => {
-            return (
-              <p key={index}>{trait.name}</p>
-            )
-          })
+          )
         }
       </MapControls>
     )

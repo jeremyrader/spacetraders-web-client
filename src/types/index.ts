@@ -1,3 +1,5 @@
+import { Describe } from "next/dist/compiled/superstruct";
+
 interface Trait {
   symbol: string;
   name: string;
@@ -14,67 +16,146 @@ interface Faction {
 }
 
 interface Agent {
-    accountId: string;
+  accountId: string;
+  symbol: string;
+  headquarters: string;
+  credits: number;
+  startingFaction: string;
+  shipCount: number;
+}
+
+interface ContractTerms {
+  deadline: string;
+  payment: {
+    onAccepted: number;
+    onFulfilled: number;
+  };
+  deliver: {
+    tradeSymbol: string;
+    destinationSymbol: string;
+    unitsRequired: number;
+    unitsFulfilled: number;
+  }[]
+}
+
+interface Contract {
+  id: string;
+  factionSymbol: string;
+  type: string;
+  terms: ContractTerms;
+  accepted: boolean;
+  fulfilled: boolean;
+  expiration: string;
+  deadlineToAccept: string;
+}
+
+interface Orbital {
+  symbol: string;
+}
+
+interface Waypoint {
+  symbol: string;
+  type: string;
+  x: number;
+  y: number;
+  orbitals: Orbital[]
+  traits: Trait[]
+  orbits: string
+  modifiers: any[]
+  chart: {
+    submittedBy: string;
+    submittedOn: string;
+  }
+  faction: {
     symbol: string;
-    headquarters: string;
-    credits: number;
-    startingFaction: string;
-    shipCount: number;
   }
+  isUnderConstruction: boolean;
+}
 
-  interface ContractTerms {
-    deadline: string;
-    payment: {
-      onAccepted: number;
-      onFulfilled: number;
-    };
-    deliver: {
-      tradeSymbol: string;
-      destinationSymbol: string;
-      unitsRequired: number;
-      unitsFulfilled: number;
-    }[]
-  }
+interface System {
+  symbol: string;
+  type: string;
+  x: number;
+  y: number;
+  orbitals: Orbital[]
+  waypoints: Waypoint[]
+}
 
-  interface Contract {
-    id: string;
-    factionSymbol: string;
-    type: string;
-    terms: ContractTerms;
-    accepted: boolean;
-    fulfilled: boolean;
-    expiration: string;
-    deadlineToAccept: string;
-  }
+export interface Ship {
+  type: string
+  name: string
+  description: string
+  supply: string
+  activity: string
+  purchasePrice: number
+  frame: Frame
+  reactor: Reactor
+  engine: Engine
+  modules: Module[]
+  mounts: Mount[]
+  crew: Crew
+}
 
-  interface Orbital {
-    symbol: string;
-  }
+interface Frame {
+  symbol: string
+  name: string
+  description: string
+  moduleSlots: number
+  mountingPoints: number
+  fuelCapacity: number
+  quality: number
+  requirements: Requirements
+  condition: number
+  integrity: number
+}
 
-  interface Waypoint {
-    symbol: string;
-    type: string;
-    x: number;
-    y: number;
-    orbitals: Orbital[]
-    traits: Trait[]
-    orbits: string
-    modifiers: any[]
-    chart: {
-      submittedBy: string;
-      submittedOn: string;
-    }
-    faction: {
-      symbol: string;
-    }
-    isUnderConstruction: boolean;
-  }
+interface Reactor {
+  symbol: string
+  name: string
+  description: string
+  powerOutput: number
+  quality: number
+  requirements: Requirements
+  condition: number
+  integrity: number
+}
 
-  interface System {
-    symbol: string;
-    type: string;
-    x: number;
-    y: number;
-    orbitals: Orbital[]
-    waypoints: Waypoint[]
-  }
+interface Requirements {
+  crew: number
+  power?: number
+  slots?: number
+}
+  
+interface Engine {
+  symbol: string
+  name: string
+  description: string
+  speed: number
+  quality: number
+  requirements: Requirements
+  condition: number
+  integrity: number
+}
+
+interface Module {
+  symbol: string
+  name: string
+  description: string
+  capacity?: number
+  requirements: Requirements
+}
+
+interface Mount {
+  symbol: string
+  name: string
+  description: string
+  strength: number
+  requirements: Requirements
+}
+
+interface Crew {
+  required: number
+  capacity: number
+}
+
+  
