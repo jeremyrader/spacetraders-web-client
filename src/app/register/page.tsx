@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react';
+import Navbar from '@/components/Navbar';
 
 function RegistrationForm() {
   const [registrationStatus, setRegistrationStatus] = useState('');
@@ -59,6 +60,7 @@ function RegistrationForm() {
   }
 
   return <div>
+    <Navbar></Navbar>
     <main className="flex min-h-screen flex-col p-24">
       <div className="flex flex-row">
         <div>

@@ -5,6 +5,8 @@ import { Fragment } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
 import { fetchResource, fetchResourcePaginated, postRequest } from '../../utils/v2';
 
+import Navbar from '@/components/Navbar';
+
 function Dashboard() {
   const [agent, setAgent] = useState<Agent | null>(null)
   const [contracts, setContracts] = useState<Contract[]>([])
@@ -34,6 +36,7 @@ function Dashboard() {
   }, [refresh]);
 
   return <DataProvider>
+    <Navbar></Navbar>
     <main className="flex min-h-screen flex-col p-24">
       Dashboard
       <div className="mb-24">

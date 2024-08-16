@@ -6,6 +6,7 @@ import { fetchResource } from '../../utils/v2';
 
 import UniverseMap from '@/components/UniverseMap';
 import SystemMap from '@/components/SystemMap';
+import Navbar from '@/components/Navbar';
 
 function Dashboard() {
   const [agent, setAgent] = useState<Agent | null>(null)
@@ -33,10 +34,10 @@ function Dashboard() {
     else {
       setSelectedSystem(null)
     }
-    
   }
 
   return <DataProvider>
+    <Navbar></Navbar>
     <main className="flex min-h-screen flex-col p-24">
       Dashboard
       <div className="mb-24">

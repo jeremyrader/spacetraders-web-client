@@ -4,8 +4,6 @@ import { DataProvider } from '../contexts/DataContext';
 import LoginForm from "@/components/LoginForm";
 import Navbar from '@/components/Navbar';
 
-
-
 export default function Home() {
 
   const callsign = window.localStorage.getItem('callsign')
