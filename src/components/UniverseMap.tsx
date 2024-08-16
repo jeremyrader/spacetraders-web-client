@@ -43,6 +43,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [mapCenter, setMapCenter] = useState({x: 0, y: 0});
   const [selectedStar, setSelectedStar] = useState<System | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const massiveCircleCenter = {
     x: 0,
@@ -141,11 +142,17 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
         } finally {
         }
       }
+
+      setIsLoading(false)
     };
 
     getSystemsRenderData();
 
   }, [dataContext]);
+
+  if (isLoading) {
+    return <div>Loading Map...</div>
+  }
 
   return <div ref={containerRef} className='border-4 border-white'>
     <Map

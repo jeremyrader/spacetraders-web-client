@@ -5,8 +5,6 @@ import Konva from 'konva';
 import { Stage } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
 
-import MapControls from './MapControls';
-
 interface MapProps {
   containerRef: any;
   children: ReactNode;
@@ -51,6 +49,7 @@ const moveAmount = 10;
 const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapCenter = {x: 0, y: 0}, MapControls }) => {
   const stageRef = useRef<Konva.Stage>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
+  const [isLoading, setIsLoading] = useState(true)
 
   const handleWheel = (wheelEvent: Konva.KonvaEventObject<WheelEvent>) => {
     wheelEvent.evt.preventDefault();
@@ -133,12 +132,21 @@ const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapC
       resizeObserver.observe(containerRef.current);
     }
 
+    setIsLoading(false)
     return () => {
       if (containerRef.current) {
         resizeObserver.unobserve(containerRef.current);
       }
     };
   }, []);
+
+  if (isLoading) {
+    return (
+      <div>
+        Map is Loading...
+    </div>
+    )
+  }
 
   return (
     <div className="relative">
