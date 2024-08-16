@@ -11,6 +11,7 @@ const Navbar: React.FC = () => {
         </div>
         <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
           <li><Link href="/map">Map</Link></li>
+          <li><Link href="/ships">Ships</Link></li>
           <li><Link href="/contracts">Contracts</Link></li>
         </ul>
       </div>

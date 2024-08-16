@@ -1,5 +1,3 @@
-import { Describe } from "next/dist/compiled/superstruct";
-
 interface Trait {
   symbol: string;
   name: string;
@@ -81,7 +79,35 @@ interface System {
   waypoints: Waypoint[]
 }
 
+interface Cargo {
+  capacity: number;
+  units: number;
+  inventory: any[]
+}
+
+interface Fuel {
+  capacity: number;
+  consumed: {
+    amount: number;
+    timestamp: string;
+  }
+  current: number;
+}
+
+interface Location {
+  arrival: string;
+  departureTime: string;
+  destination: {
+    symbol: string;
+    systemSymbol: string;
+    type: string;
+    x: number;
+    y: number;
+  }
+}
+
 export interface Ship {
+  symbol?: string;
   type: string
   name: string
   description: string
@@ -94,6 +120,25 @@ export interface Ship {
   modules: Module[]
   mounts: Mount[]
   crew: Crew
+  cargo?: Cargo
+  fuel?: Fuel
+  nav: {
+    flightMode: string;
+    route: {
+      arrival: string;
+      departureTime: string;
+      destination: Location
+      origin: Location
+    }
+    status: string;
+    systemSymbol: string;
+    waypointSymbol: string;
+  }
+  registration: {
+    name: string;
+    factionSymbol: string;
+    role: string;
+  }
 }
 
 interface Frame {

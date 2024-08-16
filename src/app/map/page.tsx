@@ -48,8 +48,6 @@ function Dashboard() {
         <p>Starting Faction: {agent?.startingFaction}</p>
         <p>Ship Count: {agent?.shipCount}</p>
       </div>
-      
-
       {
         selectedMap == 'universe' ? (
           <UniverseMap onSelectMap={handleSelectMap}></UniverseMap>
@@ -57,8 +55,6 @@ function Dashboard() {
           <SystemMap system={selectedSystem} onSelectMap={handleSelectMap}></SystemMap>
         )
       }
-      
-
     </main>
   </DataProvider>
 }
