@@ -45,6 +45,8 @@ type StoreName =
   typeof WAYPOINT_RENDER_STORE |
   typeof ORBITAL_RENDER_STORE
 
+type IndexNames = 'propertyName';
+
 let dbPromise: Promise<IDBPDatabase<MyDB>>;
 
 export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
@@ -58,7 +60,7 @@ export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
           db.createObjectStore(SYSTEMS_STORE, { keyPath: 'symbol', autoIncrement: true });
         }
         if (!db.objectStoreNames.contains(WAYPOINT_STORE)) {
-          db.createObjectStore(WAYPOINT_STORE, { keyPath: 'symbol', autoIncrement: true });
+          const store = db.createObjectStore(WAYPOINT_STORE, { keyPath: 'symbol', autoIncrement: true });
         }
         if (!db.objectStoreNames.contains(SYSTEM_RENDER_STORE)) {
           db.createObjectStore(SYSTEM_RENDER_STORE, { keyPath: 'symbol', autoIncrement: true });

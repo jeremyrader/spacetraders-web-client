@@ -10,7 +10,7 @@ import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
 
-import { getObject, saveData } from '../utils/indexeddb';
+import { getObject, getData, getDataByKeyPrefix, saveData } from '../utils/indexeddb';
 
 import { fetchResourcePaginated } from '../utils/v2'
 
@@ -26,9 +26,10 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [selectedWaypoint, setSelectedWaypoint] = useState<Waypoint | null>(null);
   const [traits, setTraits] = useState<Trait[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
+  const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
 
   const fetchWaypoints = async(manual: boolean = false) => {
-
     setIsLoading(true)
     // check the db for the first waypoint in the list
     // this avoids fetching waypoints every time the system is loaded
@@ -44,11 +45,39 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     setIsLoading(false)
   }
 
+  const fetchWaypointMetadata = async () => {
+    setIsLoading(true)
+  
+    const waypointMetadatas = await getData('waypointStore')
+
+    const filteredMetadatas = waypointMetadatas.filter((metadata: any) =>  {
+      const metadataParts = metadata.symbol.split('-')
+      return `${metadataParts[0]}-${metadataParts[1]}` == system.symbol
+    })
+
+    setWaypointMetadatas(filteredMetadatas)
+
+    setIsLoading(false)
+  }
+
+  const highlightTrait = (trait: string) => {
+    if (selectedTrait == trait) {
+      setSelectedTrait(null)
+    }
+    else {
+      setSelectedTrait(trait)
+    }
+  }
+
   const SystemMapControls = () => {
     return (
       <MapControls onSelectMap={onSelectMap}>
         <button onClick={handleSelectBack} className="btn btn-primary mr-2">Back to Galaxy Map</button>
         <button onClick={() => {fetchWaypoints(true) }} className="btn btn-primary">Rescan System</button>
+        <div className="flex">
+          <button onClick={() => {highlightTrait('MARKETPLACE')}} className="btn btn-primary mr-2">Marketplaces</button>
+          <button onClick={() => {highlightTrait('SHIPYARD')}} className="btn btn-primary">Shipyards</button>
+        </div>
         {
           isLoading ? (
             <>
@@ -91,19 +120,11 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     fetchWaypoints()
   }, [system]);
 
+  useEffect(() => {
+    fetchWaypointMetadata()
+  }, [system]);
+
   let { color } = system
-
-  const orbitals = system.waypoints.filter((waypoint: Waypoint) => {
-    return waypoint.orbitals
-  }).reduce((acc: Orbital[], waypoint: Waypoint) => {
-    return acc.concat(waypoint.orbitals);
-  }, []);
-
-  const nonOrbitalWaypoints = 
-    system.waypoints
-      .filter((systemWaypoint: Waypoint) => {
-        return !orbitals.find((orbital: Orbital) => orbital.symbol == systemWaypoint.symbol)
-      })
 
   return <div ref={containerRef} className='border-4 border-white'>
     <Map
@@ -116,9 +137,9 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       {/* Orbits Layer */}
       <Layer>
         {
-          nonOrbitalWaypoints.map((nonOrbitalWaypoint: Waypoint, index: number) => {
+          system.waypoints.map((waypoint: Waypoint, index: number) => {
 
-            let { x, y, type } = nonOrbitalWaypoint
+            let { x, y, type } = waypoint
 
             let drawOrbit = false
 
@@ -130,7 +151,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
             return drawOrbit ? (
               <React.Fragment key={index}>
-                { nonOrbitalWaypoint.orbitals.map((orbital: Orbital, index: number) => (
+                { waypoint.orbitals.map((orbital: Orbital, index: number) => (
                     <Orbit 
                       key={'orbital-' + index}
                       x={x}
@@ -158,24 +179,23 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           x={0}
           y={0}
           radius={800}
-          color={"white"} // hard code for now. TODO: pull in color from systm
+          color={"white"} // hard code for now. TODO: pull in color from system
         />
         {/* System Waypoints*/}
         {
-          nonOrbitalWaypoints.map((systemWaypoint: Waypoint, index: number) => {
-
-            let orbitalWaypoints = systemWaypoint.orbitals.map(orbital => {
-              return system.waypoints.find((waypoint: Waypoint) => waypoint.symbol == orbital.symbol)
+          system.waypoints
+            .filter((waypoint: Waypoint) => !waypoint.orbits )
+            .map((waypoint: Waypoint, index: number) => {
+              return <Waypoint
+                key={index}
+                waypoint={waypoint}
+                systemWaypoints={system.waypoints}
+                selectedTrait={selectedTrait}
+                metadatas={waypointMetadatas}
+                onWaypointClick={handleWaypointClick}
+                zoomLevel={zoomLevel}
+              />
             })
-
-            return <Waypoint
-              key={index}
-              waypoint={systemWaypoint}
-              orbitalWaypoints={orbitalWaypoints}
-              zoomLevel={zoomLevel}
-              onWaypointClick={handleWaypointClick}
-            />
-          })
         }
         {/* Outline */}
         {

@@ -178,7 +178,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
     const { currentSystemsPage } = savedState || { currentSystemsPage: 1 };
 
-    if (savedData.length > 0 && isCacheValid) {
+    if (savedData.length > 849 && isCacheValid) {
       setIsLoading(false);
     } else {
       try {

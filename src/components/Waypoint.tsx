@@ -6,12 +6,14 @@ import { getObject } from '../utils/indexeddb';
 
 interface WaypointProps {
   waypoint: Waypoint;
-  orbitalWaypoints: Waypoint[]
+  systemWaypoints: Waypoint[]
+  selectedTrait: string | null;
+  metadatas: any[];
   zoomLevel: number;
   onWaypointClick: Function;
 }
 
-const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: WaypointProps) => {
+const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLevel, onWaypointClick}: WaypointProps) => { //orbitalWaypoints
   const {symbol, orbits} = waypoint
   const [waypointRenderData, setWaypointRenderData] = useState<{color: string, radius: number}>({color: 'white', radius: 5})
   const [orbitalRenderData, setOrbitalRenderData] = useState<{x: number, y: number}>({x: 0, y: 0})
@@ -42,14 +44,38 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
     }
   }, [waypoint]);
 
+  const getIsHighlighted = (metadatas: any[], selectedTrait: string | null) => {
+    const waypointMetadata = metadatas.find((metadata) => metadata.symbol == waypoint.symbol)
+
+    let highlighted = false
+    if (waypointMetadata) {
+      const hasSelectedTrait = waypointMetadata.traits.find((trait: Trait) => {
+        return trait.symbol == selectedTrait
+      })
+  
+      if (hasSelectedTrait) {
+        highlighted = true
+      }
+    }
+
+    return highlighted
+  }
+
+
+  const multiplier = getIsHighlighted(metadatas, selectedTrait) ? 3 : 1
+
+  let orbitalWaypoints = 
+    systemWaypoints
+      .filter((waypoint: Waypoint) =>  waypoint.orbits)
+
   return (
     <Fragment>
       {
         orbits ? (
           <Circle
-            x={waypoint.x + orbitalRenderData.x}
+            x={(waypoint.x + orbitalRenderData.x)}
             y={-waypoint.y + orbitalRenderData.y} // down on HTML canvas is positive
-            radius={radius}
+            radius={radius * multiplier}
             fill="white"
             onClick={() => { onWaypointClick(waypoint) }}
           />
@@ -57,7 +83,7 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
           <Circle
             x={waypoint.x}
             y={-waypoint.y} // down on HTML canvas is positive
-            radius={radius}
+            radius={radius * multiplier}
             fillRadialGradientStartPoint={{ x: 0, y: 0 }}
             fillRadialGradientStartRadius={0}
             fillRadialGradientEndPoint={{ x: 0, y: 0 }}
@@ -68,12 +94,17 @@ const Waypoint = ({waypoint, orbitalWaypoints, zoomLevel, onWaypointClick}: Wayp
         )
       }
       {
-        orbitalWaypoints.map((orbital, index) => {
+        waypoint.orbitals.map((orbital, index) => {
+
+          const orbitalWaypoint = orbitalWaypoints.find((waypoint: Waypoint) => waypoint.symbol == orbital.symbol)
+
           return (
             <Waypoint
               key={index}
-              waypoint={orbital}
-              orbitalWaypoints={orbital.orbitals as Waypoint[]}
+              waypoint={orbitalWaypoint as Waypoint}
+              systemWaypoints={systemWaypoints}
+              selectedTrait={selectedTrait}
+              metadatas={metadatas}
               zoomLevel={zoomLevel}
               onWaypointClick={onWaypointClick}
             />
