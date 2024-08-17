@@ -3,8 +3,10 @@
 import { Circle } from 'react-konva';
 import { Fragment } from 'react';
 
+import { ISystem } from '@/types'
+
 interface SystemProps {
-  system: System;
+  system: ISystem;
   systemRenderData: any;
   zoomLevel: number;
   onSystemClick: Function;

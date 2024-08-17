@@ -4,9 +4,11 @@ import { Circle } from 'react-konva';
 import { useState, useEffect, Fragment } from 'react';
 import { getObject } from '../utils/indexeddb';
 
+import { IWaypoint, ITrait } from '@/types'
+
 interface WaypointProps {
-  waypoint: Waypoint;
-  systemWaypoints: Waypoint[]
+  waypoint: IWaypoint;
+  systemWaypoints: IWaypoint[]
   selectedTrait: string | null;
   metadatas: any[];
   zoomLevel: number;
@@ -49,7 +51,7 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
 
     let highlighted = false
     if (waypointMetadata) {
-      const hasSelectedTrait = waypointMetadata.traits.find((trait: Trait) => {
+      const hasSelectedTrait = waypointMetadata.traits.find((trait: ITrait) => {
         return trait.symbol == selectedTrait
       })
   
@@ -66,7 +68,7 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
 
   let orbitalWaypoints = 
     systemWaypoints
-      .filter((waypoint: Waypoint) =>  waypoint.orbits)
+      .filter((waypoint: IWaypoint) =>  waypoint.orbits)
 
   return (
     <Fragment>
@@ -96,12 +98,12 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
       {
         waypoint.orbitals.map((orbital, index) => {
 
-          const orbitalWaypoint = orbitalWaypoints.find((waypoint: Waypoint) => waypoint.symbol == orbital.symbol)
+          const orbitalWaypoint = orbitalWaypoints.find((waypoint: IWaypoint) => waypoint.symbol == orbital.symbol)
 
           return (
             <Waypoint
               key={index}
-              waypoint={orbitalWaypoint as Waypoint}
+              waypoint={orbitalWaypoint as IWaypoint}
               systemWaypoints={systemWaypoints}
               selectedTrait={selectedTrait}
               metadatas={metadatas}

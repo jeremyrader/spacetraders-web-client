@@ -6,10 +6,11 @@ import { DataProvider } from '../../contexts/DataContext';
 import { fetchResource, fetchResourcePaginated, postRequest } from '../../utils/v2';
 
 import Navbar from '@/components/Navbar';
+import { IAgent, IContract } from '@/types'
 
 function Dashboard() {
-  const [agent, setAgent] = useState<Agent | null>(null)
-  const [contracts, setContracts] = useState<Contract[]>([])
+  const [agent, setAgent] = useState<IAgent | null>(null)
+  const [contracts, setContracts] = useState<IContract[]>([])
   const [refresh, setRefresh] = useState(false);
 
   const handleAcceptContract = async (contractId: string) => {

@@ -2,11 +2,12 @@
 
 import { useRef, useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
+import { IFaction } from '@/types'
 
 function RegistrationForm() {
   const [registrationStatus, setRegistrationStatus] = useState('');
-  const [factions, setFactions] = useState<Faction[]>([])
-  const [selectedFaction, setSelectedFaction] = useState<Faction | null>(null)
+  const [factions, setFactions] = useState<IFaction[]>([])
+  const [selectedFaction, setSelectedFaction] = useState<IFaction | null>(null)
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

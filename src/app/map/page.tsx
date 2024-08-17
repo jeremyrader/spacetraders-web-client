@@ -8,10 +8,12 @@ import UniverseMap from '@/components/UniverseMap';
 import SystemMap from '@/components/SystemMap';
 import Navbar from '@/components/Navbar';
 
+import { IAgent, ISystem } from '@/types'
+
 function Dashboard() {
-  const [agent, setAgent] = useState<Agent | null>(null)
+  const [agent, setAgent] = useState<IAgent | null>(null)
   const [selectedMap, setSelectedMap] = useState("universe")
-  const [selectedSystem, setSelectedSystem] = useState<System |  null>(null)
+  const [selectedSystem, setSelectedSystem] = useState<ISystem |  null>(null)
 
   useEffect(() => {
 
@@ -25,7 +27,7 @@ function Dashboard() {
     fetchAgent();
   }, []);
 
-  const handleSelectMap = (map: string, system: System) => {
+  const handleSelectMap = (map: string, system: ISystem) => {
     setSelectedMap(map)
 
     if (system) {

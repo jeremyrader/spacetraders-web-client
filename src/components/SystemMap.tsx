@@ -14,7 +14,7 @@ import MarketUI from './MarketUI'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
-import { Trait } from '../types'
+import { IWaypoint, IOrbital, ITrait } from '../types'
 
 interface SystemMapProps {
   system: any;
@@ -25,8 +25,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [selectedWaypoint, setSelectedWaypoint] = useState<Waypoint | null>(null);
-  const [traits, setTraits] = useState<Trait[]>([])
+  const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypoint | null>(null);
+  const [traits, setTraits] = useState<ITrait[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
   const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
@@ -91,8 +91,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
   const SystemMapControls = () => {
 
-    const hasShipyard = traits.find((trait: Trait) => trait.symbol == 'SHIPYARD')
-    const hasMarketplace = traits.find((trait: Trait) => trait.symbol == 'MARKETPLACE')
+    const hasShipyard = traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
+    const hasMarketplace = traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
 
     return (
       <MapControls onSelectMap={onSelectMap}>
@@ -111,13 +111,13 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           ): null
         }
         {
-          isMarketplaceSelected && hasMarketplace ? (
-            <MarketUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
+          selectedWaypoint && isMarketplaceSelected && hasMarketplace ? (
+            <MarketUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint.symbol}/>
           ) : null
         }
         {
-          isShipyardSelected && hasShipyard ? (
-            <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
+          selectedWaypoint && isShipyardSelected && hasShipyard ? (
+            <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint.symbol}/>
           ) : null
         }
         { isShipyardSelected && hasShipyard ? (
@@ -137,7 +137,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 <p>Type: {selectedWaypoint.type}</p>
               </>
               {
-                traits.map((trait: Trait, index: number) => {
+                traits.map((trait: ITrait, index: number) => {
                   if (trait.symbol === 'SHIPYARD') {
                     return (
                       <button key={index} onClick={handleSelectShipyard}>Shipyard</button>
@@ -166,7 +166,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     onSelectMap('universe')
   };
 
-  const handleWaypointClick = async (waypoint: Waypoint) => {
+  const handleWaypointClick = async (waypoint: IWaypoint) => {
     setSelectedWaypoint(waypoint)
 
     const waypointData = await getObject('waypointStore', waypoint.symbol)
@@ -194,7 +194,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       {/* Orbits Layer */}
       <Layer>
         {
-          system.waypoints.map((waypoint: Waypoint, index: number) => {
+          system.waypoints.map((waypoint: IWaypoint, index: number) => {
 
             let { x, y, type } = waypoint
 
@@ -208,7 +208,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
             return drawOrbit ? (
               <React.Fragment key={index}>
-                { waypoint.orbitals.map((orbital: Orbital, index: number) => (
+                { waypoint.orbitals.map((orbital: IOrbital, index: number) => (
                     <Orbit 
                       key={'orbital-' + index}
                       x={x}
@@ -241,8 +241,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         {/* System Waypoints*/}
         {
           system.waypoints
-            .filter((waypoint: Waypoint) => !waypoint.orbits )
-            .map((waypoint: Waypoint, index: number) => {
+            .filter((waypoint: IWaypoint) => !waypoint.orbits )
+            .map((waypoint: IWaypoint, index: number) => {
               return <Waypoint
                 key={index}
                 waypoint={waypoint}

@@ -11,6 +11,8 @@ import MapControls from './MapControls';
 import System from './System'
 import Nebula from './Nebula'
 
+import { ISystem } from '@/types'
+
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -42,7 +44,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const [systemsRenderData, setSystemsRenderData] = useState<any[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [mapCenter, setMapCenter] = useState({x: 0, y: 0});
-  const [selectedStar, setSelectedStar] = useState<System | null>(null);
+  const [selectedStar, setSelectedStar] = useState<ISystem | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const massiveCircleCenter = {
@@ -81,11 +83,11 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     throw new Error('DataContext must be used within a DataProvider');
   }
 
-  const handleStarClick = (star: System) => {
+  const handleStarClick = (star: ISystem) => {
     setSelectedStar(star);
   };
 
-  const handleEnterSystemClick = (star: System | null) => {
+  const handleEnterSystemClick = (star: ISystem | null) => {
     if (star) {
       onSelectMap('system', star)
     }

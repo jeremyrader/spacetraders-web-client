@@ -1,19 +1,19 @@
-export interface Trait {
+export interface ITrait {
   symbol: string;
   name: string;
   description: string;
 }
 
-interface Faction {
+export interface IFaction {
   symbol: string;
   name: string;
   description: string;
   headquarters: string;
   isRecruiting: boolean;
-  traits: Trait[];
+  traits: ITrait[];
 }
 
-interface Agent {
+export interface IAgent {
   accountId: string;
   symbol: string;
   headquarters: string;
@@ -36,7 +36,7 @@ interface ContractTerms {
   }[]
 }
 
-interface Contract {
+export interface IContract {
   id: string;
   factionSymbol: string;
   type: string;
@@ -47,17 +47,17 @@ interface Contract {
   deadlineToAccept: string;
 }
 
-interface Orbital {
+export interface IOrbital {
   symbol: string;
 }
 
-interface Waypoint {
+export interface IWaypoint {
   symbol: string;
   type: string;
   x: number;
   y: number;
-  orbitals: Orbital[]
-  traits: Trait[]
+  orbitals: IOrbital[]
+  traits: ITrait[]
   orbits: string
   modifiers: any[]
   chart: {
@@ -70,13 +70,13 @@ interface Waypoint {
   isUnderConstruction: boolean;
 }
 
-interface System {
+export interface ISystem {
   symbol: string;
   type: string;
   x: number;
   y: number;
-  orbitals: Orbital[]
-  waypoints: Waypoint[]
+  orbitals: IOrbital[]
+  waypoints: IWaypoint[]
 }
 
 interface Cargo {
