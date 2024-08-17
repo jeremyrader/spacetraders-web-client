@@ -186,7 +186,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   return <div ref={containerRef} className='border-4 border-white'>
     <Map
       containerRef={containerRef}
-      maxZoom={1.5}
+      maxZoom={2.5}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
       mapCenter={{x: 0, y: 0}}
       MapControls={SystemMapControls}
