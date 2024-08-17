@@ -3,12 +3,18 @@
 import { useState, useEffect } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
 import { fetchResource } from '../../utils/v2';
-import { Ship } from '../../types';
+import { Ship, Inventory } from '../../types';
 
 import Navbar from '@/components/Navbar';
 
 function Ships() {
   const [ships, setShips] = useState<Ship[]>([])
+  const [inventory, setInventory] = useState<Inventory[]>([])
+
+  async function handleViewCargo (shipSymbol?: string) {
+    const response = await fetchResource(`my/ships/${shipSymbol}/cargo`)
+    setInventory(response.data.inventory)
+  }
 
   useEffect(() => {
     async function getMyShips() {
@@ -31,12 +37,13 @@ function Ships() {
             <th>Symbol</th>
             <th>Frame</th>
             <th>Role</th>
-            <td>Carry Capacity</td>
+            <td>Cargo</td>
             <td>Fuel</td>
             <td>Flight Mode</td>
             <td>Status</td>
             <td>System</td>
             <td>Waypoint</td>
+            <td>Actions</td>
           </tr>
         </thead>
         <tbody>
@@ -46,17 +53,48 @@ function Ships() {
                 <th>{ship.symbol}</th>
                 <th>{ship.frame.name}</th>
                 <th>{ship.registration.role}</th>
-                <th>{ship.cargo?.capacity}</th>
+                <th>{ship.cargo?.capacity} / {ship.cargo?.capacity}</th>
                 <th>{ship.fuel?.current} / {ship.fuel?.capacity}</th>
                 <th>{ship.nav.flightMode}</th>
                 <th>{ship.nav.status}</th>
                 <th>{ship.nav.systemSymbol}</th>
                 <th>{ship.nav.waypointSymbol}</th>
+                <th>
+                  <button className="btn" onClick={() => {
+                    handleViewCargo(ship.symbol)
+                  }}>
+                    View Cargo
+                  </button>
+                </th>
               </tr>
             ))
           }
         </tbody>
       </table>
+
+      <table className="table">
+        {/* head */}
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Units</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            inventory.map((item, index) => (
+              <tr key={index}>
+                <th>{item.name}</th>
+                <th>{item.description}</th>
+                <th>{item.units}</th>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+
     </div>
     </main>
   </DataProvider>

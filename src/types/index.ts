@@ -238,4 +238,11 @@ export interface Market {
   tradeGoods: TradeGood[]
 }
 
+export interface Inventory {
+  symbol: string;
+  name: string;
+  description: string;
+  units: number;
+}
+
   
