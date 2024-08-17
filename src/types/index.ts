@@ -203,4 +203,39 @@ interface Crew {
   capacity: number
 }
 
+export interface Commodity {
+  symbol: string;
+  name: string;
+  description: string;
+}
+
+interface Transaction {
+  waypointSymbol: string;
+  shipSymbol: string;
+  tradeSymbol: string;
+  type: string;
+  units: number;
+  pricePerUnit: number;
+  totalPrice: number;
+  timestamp: string;
+}
+
+export interface TradeGood {
+  symbol: string;
+  tradeVolume: string;
+  type: string;
+  supply: string;
+  purchasePrice: number;
+  sellPrice: number;
+}
+
+export interface Market {
+  symbol: string;
+  imports: any[];
+  exports: any[]
+  exchange: Commodity[]
+  transactions: Transaction[]
+  tradeGoods: TradeGood[]
+}
+
   

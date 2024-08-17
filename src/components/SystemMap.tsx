@@ -10,6 +10,7 @@ import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
 import ShipyardUI from './ShipyardUI';
+import MarketUI from './MarketUI'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
@@ -30,6 +31,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
   const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
+  const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
 
   const fetchWaypoints = async(manual: boolean = false) => {
     setIsLoading(true)
@@ -75,9 +77,14 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     setIsShipyardSelected(true)
   }
 
+  const handleSelectMarketplace = () => {
+    setIsMarketplaceSelected(true)
+  }
+
   const SystemMapControls = () => {
 
     const hasShipyard = traits.find((trait: Trait) => trait.symbol == 'SHIPYARD')
+    const hasMarketplace = traits.find((trait: Trait) => trait.symbol == 'MARKETPLACE')
 
     return (
       <MapControls onSelectMap={onSelectMap}>
@@ -96,23 +103,32 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           ): null
         }
         {
+          isMarketplaceSelected && hasMarketplace ? (
+            <MarketUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
+          ) : null
+        }
+        {
           isShipyardSelected && hasShipyard ? (
             <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
-          ) : (
+          ) : null
+        }
+        {
+          selectedWaypoint && !isShipyardSelected && !isMarketplaceSelected ? (
             <>
-              {
-                selectedWaypoint ? (
-                  <>
-                    <p>Symbol: {selectedWaypoint.symbol}</p>
-                    <p>Type: {selectedWaypoint.type}</p>
-                  </>
-                ) : null
-              }
+              <>
+                <p>Symbol: {selectedWaypoint.symbol}</p>
+                <p>Type: {selectedWaypoint.type}</p>
+              </>
               {
                 traits.map((trait: Trait, index: number) => {
                   if (trait.symbol === 'SHIPYARD') {
                     return (
                       <button key={index} onClick={handleSelectShipyard}>Shipyard</button>
+                    )
+                  }
+                  else if (trait.symbol === 'MARKETPLACE') {
+                    return (
+                      <button key={index} onClick={handleSelectMarketplace}>Marketplace</button>
                     )
                   }
                   else {
@@ -123,7 +139,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 })
               }
             </>
-          )
+          ) : null
         }
       </MapControls>
     )
