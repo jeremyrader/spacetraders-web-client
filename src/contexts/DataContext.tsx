@@ -206,7 +206,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   useEffect(() => {
 
     // Load initial data after reset
-    if (true) {
+    if (false) {
       loadData()
     }
     
