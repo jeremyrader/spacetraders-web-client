@@ -117,6 +117,8 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
             const symbolParts = mapCenterSymbol.split('-')
             const mapCenter = systems.find(system => system.symbol == `${symbolParts[0]}-${symbolParts[1]}`)
 
+            setSelectedStar(mapCenter)
+
             if (mapCenter) {
               setMapCenter({x: mapCenter.x, y: mapCenter.y})
             }

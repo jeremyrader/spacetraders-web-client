@@ -96,7 +96,7 @@ const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapC
       // Apply the new scale and position
       stage.scale({ x: newScale, y: newScale });
       stage.position(newPos);
-      
+
       stage.batchDraw();
 
     }
@@ -108,11 +108,12 @@ const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapC
     if (stage) {
       // Set initial position so that the saved map center is in the center of the canvas
       // The faction headquarters is the default
-
       stage.position({
         x: (stageSize.width / 2) - mapCenter.x,
         y: (stageSize.height / 2) + mapCenter.y,
       });
+
+      stage.scale({x: 1, y: 1})
 
       stage.batchDraw();
     }

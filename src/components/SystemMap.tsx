@@ -34,6 +34,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
   const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
   const [selectedWaypointOutline, setSelectedWaypointOutline] = useState<{x: number, y: number, radius: number} | null>(null)
+  const [mapCenter, setMapCenter] = useState<{x: number, y: number}>({x: 0, y: 0})
 
   const fetchWaypoints = async(manual: boolean = false) => {
     setIsLoading(true)
@@ -176,6 +177,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
     if (x !== undefined && y !== undefined && radius !== undefined) {
       setSelectedWaypointOutline({x: x, y: y, radius: radius})
+      setMapCenter({x: x, y: -y})
     }
 
     setSelectedWaypoint(waypoint)
@@ -199,7 +201,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       containerRef={containerRef}
       maxZoom={2.5}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
-      mapCenter={{x: 0, y: 0}}
+      mapCenter={mapCenter}
       MapControls={SystemMapControls}
     >
       {/* Orbits Layer */}
@@ -256,7 +258,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
               x={selectedWaypointOutline.x}
               y={selectedWaypointOutline.y}
               radius={selectedWaypointOutline.radius + 2}
-              stroke="black"
+              stroke={selectedWaypoint.type.includes('ASTEROID') ? 'white' : 'black'}
               strokeWidth={1}
               opacity={0.7}
             />
