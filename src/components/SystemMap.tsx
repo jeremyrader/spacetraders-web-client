@@ -81,6 +81,14 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     setIsMarketplaceSelected(true)
   }
 
+  const handleCloseShipyardUI = () => {
+    setIsShipyardSelected(false)
+  }
+
+  const handleCloseMarketUI = () => {
+    setIsMarketplaceSelected(false)
+  }
+
   const SystemMapControls = () => {
 
     const hasShipyard = traits.find((trait: Trait) => trait.symbol == 'SHIPYARD')
@@ -110,6 +118,15 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         {
           isShipyardSelected && hasShipyard ? (
             <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
+          ) : null
+        }
+        { isShipyardSelected && hasShipyard ? (
+            <button className="btn" onClick={handleCloseShipyardUI}>Close Shipyard UI</button>
+          ) : null
+        }
+
+        { isMarketplaceSelected && hasMarketplace ? (
+            <button className="btn" onClick={handleCloseMarketUI}>Close Market UI</button>
           ) : null
         }
         {
