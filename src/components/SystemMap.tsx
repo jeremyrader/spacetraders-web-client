@@ -3,6 +3,7 @@
 import { Layer, Circle } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
+import Konva from 'konva';
 
 import Map from './Map'
 import MapControls from './MapControls';
@@ -228,7 +229,20 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           })
         }
       </Layer>
-
+      <Layer>
+        {/* Seleced waypoint outline */}
+        {
+          selectedWaypoint && (
+            <Circle
+              x={selectedWaypoint.x}
+              y={-selectedWaypoint.y}
+              radius={10}
+              stroke="white"
+              strokeWidth={2}
+              opacity={0.5}
+            />
+        )}
+      </Layer>
       {/* Waypoints Layer */}
       <Layer>
         {/* System Star */}
@@ -254,18 +268,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
               />
             })
         }
-        {/* Outline */}
-        {
-          selectedWaypoint && (
-            <Circle
-              x={selectedWaypoint.x}
-              y={-selectedWaypoint.y}
-              radius={10}
-              stroke="white"
-              strokeWidth={2}
-              opacity={0.5}
-            />
-        )}
       </Layer>
     </Map>
   </div>
