@@ -28,7 +28,7 @@ const ShipyardUI = ({systemSymbol, waypointSymbol}: ShipyardProps) => {
       const response = await fetchResource(`systems/${systemSymbol}/waypoints/${waypointSymbol}/shipyard`)
 
       if (response.data?.ships) {
-       setShips(response.data?.ships)
+        setShips(response.data?.ships)
       }
 
       if (response.data?.shipTypes) {

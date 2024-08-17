@@ -13,6 +13,7 @@ import ShipyardUI from './ShipyardUI';
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
+import { Trait } from '../types'
 
 interface SystemMapProps {
   system: any;
@@ -28,6 +29,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
   const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
+  const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
 
   const fetchWaypoints = async(manual: boolean = false) => {
     setIsLoading(true)
@@ -69,6 +71,10 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     }
   }
 
+  const handleSelectShipyard = () => {
+    setIsShipyardSelected(true)
+  }
+
   const SystemMapControls = () => {
 
     const hasShipyard = traits.find((trait: Trait) => trait.symbol == 'SHIPYARD')
@@ -89,9 +95,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
             </>
           ): null
         }
-        
         {
-          selectedWaypoint && hasShipyard ? (
+          isShipyardSelected && hasShipyard ? (
             <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint?.symbol}/>
           ) : (
             <>
@@ -105,9 +110,16 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
               }
               {
                 traits.map((trait: Trait, index: number) => {
-                  return (
-                    <p key={index}>{trait.name}</p>
-                  )
+                  if (trait.symbol === 'SHIPYARD') {
+                    return (
+                      <button key={index} onClick={handleSelectShipyard}>Shipyard</button>
+                    )
+                  }
+                  else {
+                    return (
+                      <p key={index}>{trait.name}</p>
+                    )
+                  }
                 })
               }
             </>
