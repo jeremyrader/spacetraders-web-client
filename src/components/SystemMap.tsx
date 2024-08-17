@@ -33,6 +33,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
   const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
+  const [selectedWaypointOutline, setSelectedWaypointOutline] = useState<{x: number, y: number, radius: number} | null>(null)
 
   const fetchWaypoints = async(manual: boolean = false) => {
     setIsLoading(true)
@@ -167,7 +168,16 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     onSelectMap('universe')
   };
 
-  const handleWaypointClick = async (waypoint: IWaypoint) => {
+  const handleWaypointClick = async (waypoint: IWaypoint, waypointRef: React.RefObject<Konva.Circle>) => {
+
+    const x = waypointRef?.current?.x()
+    const y = waypointRef?.current?.y()
+    const radius = waypointRef?.current?.radius()
+
+    if (x !== undefined && y !== undefined && radius !== undefined) {
+      setSelectedWaypointOutline({x: x, y: y, radius: radius})
+    }
+
     setSelectedWaypoint(waypoint)
 
     const waypointData = await getObject('waypointStore', waypoint.symbol)
@@ -230,21 +240,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         }
       </Layer>
       <Layer>
-        {/* Seleced waypoint outline */}
-        {
-          selectedWaypoint && (
-            <Circle
-              x={selectedWaypoint.x}
-              y={-selectedWaypoint.y}
-              radius={10}
-              stroke="white"
-              strokeWidth={2}
-              opacity={0.5}
-            />
-        )}
-      </Layer>
-      {/* Waypoints Layer */}
-      <Layer>
         {/* System Star */}
         <SystemStar
           x={0}
@@ -252,6 +247,23 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           radius={800}
           color={"white"} // hard code for now. TODO: pull in color from system
         />
+      </Layer>
+      <Layer>
+        {/* Selected waypoint outline */}
+        {
+          !!(selectedWaypoint && selectedWaypointOutline) && (
+            <Circle
+              x={selectedWaypointOutline.x}
+              y={selectedWaypointOutline.y}
+              radius={selectedWaypointOutline.radius + 2}
+              stroke="black"
+              strokeWidth={1}
+              opacity={0.7}
+            />
+        )}
+      </Layer>
+      {/* Waypoints Layer */}
+      <Layer>
         {/* System Waypoints*/}
         {
           system.waypoints

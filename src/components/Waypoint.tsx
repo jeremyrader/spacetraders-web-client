@@ -1,7 +1,8 @@
 'use client'
 
 import { Circle } from 'react-konva';
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
+import Konva from 'konva'
 import { getObject } from '../utils/indexeddb';
 
 import { IWaypoint, ITrait } from '@/types'
@@ -20,6 +21,8 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
   const [waypointRenderData, setWaypointRenderData] = useState<{color: string, radius: number}>({color: 'white', radius: 5})
   const [orbitalRenderData, setOrbitalRenderData] = useState<{x: number, y: number}>({x: 0, y: 0})
   const {color, radius} = waypointRenderData
+  const orbitalRef = useRef<Konva.Circle>(null);
+  const waypointRef = useRef<Konva.Circle>(null);
 
   useEffect(() => {
     async function getWaypointRenderData() {
@@ -63,6 +66,13 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
     return highlighted
   }
 
+  const handleMouseEnter = () => {
+    document.body.style.cursor = 'pointer';
+  };
+
+  const handleMouseLeave = () => {
+    document.body.style.cursor = 'default';
+  };
 
   const multiplier = getIsHighlighted(metadatas, selectedTrait) ? 3 : 1
 
@@ -75,14 +85,20 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
       {
         orbits ? (
           <Circle
+            ref={orbitalRef}
             x={(waypoint.x + orbitalRenderData.x)}
             y={-waypoint.y + orbitalRenderData.y} // down on HTML canvas is positive
             radius={radius * multiplier}
             fill="white"
-            onClick={() => { onWaypointClick(waypoint) }}
+            stroke="black"
+            strokeWidth={0.1}
+            onClick={() => { onWaypointClick(waypoint, orbitalRef) }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           />
         ) : (
           <Circle
+            ref={waypointRef}
             x={waypoint.x}
             y={-waypoint.y} // down on HTML canvas is positive
             radius={radius * multiplier}
@@ -91,7 +107,11 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
             fillRadialGradientEndPoint={{ x: 0, y: 0 }}
             fillRadialGradientEndRadius={radius}
             fillRadialGradientColorStops={[0, '#258dbe', 1, '#25be49']}
-            onClick={() => { onWaypointClick(waypoint) }}
+            stroke="black"
+            strokeWidth={0.1}
+            onClick={() => { onWaypointClick(waypoint, waypointRef) }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           />
         )
       }
