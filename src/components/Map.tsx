@@ -54,21 +54,23 @@ const Map: React.FC<MapProps> = ({ containerRef, children, maxZoom, onZoom, mapC
   const handleWheel = (wheelEvent: Konva.KonvaEventObject<WheelEvent>) => {
     wheelEvent.evt.preventDefault();
 
-    const scaleBy = 1.1;  // Zoom factor
+    const scaleBy = 1.2;  // Zoom factor
     const stage = stageRef.current;
 
     if (stage) {
 
       const oldScale = stage.scaleX();
 
+      const scaleFactor = 1 + Math.log(1 + scaleBy) / 10;
+
       // Determine the new scale factor based on scroll direction
       let newScale = oldScale;
       if (wheelEvent.evt.deltaY < 0) {
         // Zoom in (scrolling up)
-        newScale = oldScale * scaleBy;
+        newScale = oldScale * scaleFactor;
       } else if (wheelEvent.evt.deltaY > 0) {
         // Zoom out (scrolling down)
-        newScale = oldScale / scaleBy;
+        newScale = oldScale / scaleFactor;
       }
 
       newScale = Math.min(newScale, maxZoom)
