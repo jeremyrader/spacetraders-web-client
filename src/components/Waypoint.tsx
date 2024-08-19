@@ -134,38 +134,26 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelect
               ) : null
             }
             {isSelected && (
-              <Group>
-                <Rect
-                  x={waypoint.x + radius + 10}  // Position to the right of the star
-                  y={-waypoint.y -40}            // Adjust to vertically center with the star
-                  width={200}           // Box width
-                  height={100}          // Box height
-                  fill="white"  // Semi-transparent dark background
-                  opacity={0.8}
-                  cornerRadius={10}     // Rounded corners for a sleek look
-                  shadowBlur={10}       // Soft shadow for a floating effect
-                />
-                <Text
-                  x={waypoint.x + radius + 5}
-                  y={-waypoint.y - 10}
-                  text={
-                    `
-                      Symbol: ${waypoint.symbol}\n
-                      Type: ${waypoint.type}\n
-                      Traits:\n
-                      ${
-                        waypoint.traits.map(trait=> {
-                          return `${trait.name}`
-                        })
-                      }
-                    `
-                  }
-                  fontSize={4}
-                  fontFamily="Arial"
-                  fill="black"
-                  lineHeight={1.5}       // Line spacing for readability
-                />
-              </Group>
+              <Text
+                x={waypoint.x + radius}
+                y={-waypoint.y - 30}
+                text={
+                  `
+                    Symbol: ${waypoint.symbol}\n
+                    Type: ${waypoint.type}\n
+                    Traits:\n
+                    ${
+                      waypoint.traits.map(trait=> {
+                        return `${trait.name}`
+                      })
+                    }
+                  `
+                }
+                fontSize={4}
+                fontFamily="Arial"
+                fill="rgba(255, 255, 255, 0.8)"
+                lineHeight={1.5}       // Line spacing for readability
+              />
             )}
           </Group>
         )
