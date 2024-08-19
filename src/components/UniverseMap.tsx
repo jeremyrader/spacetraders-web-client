@@ -84,6 +84,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
   const handleStarClick = (star: ISystem) => {
     setSelectedStar(star);
+    setMapCenter({x: star.x, y: star.y})
   };
 
   const handleEnterSystemClick = (star: ISystem | null) => {

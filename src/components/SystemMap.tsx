@@ -26,7 +26,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypoint | null>(null);
+  const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypointRender | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
@@ -153,6 +153,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
               <>
                 <p>Symbol: {selectedWaypoint.symbol}</p>
                 <p>Type: {selectedWaypoint.type}</p>
+                <p>Coords: {selectedWaypoint.x}, { selectedWaypoint.y }</p>
               </>
               {
                 selectedWaypoint.traits.map((trait: ITrait, index: number) => {

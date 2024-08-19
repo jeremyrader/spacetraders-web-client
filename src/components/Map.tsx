@@ -4,7 +4,6 @@ import React, { ReactNode } from 'react';
 import Konva from 'konva';
 import { Stage, Layer, Text } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
-import { ST } from 'next/dist/shared/lib/utils';
 
 interface MapProps {
   containerRef: any;
@@ -109,16 +108,19 @@ const Map: React.FC<MapProps> = ({ containerRef, isLoading, children, maxZoom, o
     const stage = stageRef.current;
 
     if (stage) {
-      // Set initial position so that the saved map center is in the center of the canvas
-      // The faction headquarters is the default
-      stage.position({
-        x: (stageSize.width / 2) - mapCenter.x,
-        y: (stageSize.height / 2) + mapCenter.y,
-      });
 
-      stage.scale({x: 1, y: 1})
+      stage.scale({x: maxZoom, y: maxZoom})
+      const scale = stage.scale()
 
-      stage.batchDraw();
+      if (scale) {
+        stage.position({
+          x: (stageSize.width / 2) - mapCenter.x * scale.x,
+          y: (stageSize.height / 2) + mapCenter.y * scale.y,
+        });
+  
+        stage.batchDraw();
+      }
+
     }
   }, [stageSize, mapCenter]);
 
