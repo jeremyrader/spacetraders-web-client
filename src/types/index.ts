@@ -158,6 +158,7 @@ export interface IShipRender extends IShip {
   renderData: {
     x: number;
     y: number;
+    color: string;
   }
 }
 

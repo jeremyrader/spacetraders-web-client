@@ -29,7 +29,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypoint | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
-  const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
   const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
   const [selectedWaypointOutline, setSelectedWaypointOutline] = useState<{x: number, y: number, radius: number} | null>(null)
@@ -196,10 +195,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }
 
   useEffect(() => {
-    fetchWaypoints()
-  }, [system]);
 
-  useEffect(() => {
     const getShips = async () => {
       const ships: IShipRender[] = await getData('shipStore')
       const inSystemShips = ships.filter(ship => ship.nav.route.destination.systemSymbol == system.symbol)
@@ -210,7 +206,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
           inSystemShip.renderData = {
             x: waypoint.renderData.x || waypoint.x,
-            y: waypoint.renderData.y || waypoint.y
+            y: waypoint.renderData.y || waypoint.y,
+            color: 'white'
           }
         }
         
@@ -219,7 +216,13 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       setShips(inSystemShips)
     }
 
-    getShips()
+    async function loadData() {
+      await fetchWaypoints()
+      await getShips()
+    }
+
+    loadData()
+    
   }, [system]);
 
   return <div ref={containerRef} className='border-4 border-white'>
@@ -273,7 +276,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         <SystemStar
           x={0}
           y={0}
-          radius={800}
+          radius={100}
           color={"white"} // hard code for now. TODO: pull in color from system
         />
       </Layer>
@@ -312,7 +315,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         {
           ships.map((ship: IShipRender, index: number) => {
             if (ship.renderData) {
-              const { x, y } = ship.renderData
+              const { x, y, color } = ship.renderData
+
               return (
                 <Circle
                   key={index}
@@ -321,7 +325,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                   radius={1}
                   stroke="black"
                   strokeWidth={.5}
-                  fill="white"
+                  fill={color}
                 />
               )
             }
