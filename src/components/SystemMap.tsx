@@ -202,7 +202,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     
   }, [system]);
 
-  return <div ref={containerRef} className='border-4 border-white'>
+  return <div ref={containerRef}>
     <Map
       containerRef={containerRef}
       isLoading={isLoading}

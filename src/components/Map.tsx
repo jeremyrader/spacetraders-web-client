@@ -150,7 +150,7 @@ const Map: React.FC<MapProps> = ({ containerRef, isLoading, children, maxZoom, o
       <Stage
         ref={stageRef}
         width={stageSize.width}
-        height={window.innerHeight}
+        height={850}
         style={{ backgroundColor: 'black' }}
         onWheel={handleWheel}
         draggable

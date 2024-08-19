@@ -7,7 +7,7 @@ import UniverseMap from '@/components/UniverseMap';
 import SystemMap from '@/components/SystemMap';
 import Navbar from '@/components/Navbar';
 
-import { IAgent, ISystemRender } from '@/types'
+import { ISystemRender } from '@/types'
 
 function Map() {
   const [selectedMap, setSelectedMap] = useState("universe")
@@ -32,16 +32,19 @@ function Map() {
   }
 
   return <DataProvider>
-    <Navbar></Navbar>
-    <main className="flex min-h-screen flex-col p-24">
-      {
-        selectedMap == 'universe' ? (
-          <UniverseMap onSelectMap={handleSelectMap}></UniverseMap>
-        ) : (
-          <SystemMap system={selectedSystem} onSelectMap={handleSelectMap}></SystemMap>
-        )
-      }
-    </main>
+    <div className="h-screen">
+      <Navbar></Navbar>
+      <main className="flex flex-col p-4">
+        {
+          selectedMap == 'universe' ? (
+            <UniverseMap onSelectMap={handleSelectMap}></UniverseMap>
+          ) : (
+            <SystemMap system={selectedSystem} onSelectMap={handleSelectMap}></SystemMap>
+          )
+        }
+      </main>
+    </div>
+
   </DataProvider>
 }
 
