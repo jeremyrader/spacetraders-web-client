@@ -103,6 +103,10 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     setIsMarketplaceSelected(false)
   }
 
+  function getDistance(x1: number, y1: number, x2: number, y2: number): number {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  }
+
   const SystemMapControls = () => {
 
     const hasShipyard = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
@@ -237,34 +241,29 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       {/* Orbits Layer */}
       <Layer>
         {
-          system.waypoints.map((waypoint: IWaypoint, index: number) => {
-
-            let { x, y, type } = waypoint
-
-            let drawOrbit = false
-
-            if (['PLANET', 'GAS_GIANT', 'JUMP_GATE'].includes(type)) {
-              drawOrbit = true
-            }
-
-            const distanceFromOrigin = Math.sqrt(x ** 2 + y ** 2);
+          system.waypoints.map((waypoint: IWaypointRender, index: number) => {
+            let { x, y, renderData } = waypoint
+            const { drawOrbit } = renderData
 
             return drawOrbit ? (
               <React.Fragment key={index}>
-                { waypoint.orbitals.map((_, index: number) => (
-                    <Orbit 
-                      key={'orbital-' + index}
-                      x={x}
-                      y={y}
-                      radius={6}
-                    />
-                  ))
+                { 
+                  waypoint.orbitals.map((orbital, index: number) => {
+                    return (
+                      <Orbit 
+                        key={'orbital-' + index}
+                        x={x}
+                        y={y}
+                        radius={getDistance(x, y, orbital.renderData.x || 0, orbital.renderData.y || 0)}
+                      />
+                    )
+                  })
                 }
                 <Orbit 
                   key={'waypoint-' + index}
                   x={0}
                   y={0}
-                  radius={distanceFromOrigin}
+                  radius={getDistance(0, 0, x, y)}
                 />
                 </React.Fragment>
             ) : null
