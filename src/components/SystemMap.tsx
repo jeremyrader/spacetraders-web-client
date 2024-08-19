@@ -149,36 +149,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
             <button className="btn" onClick={handleCloseMarketUI}>Close Market UI</button>
           ) : null
         }
-        {
-          selectedWaypoint && !isShipyardSelected && !isMarketplaceSelected ? (
-            <>
-              <>
-                <p>Symbol: {selectedWaypoint.symbol}</p>
-                <p>Type: {selectedWaypoint.type}</p>
-                <p>Coords: {selectedWaypoint.x}, { selectedWaypoint.y }</p>
-              </>
-              {
-                selectedWaypoint.traits.map((trait: ITrait, index: number) => {
-                  if (trait.symbol === 'SHIPYARD') {
-                    return (
-                      <button key={index} onClick={handleSelectShipyard}>Shipyard</button>
-                    )
-                  }
-                  else if (trait.symbol === 'MARKETPLACE') {
-                    return (
-                      <button key={index} onClick={handleSelectMarketplace}>Marketplace</button>
-                    )
-                  }
-                  else {
-                    return (
-                      <p key={index}>{trait.name}</p>
-                    )
-                  }
-                })
-              }
-            </>
-          ) : null
-        }
       </MapControls>
     )
   }
@@ -331,6 +301,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 selectedTrait={selectedTrait}
                 onWaypointClick={handleWaypointClick}
                 zoomLevel={zoomLevel}
+                isSelected={selectedWaypoint?.symbol === waypoint.symbol}
               />
             })
         }

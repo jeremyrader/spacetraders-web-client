@@ -1,7 +1,7 @@
 'use client'
 
-import { Circle, Text, Group } from 'react-konva';
-import { useRef, useState, Fragment } from 'react';
+import { Circle, Text, Rect, Group } from 'react-konva';
+import { useRef, useState, useEffect, Fragment } from 'react';
 import Konva from 'konva'
 
 import { IWaypointRender, ITrait } from '@/types'
@@ -11,9 +11,10 @@ interface WaypointProps {
   selectedTrait: string | null;
   zoomLevel: number;
   onWaypointClick: Function;
+  isSelected: boolean;
 }
 
-const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick}: WaypointProps) => {
+const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelected}: WaypointProps) => {
   const { symbol, orbits } = waypoint
   const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
@@ -36,6 +37,10 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick}: Waypoin
     setIsHovered(false)
   };
 
+  const handleClick = () => {
+    onWaypointClick(waypoint, waypointRef)
+  };
+
   const multiplier = getIsHighlighted(waypoint.traits, selectedTrait) ? 3 : 1
   const symbolParts = symbol.split('-')
   const waypointTerminator = symbolParts[2]
@@ -51,6 +56,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick}: Waypoin
               selectedTrait={selectedTrait}
               zoomLevel={zoomLevel}
               onWaypointClick={onWaypointClick}
+              isSelected={isSelected}
             />
           )
         })
@@ -104,29 +110,63 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick}: Waypoin
               fillRadialGradientColorStops={[0, '#258dbe', 1, '#25be49']}
               stroke="black"
               strokeWidth={0.1}
-              onClick={() => { onWaypointClick(waypoint, waypointRef) }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
+              onClick={handleClick}
             />
             {
               isHovered ? (
-                  <Text
-                    x={waypoint.x + 5}
-                    y={-waypoint.y - 20}
-                    text={waypointTerminator}
-                    fontSize={14}                // Small, but readable size
-                    fontFamily="Arial"           // Clean, sans-serif font
-                    fill="rgba(255, 255, 255, 0.8)" // White with slight transparency
-                    padding={5}                  // Padding around the text
-                    align="center"               // Center align the text
-                    verticalAlign="middle"       // Center align vertically
-                    offsetX={waypointTerminator.length * 7}    // Adjust based on text length
-                    offsetY={10}                 // Slight offset from the star position
-                    listening={false}            // Disable event listeners if not needed
-                    opacity={.2}
-                  />
+                <Text
+                  x={waypoint.x + 5}
+                  y={-waypoint.y - 20}
+                  text={waypointTerminator}
+                  fontSize={14}                // Small, but readable size
+                  fontFamily="Arial"           // Clean, sans-serif font
+                  fill="rgba(255, 255, 255, 0.8)" // White with slight transparency
+                  padding={5}                  // Padding around the text
+                  align="center"               // Center align the text
+                  verticalAlign="middle"       // Center align vertically
+                  offsetX={waypointTerminator.length * 7}    // Adjust based on text length
+                  offsetY={10}                 // Slight offset from the star position
+                  listening={false}            // Disable event listeners if not needed
+                  opacity={.2}
+                />
               ) : null
             }
+            {isSelected && (
+              <Group>
+                <Rect
+                  x={waypoint.x + radius + 10}  // Position to the right of the star
+                  y={-waypoint.y -40}            // Adjust to vertically center with the star
+                  width={200}           // Box width
+                  height={100}          // Box height
+                  fill="white"  // Semi-transparent dark background
+                  opacity={0.8}
+                  cornerRadius={10}     // Rounded corners for a sleek look
+                  shadowBlur={10}       // Soft shadow for a floating effect
+                />
+                <Text
+                  x={waypoint.x + radius + 5}
+                  y={-waypoint.y - 10}
+                  text={
+                    `
+                      Symbol: ${waypoint.symbol}\n
+                      Type: ${waypoint.type}\n
+                      Traits:\n
+                      ${
+                        waypoint.traits.map(trait=> {
+                          return `${trait.name}`
+                        })
+                      }
+                    `
+                  }
+                  fontSize={4}
+                  fontFamily="Arial"
+                  fill="black"
+                  lineHeight={1.5}       // Line spacing for readability
+                />
+              </Group>
+            )}
           </Group>
         )
       }
