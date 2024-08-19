@@ -15,17 +15,19 @@ import MarketUI from './MarketUI'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
-import { ISystemRender, IWaypoint, IWaypointRender, IShip, IShipRender, ITrait } from '../types'
+import { ISystemRender, IWaypointRender, IShipRender, ITrait } from '../types'
 
 interface SystemMapProps {
   system: ISystemRender;
   onSelectMap: Function;
 }
 
+const maxZoom = 3
+
 function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomLevel, setZoomLevel] = useState(maxZoom);
   const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypointRender | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
@@ -234,7 +236,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     <Map
       containerRef={containerRef}
       isLoading={isLoading}
-      maxZoom={2.5}
+      maxZoom={maxZoom}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
       mapCenter={mapCenter}
       MapControls={SystemMapControls}
@@ -294,22 +296,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
             />
         )}
       </Layer>
-      {/* Waypoints Layer */}
-      <Layer>
-        {
-          system.waypoints
-            .filter((waypoint: IWaypointRender) => !waypoint.orbits )
-            .map((waypoint: IWaypointRender, index: number) => {
-              return <Waypoint
-                key={index}
-                waypoint={waypoint}
-                selectedTrait={selectedTrait}
-                onWaypointClick={handleWaypointClick}
-                zoomLevel={zoomLevel}
-              />
-            })
-        }
-      </Layer>
       {/* System ships */}
       <Layer>
         {
@@ -330,6 +316,23 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
               )
             }
           })
+        }
+      </Layer>
+      {/* Waypoints Layer */}
+      <Layer>
+        {
+          system.waypoints
+            .filter((waypoint: IWaypointRender) => !waypoint.orbits)
+            .sort((a,b) => b.x - a.x)
+            .map((waypoint: IWaypointRender, index: number) => {
+              return <Waypoint
+                key={index}
+                waypoint={waypoint}
+                selectedTrait={selectedTrait}
+                onWaypointClick={handleWaypointClick}
+                zoomLevel={zoomLevel}
+              />
+            })
         }
       </Layer>
     </Map>
