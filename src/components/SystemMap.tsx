@@ -15,10 +15,10 @@ import MarketUI from './MarketUI'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
-import { IWaypoint, IOrbital, ITrait } from '../types'
+import { ISystemRender, IWaypoint, IWaypointRender, IOrbital, ITrait } from '../types'
 
 interface SystemMapProps {
-  system: any;
+  system: ISystemRender;
   onSelectMap: Function;
 }
 
@@ -183,7 +183,10 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     setSelectedWaypoint(waypoint)
 
     const waypointData = await getObject('waypointStore', waypoint.symbol)
-    setTraits(waypointData.traits)
+
+    if (waypointData) {
+      setTraits(waypointData.traits)
+    }
   }
 
   useEffect(() => {
@@ -193,8 +196,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   useEffect(() => {
     fetchWaypointMetadata()
   }, [system]);
-
-  let { color } = system
 
   return <div ref={containerRef} className='border-4 border-white'>
     <Map
@@ -221,7 +222,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
             return drawOrbit ? (
               <React.Fragment key={index}>
-                { waypoint.orbitals.map((orbital: IOrbital, index: number) => (
+                { waypoint.orbitals.map((_, index: number) => (
                     <Orbit 
                       key={'orbital-' + index}
                       x={x}
@@ -266,15 +267,13 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       </Layer>
       {/* Waypoints Layer */}
       <Layer>
-        {/* System Waypoints*/}
         {
           system.waypoints
-            .filter((waypoint: IWaypoint) => !waypoint.orbits )
-            .map((waypoint: IWaypoint, index: number) => {
+            .filter((waypoint: IWaypointRender) => !waypoint.orbits )
+            .map((waypoint: IWaypointRender, index: number) => {
               return <Waypoint
                 key={index}
                 waypoint={waypoint}
-                systemWaypoints={system.waypoints}
                 selectedTrait={selectedTrait}
                 metadatas={waypointMetadatas}
                 onWaypointClick={handleWaypointClick}

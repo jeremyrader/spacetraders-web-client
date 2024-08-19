@@ -70,13 +70,30 @@ export interface IWaypoint {
   isUnderConstruction: boolean;
 }
 
+export interface IWaypointRender extends IWaypoint {
+  renderData: {
+    radius: number;
+    drawOrbit: boolean;
+    x?: number;
+    y?: number;
+  }
+  orbitals: IWaypointRender[];
+}
+
 export interface ISystem {
   symbol: string;
   type: string;
   x: number;
   y: number;
-  orbitals: IOrbital[]
   waypoints: IWaypoint[]
+}
+
+export interface ISystemRender extends ISystem {
+  renderData: {
+    radius: number;
+    color: string;
+  }
+  waypoints: IWaypointRender[];
 }
 
 interface Cargo {
@@ -245,4 +262,20 @@ export interface Inventory {
   units: number;
 }
 
-  
+export type TWaypointType = 
+  | 'PLANET'
+  | 'GAS_GIANT'
+  | 'MOON'
+  | 'ORBITAL_STATION'
+  | 'JUMP_GATE'
+  | 'ASTEROID_FIELD'
+  | 'ASTEROID'
+  | 'ENGINEERED_ASTEROID'
+  | 'ASTEROID_BASE'
+  | 'NEBULA'
+  | 'DEBRIS_FIELD'
+  | 'GRAVITY_WELL'
+  | 'ARTIFICIAL_GRAVITY_WELL'
+  | 'FUEL_STATION';
+
+export type TWaypointRenderDataMap = Record<TWaypointType, { radius: number, drawOrbit: boolean }>;

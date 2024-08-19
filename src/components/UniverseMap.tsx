@@ -41,7 +41,6 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const layerRef = useRef<Konva.Layer>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [systems, setSystems] = useState<any[]>([]);
-  const [systemsRenderData, setSystemsRenderData] = useState<any[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [mapCenter, setMapCenter] = useState({x: 0, y: 0});
   const [selectedStar, setSelectedStar] = useState<ISystem | null>(null);
@@ -96,14 +95,13 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const UniverseMapControls = () => {
     return (
       <MapControls onSelectMap={onSelectMap}>
-        <button disabled={!selectedStar} onClick={() => handleEnterSystemClick(selectedStar)} className="btn btn-primary">View System Map</button>
+        <button onClick={() => handleEnterSystemClick(selectedStar)} type="button" className="btn btn-primary">View System Map</button>
         <p>{selectedStar?.symbol}</p>
       </MapControls>
     )
   }
 
   useEffect(() => {
-
     const getSystems = async () => {
       if (dataContext) {
         try {
@@ -111,7 +109,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
           setSystems(systems);
 
-          const mapCenterSymbol = window.localStorage.getItem('map-center-symbol')
+          const mapCenterSymbol = window.localStorage.getItem('headquarters')
 
           if (mapCenterSymbol) {
             const symbolParts = mapCenterSymbol.split('-')
@@ -123,6 +121,8 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
               setMapCenter({x: mapCenter.x, y: mapCenter.y})
             }
           }
+
+          setIsLoading(false)
         } catch (error) {
           console.error('Error fetching data from IndexedDB:', error);
         } finally {
@@ -132,35 +132,12 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
     getSystems();
 
-  }, [dataContext]);
-
-  useEffect(() => {
-
-    const getSystemsRenderData = async () => {
-      if (dataContext) {
-        try {
-          const systemsRenderData = await dataContext.getSystemsRenderData();
-          setSystemsRenderData(systemsRenderData)
-        } catch (error) {
-          console.error('Error fetching data from IndexedDB:', error);
-        } finally {
-        }
-      }
-
-      setIsLoading(false)
-    };
-
-    getSystemsRenderData();
-
-  }, [dataContext]);
-
-  if (isLoading) {
-    return <div>Loading Map...</div>
-  }
+  }, []);
 
   return <div ref={containerRef} className='border-4 border-white'>
     <Map
       containerRef={containerRef}
+      isLoading={isLoading}
       maxZoom={1}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
       mapCenter={mapCenter}
@@ -200,19 +177,14 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       <Layer ref={layerRef}>
         {
           systems.map((system, index) => {
-            const systemRenderData = systemsRenderData.find(data => data.symbol == system.symbol)
-
-            if (systemRenderData) {
-              return (
-                <System
-                  key={index}
-                  system={system}
-                  systemRenderData={systemRenderData}
-                  zoomLevel={zoomLevel}
-                  onSystemClick={handleStarClick}
-                />
-              )
-            }
+            return (
+              <System
+                key={index}
+                system={system}
+                zoomLevel={zoomLevel}
+                onSystemClick={handleStarClick}
+              />
+            )
           })
         }
       </Layer>

@@ -11,14 +11,9 @@ import { IAgent, IContract } from '@/types'
 function Dashboard() {
   const [agent, setAgent] = useState<IAgent | null>(null)
   const [contracts, setContracts] = useState<IContract[]>([])
-  const [refresh, setRefresh] = useState(false);
 
   const handleAcceptContract = async (contractId: string) => {
     const response = await postRequest(`my/contracts/${contractId}/accept`)
-
-    // refresh if the status is okay
-    // setRefresh(!refresh);
-    
   }
 
   useEffect(() => {
@@ -34,7 +29,7 @@ function Dashboard() {
 
     fetchAgent();
     fetchContracts();
-  }, [refresh]);
+  }, []);
 
   return <DataProvider>
     <Navbar></Navbar>

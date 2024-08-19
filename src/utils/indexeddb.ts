@@ -15,43 +15,23 @@ interface MyDB extends DBSchema {
     key: string;
     value: { symbol?: string; [key: string]: any };
   }
-  systemRenderStore: {
-    key: string;
-    value: { symbol?: string; [key: string]: any };
-  }
-  waypointRenderStore: {
-    key: string;
-    value: { symbol?: string; [key: string]: any };
-  }
-  orbitalRenderStore: {
-    key: string;
-    value: { symbol?: string; [key: string]: any };
-  }
 }
 
 const DB_NAME = 'spacetraders';
 const STATE_STORE = 'stateStore';
 const SYSTEMS_STORE = 'systemsStore';
 const WAYPOINT_STORE = 'waypointStore'
-const SYSTEM_RENDER_STORE = 'systemRenderStore'
-const WAYPOINT_RENDER_STORE = 'waypointRenderStore'
-const ORBITAL_RENDER_STORE = 'orbitalRenderStore'
 
 type StoreName = 
   typeof STATE_STORE | 
   typeof SYSTEMS_STORE | 
-  typeof WAYPOINT_STORE | 
-  typeof SYSTEM_RENDER_STORE |
-  typeof WAYPOINT_RENDER_STORE |
-  typeof ORBITAL_RENDER_STORE
-
-type IndexNames = 'propertyName';
+  typeof WAYPOINT_STORE
 
 let dbPromise: Promise<IDBPDatabase<MyDB>>;
 
 export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
   if (!dbPromise) {
-    dbPromise = openDB<MyDB>(DB_NAME, 6, {
+    dbPromise = openDB<MyDB>(DB_NAME, 7, {
       upgrade(db, oldVersion, newVersion, transaction) {
         if (!db.objectStoreNames.contains(STATE_STORE)) {
           db.createObjectStore(STATE_STORE);
@@ -60,16 +40,7 @@ export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
           db.createObjectStore(SYSTEMS_STORE, { keyPath: 'symbol', autoIncrement: true });
         }
         if (!db.objectStoreNames.contains(WAYPOINT_STORE)) {
-          const store = db.createObjectStore(WAYPOINT_STORE, { keyPath: 'symbol', autoIncrement: true });
-        }
-        if (!db.objectStoreNames.contains(SYSTEM_RENDER_STORE)) {
-          db.createObjectStore(SYSTEM_RENDER_STORE, { keyPath: 'symbol', autoIncrement: true });
-        }
-        if (!db.objectStoreNames.contains(WAYPOINT_RENDER_STORE)) {
-          db.createObjectStore(WAYPOINT_RENDER_STORE, { keyPath: 'symbol', autoIncrement: true });
-        }
-        if (!db.objectStoreNames.contains(ORBITAL_RENDER_STORE)) {
-          db.createObjectStore(ORBITAL_RENDER_STORE, { keyPath: 'symbol', autoIncrement: true });
+          db.createObjectStore(WAYPOINT_STORE, { keyPath: 'symbol', autoIncrement: true });
         }
       },
     });

@@ -1,53 +1,24 @@
 'use client'
 
 import { Circle } from 'react-konva';
-import { useState, useEffect, useRef, Fragment } from 'react';
+import { useRef, Fragment } from 'react';
 import Konva from 'konva'
-import { getObject } from '../utils/indexeddb';
 
-import { IWaypoint, ITrait } from '@/types'
+import { IWaypointRender, ITrait } from '@/types'
 
 interface WaypointProps {
-  waypoint: IWaypoint;
-  systemWaypoints: IWaypoint[]
+  waypoint: IWaypointRender;
   selectedTrait: string | null;
   metadatas: any[];
   zoomLevel: number;
   onWaypointClick: Function;
 }
 
-const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLevel, onWaypointClick}: WaypointProps) => { //orbitalWaypoints
-  const {symbol, orbits} = waypoint
-  const [waypointRenderData, setWaypointRenderData] = useState<{color: string, radius: number}>({color: 'white', radius: 5})
-  const [orbitalRenderData, setOrbitalRenderData] = useState<{x: number, y: number}>({x: 0, y: 0})
-  const {color, radius} = waypointRenderData
+const Waypoint = ({waypoint, selectedTrait, metadatas, zoomLevel, onWaypointClick}: WaypointProps) => {
+  const { orbits } = waypoint
+  const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
   const waypointRef = useRef<Konva.Circle>(null);
-
-  useEffect(() => {
-    async function getWaypointRenderData() {
-      const waypointRenderData = await getObject('waypointRenderStore', symbol)
-      if (waypointRenderData) {
-        setWaypointRenderData(waypointRenderData)
-      }
-    }
-    getWaypointRenderData()
-  }, []);
-
-  useEffect(() => {
-    const {symbol, orbits} = waypoint
-  
-    async function getOrbitalRenderData() {
-      const orbitalRenderData = await getObject('orbitalRenderStore', symbol)
-      if (orbitalRenderData) {
-        setOrbitalRenderData(orbitalRenderData)
-      }
-    }
-
-    if (orbits) {
-      getOrbitalRenderData()
-    }
-  }, [waypoint]);
 
   const getIsHighlighted = (metadatas: any[], selectedTrait: string | null) => {
     const waypointMetadata = metadatas.find((metadata) => metadata.symbol == waypoint.symbol)
@@ -76,18 +47,14 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
 
   const multiplier = getIsHighlighted(metadatas, selectedTrait) ? 3 : 1
 
-  let orbitalWaypoints = 
-    systemWaypoints
-      .filter((waypoint: IWaypoint) =>  waypoint.orbits)
-
   return (
     <Fragment>
       {
-        orbits ? (
+        (orbits && x && y) ? (
           <Circle
             ref={orbitalRef}
-            x={(waypoint.x + orbitalRenderData.x)}
-            y={-waypoint.y + orbitalRenderData.y} // down on HTML canvas is positive
+            x={x}
+            y={-y} // down on HTML canvas is positive
             radius={radius * multiplier}
             fill="white"
             stroke="black"
@@ -117,14 +84,10 @@ const Waypoint = ({waypoint, systemWaypoints, selectedTrait, metadatas, zoomLeve
       }
       {
         waypoint.orbitals.map((orbital, index) => {
-
-          const orbitalWaypoint = orbitalWaypoints.find((waypoint: IWaypoint) => waypoint.symbol == orbital.symbol)
-
           return (
             <Waypoint
               key={index}
-              waypoint={orbitalWaypoint as IWaypoint}
-              systemWaypoints={systemWaypoints}
+              waypoint={orbital}
               selectedTrait={selectedTrait}
               metadatas={metadatas}
               zoomLevel={zoomLevel}

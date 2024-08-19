@@ -2,10 +2,10 @@ import React, { createContext, useState, useEffect, useRef, ReactNode } from 're
 import { saveData, getData, saveState, getState, getTimestamp, setTimestamp } from '../utils/indexeddb';
 import { rateLimiter, burstLimiter } from '../utils/ratelimiter'
 import { getRandomInt, getRandomOrange, getRandomRed, getRandomBlue, getRandomStarColor, generatePointsOnCircle } from '../utils/canvasUtils'
+import { ISystemRender, IWaypoint, IWaypointRender, TWaypointType, TWaypointRenderDataMap } from '@/types';
 
 interface DataContextProps {
   getSystems: () => Promise<any[]>;
-  getSystemsRenderData: () => Promise<any[]>;
   isLoading: boolean;
   error: string | null;
 }
@@ -36,123 +36,193 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       );
 
       await saveState(page);
-      await saveData('systemsStore', result.data)
 
-      const systems = result.data
+      const systems: ISystemRender[] = result.data
 
       for (const system of systems) {
-        const { x, y, symbol, type, waypoints } = system;
+        const { type, waypoints } = system;
         let color = "white"
-        let radius = 30
-
-        let types = [
-          'BLACK_HOLE',
-          'ORANGE_STAR',
-          'BLUE_STAR',
-          'RED_STAR',
-          'YOUNG_STAR',
-          'WHITE_DWARF',
-          'HYPERGIANT',
-          'UNSTABLE',
-          'NEUTRON_STAR'
-        ]
+        let systemRadius = 30
 
         if (type == 'BLACK_HOLE') {
           color = "gray"
-          radius = getRandomInt(5,10)
+          systemRadius = getRandomInt(5,10)
         }
 
         if (type == 'ORANGE_STAR') {
           color = getRandomOrange()
-          radius = getRandomInt(15,20)
+          systemRadius = getRandomInt(15,20)
         }
 
         if (type == 'BLUE_STAR') {
           color = getRandomBlue()
-          radius = getRandomInt(25,28)
+          systemRadius = getRandomInt(25,28)
         }
 
         if (type == 'RED_STAR') {
           color = getRandomRed()
-          radius = getRandomInt(15, 25)
+          systemRadius = getRandomInt(15, 25)
         }
 
         if (type == 'YOUNG_STAR') {
           color = getRandomStarColor()
-          radius = getRandomInt(20,25)
+          systemRadius = getRandomInt(20,25)
         }
 
         if (type == 'WHITE_DWARF') {
           color = 'white'
-          radius = getRandomInt(10,15)
+          systemRadius = getRandomInt(10,15)
         }
 
         if (type == 'HYPERGIANT') {
           color = getRandomStarColor()
-          radius = getRandomInt(28,30)
+          systemRadius = getRandomInt(28,30)
         }
 
         if (type == 'UNSTABLE') {
           color = getRandomStarColor()
-          radius = 15
+          systemRadius = 15
         }
 
         if (type == 'NEUTRON_STAR') {
           color = "white"
-          radius = getRandomInt(10,15)
+          systemRadius = getRandomInt(10,15)
         }
 
-        await saveData('systemRenderStore', [{ symbol: symbol, color: color, radius: radius }])
+        system.renderData = {
+          radius: systemRadius,
+          color: color
+        }
 
-        // Orbital waypoints have the same coordinates as their parent waypoints
-        // New pseudo coordinates are created here so that they're rendered in an orbit on the map
-        for (const waypoint of waypoints) {
-          const { symbol, type, orbitals } = waypoint
+        const waypointRenderDataMap: TWaypointRenderDataMap = {
+          'PLANET': {
+            radius: 4,
+            drawOrbit: true
+          },
+          'GAS_GIANT': {
+            radius: 6,
+            drawOrbit: true
+          },
+          'MOON': {
+            radius: 1,
+            drawOrbit: true
+          },
+          'ORBITAL_STATION': {
+            radius: 1,
+            drawOrbit: true
+          },
+          'JUMP_GATE': {
+            radius: 1,
+            drawOrbit: true
+          },
+          'ASTEROID_FIELD': {
+            radius: 3,
+            drawOrbit: false
+          },
+          'ASTEROID':  {
+            radius: 2,
+            drawOrbit: false
+          },
+          'ENGINEERED_ASTEROID':  {
+            radius: 1,
+            drawOrbit: true
+          },
+          'ASTEROID_BASE': {
+            radius: 1,
+            drawOrbit: false
+          },
+          'NEBULA': {
+            radius: 1,
+            drawOrbit: false
+          },
+          'DEBRIS_FIELD': {
+            radius: 1,
+            drawOrbit: true
+          },
+          'GRAVITY_WELL': {
+            radius: 1,
+            drawOrbit: false
+          },
+          'ARTIFICIAL_GRAVITY_WELL': {
+            radius: 1,
+            drawOrbit: false
+          },
+          'FUEL_STATION': {
+            radius: 1,
+            drawOrbit: true
+          },
+        }
 
-          let radius = 1
-          let color = 'white'
-          let drawOrbit = false
+        const systemWaypoints: IWaypointRender[] = waypoints
 
-          if (['ASTEROID', 'ENGINEERED_ASTEROID', 'ASTEROID_BASE'].includes(type)) {
-            color = 'gray'
-            radius = 2
+        let parentOrbitalWaypoints = 
+          systemWaypoints
+            .filter((waypoint: IWaypoint) => !waypoint.orbits)
+
+        let childOrbitalWaypoints = 
+          systemWaypoints
+            .filter((waypoint: IWaypoint) => waypoint.orbits)
+
+        for (const waypoint of parentOrbitalWaypoints) {
+          const { type, orbitals, x, y } = waypoint
+
+          const waypointRenderData = waypointRenderDataMap[type as TWaypointType]
+          const { radius, drawOrbit } = waypointRenderData
+
+          waypoint.renderData = {
+            radius: radius,
+            drawOrbit: drawOrbit
           }
 
-          if (type == 'MOON') {
-            color = 'white'
-            radius = 3
-            drawOrbit = true
-          }
+          waypoint.orbitals = getOrbitalWaypoints(orbitals, { x: x, y: y}, radius, childOrbitalWaypoints, waypointRenderDataMap)
+        }
 
-          if (type == 'PLANET') {
-            color = '#126f1e'
-            radius = 3
-            drawOrbit = true
-          }
+        system.waypoints = parentOrbitalWaypoints
 
-          if (type == 'GAS_GIANT') {
-            color = 'green'
-            radius = 5
-            drawOrbit = true
-          }
+      }
 
-          if (type == 'JUMP_GATE' || type == 'FUEL_STATION') {
-            color = 'blue'
-            radius = 2
-            drawOrbit = true
-          }
+      function getOrbitalWaypoints(
+        orbitals: IWaypointRender[],
+        parentWaypointCoords: { x: number, y: number },
+        parentWaypointRadius: number,
+        childOrbitalWaypoints: IWaypointRender[],
+        waypointRenderDataMap: TWaypointRenderDataMap
+      ) {
+          const waypointOrbitals: IWaypointRender[] = orbitals
 
-          await saveData('waypointRenderStore', [{ symbol: symbol, color: color, radius: radius, drawOrbit: drawOrbit }])
+          const orbitalDistance = 4
+          const orbitalCoordinates = generatePointsOnCircle(parentWaypointRadius + orbitalDistance, orbitals.length);
+          
+          for (let [index, orbital] of waypointOrbitals.entries()) {
+            const completeOrbitalData = childOrbitalWaypoints.find((waypoint: IWaypoint) => waypoint.symbol == orbital.symbol)
 
-          if (orbitals.length > 0) {
-            const orbitalDistance = 3
-            const orbitalCoordinates = generatePointsOnCircle(radius + orbitalDistance, orbitals.length);
-            for (const [index, orbital] of orbitals.entries()) {
-              await saveData('orbitalRenderStore', [{ symbol: orbital.symbol, x: orbitalCoordinates[index].x, y: orbitalCoordinates[index].y }])
+            if (completeOrbitalData) {
+              const { type } = completeOrbitalData
+
+              Object.assign(orbital, completeOrbitalData)
+
+              const waypointRenderData = waypointRenderDataMap[type as TWaypointType]
+              const { radius, drawOrbit } = waypointRenderData
+    
+              // Orbital waypoints have the same coordinates as their parent waypoints
+              // New pseudo coordinates are created here so that they're rendered in an orbit on the map
+              const x = parentWaypointCoords.x + orbitalCoordinates[index].x
+              const y = parentWaypointCoords.y + orbitalCoordinates[index].y
+
+              orbital.renderData = {
+                x: x,
+                y: y,
+                radius: radius,
+                drawOrbit: drawOrbit
+              }
+              orbital.orbitals = getOrbitalWaypoints(orbital.orbitals, { x: x, y: y },radius, childOrbitalWaypoints, waypointRenderDataMap)
             }
           }
-        }
+
+          return waypointOrbitals
       }
+
+      await saveData('systemsStore', systems)
 
       if (result.data.length == result.meta.limit) {
         return fetchSystemsData(page + 1);
@@ -178,7 +248,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
 
     const { currentSystemsPage } = savedState || { currentSystemsPage: 1 };
 
-    if (savedData.length > 849 && isCacheValid) {
+    if (false) {
       setIsLoading(false);
     } else {
       try {
@@ -199,21 +269,17 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     return await getData('systemsStore');
   };
 
-  const getSystemsRenderData = async (): Promise<any[]> => {
-    return await getData('systemRenderStore');
-  };
+  // useEffect(() => {
 
-  useEffect(() => {
-
-    // Load initial data after reset
-    if (false) {
-      loadData()
-    }
+  //   // Load initial data after reset
+  //   if (true) {
+  //     loadData()
+  //   }
     
-  }, []);
+  // }, []);
 
   return (
-    <DataContext.Provider value={{ getSystems, getSystemsRenderData, isLoading, error }}>
+    <DataContext.Provider value={{ getSystems, isLoading, error }}>
       {children}
     </DataContext.Provider>
   );

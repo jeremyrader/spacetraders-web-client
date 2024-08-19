@@ -52,6 +52,7 @@ function RegistrationForm() {
     if (result.data) {
       window.localStorage.setItem('callsign', result.data.agent.symbol)
       window.localStorage.setItem(result.data.agent.symbol, result.data.token)
+      window.localStorage.setItem('headquarters', result.data.headquarters)
       setRegistrationStatus('Agent successfully registered')
     }
     else {

@@ -3,17 +3,16 @@
 import { Circle } from 'react-konva';
 import { Fragment } from 'react';
 
-import { ISystem } from '@/types'
+import { ISystemRender } from '@/types'
 
 interface SystemProps {
-  system: ISystem;
-  systemRenderData: any;
+  system: ISystemRender;
   zoomLevel: number;
   onSystemClick: Function;
 }
 
-const System = ({system, systemRenderData, zoomLevel, onSystemClick}: SystemProps) => {
-  const { color, radius } = systemRenderData
+const System = ({system, zoomLevel, onSystemClick}: SystemProps) => {
+  const { color, radius } = system.renderData
   const { x, y } = system
 
   function calculateColorFill(zoomLevel: number) {
