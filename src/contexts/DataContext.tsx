@@ -3,6 +3,7 @@ import { saveData, getData, saveState, getState, getTimestamp, setTimestamp } fr
 import { rateLimiter, burstLimiter } from '../utils/ratelimiter'
 import { getRandomInt, getRandomOrange, getRandomRed, getRandomBlue, getRandomStarColor, generatePointsOnCircle } from '../utils/canvasUtils'
 import { ISystemRender, IWaypoint, IWaypointRender, TWaypointType, TWaypointRenderDataMap } from '@/types';
+import { fetchResourcePaginated } from '../utils/v2'
 
 interface DataContextProps {
   getSystems: () => Promise<any[]>;
@@ -178,7 +179,6 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         }
 
         system.waypoints = parentOrbitalWaypoints
-
       }
 
       function getOrbitalWaypoints(
@@ -269,14 +269,23 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     return await getData('systemsStore');
   };
 
-  // useEffect(() => {
+  useEffect(() => {
+    async function getShips() {
+      const response = await fetchResourcePaginated(`my/ships/`)
+      await saveData('shipStore', response)
+    }
 
-  //   // Load initial data after reset
-  //   if (true) {
-  //     loadData()
-  //   }
+    getShips()
+  }, [])
+
+  useEffect(() => {
+
+    // Load initial data after reset
+    if (true) {
+      loadData()
+    }
     
-  // }, []);
+  }, []);
 
   return (
     <DataContext.Provider value={{ getSystems, isLoading, error }}>

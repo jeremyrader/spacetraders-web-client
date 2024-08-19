@@ -15,7 +15,7 @@ import MarketUI from './MarketUI'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
-import { ISystemRender, IWaypoint, IWaypointRender, IOrbital, ITrait } from '../types'
+import { ISystemRender, IWaypoint, IWaypointRender, IShip, IShipRender, ITrait } from '../types'
 
 interface SystemMapProps {
   system: ISystemRender;
@@ -27,14 +27,14 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
   const [zoomLevel, setZoomLevel] = useState(1);
   const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypoint | null>(null);
-  const [traits, setTraits] = useState<ITrait[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
   const [waypointMetadatas, setWaypointMetadatas] = useState<any[]>([])
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
   const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
   const [selectedWaypointOutline, setSelectedWaypointOutline] = useState<{x: number, y: number, radius: number} | null>(null)
   const [mapCenter, setMapCenter] = useState<{x: number, y: number}>({x: 0, y: 0})
+  const [ships, setShips] = useState<IShipRender[]>([])
 
   const fetchWaypoints = async(manual: boolean = false) => {
     setIsLoading(true)
@@ -42,28 +42,40 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     // this avoids fetching waypoints every time the system is loaded
     // I'd like to find a better way to do this in case the system was only
     // partially loaded before
-    const firstWaypoint = await getObject('waypointStore', system.waypoints[0].symbol)
 
-    if (!firstWaypoint || manual) {
+    const currentSystem = await getObject('systemsStore', system.symbol)
+    const firstWaypoint = currentSystem.waypoints[0]
+    if (!firstWaypoint.traits || manual) {
       const symbolParts = system.symbol.split('-')
       const results = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
-      saveData('waypointStore', results)
+
+      type accType = Record<string, typeof results[string]>
+
+      const waypointsIndexedBySymbol = results.reduce((acc: accType, result: IWaypointRender) => {
+        acc[result.symbol] = result;
+        return acc;
+      }, {} as accType);
+
+      function updateTraits(waypoint: IWaypointRender, getTraits: (symbol: string) => ITrait[]): IWaypointRender {
+        waypoint.traits = getTraits(waypoint.symbol);
+        waypoint.orbitals = waypoint.orbitals.map(orbital => updateTraits(orbital, getTraits));
+      
+        saveData('waypointStore', [waypoint])
+
+        return waypoint;
+      }
+
+      const getTraits = (symbol: string) => {
+        return waypointsIndexedBySymbol[symbol].traits
+      };
+      
+      for (let waypoint of currentSystem.waypoints) {
+        waypoint = updateTraits(waypoint, getTraits);
+      }
+
+      saveData('systemsStore', [currentSystem])
+
     }
-    setIsLoading(false)
-  }
-
-  const fetchWaypointMetadata = async () => {
-    setIsLoading(true)
-  
-    const waypointMetadatas = await getData('waypointStore')
-
-    const filteredMetadatas = waypointMetadatas.filter((metadata: any) =>  {
-      const metadataParts = metadata.symbol.split('-')
-      return `${metadataParts[0]}-${metadataParts[1]}` == system.symbol
-    })
-
-    setWaypointMetadatas(filteredMetadatas)
-
     setIsLoading(false)
   }
 
@@ -94,8 +106,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
   const SystemMapControls = () => {
 
-    const hasShipyard = traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
-    const hasMarketplace = traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
+    const hasShipyard = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
+    const hasMarketplace = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
 
     return (
       <MapControls onSelectMap={onSelectMap}>
@@ -140,7 +152,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 <p>Type: {selectedWaypoint.type}</p>
               </>
               {
-                traits.map((trait: ITrait, index: number) => {
+                selectedWaypoint.traits.map((trait: ITrait, index: number) => {
                   if (trait.symbol === 'SHIPYARD') {
                     return (
                       <button key={index} onClick={handleSelectShipyard}>Shipyard</button>
@@ -169,7 +181,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     onSelectMap('universe')
   };
 
-  const handleWaypointClick = async (waypoint: IWaypoint, waypointRef: React.RefObject<Konva.Circle>) => {
+  const handleWaypointClick = async (waypoint: IWaypointRender, waypointRef: React.RefObject<Konva.Circle>) => {
 
     const x = waypointRef?.current?.x()
     const y = waypointRef?.current?.y()
@@ -181,12 +193,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     }
 
     setSelectedWaypoint(waypoint)
-
-    const waypointData = await getObject('waypointStore', waypoint.symbol)
-
-    if (waypointData) {
-      setTraits(waypointData.traits)
-    }
   }
 
   useEffect(() => {
@@ -194,12 +200,32 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }, [system]);
 
   useEffect(() => {
-    fetchWaypointMetadata()
+    const getShips = async () => {
+      const ships: IShipRender[] = await getData('shipStore')
+      const inSystemShips = ships.filter(ship => ship.nav.route.destination.systemSymbol == system.symbol)
+
+      for (const inSystemShip of inSystemShips) {
+        const waypoint = await getObject('waypointStore', inSystemShip.nav.route.destination.symbol)
+        if (waypoint) {
+
+          inSystemShip.renderData = {
+            x: waypoint.renderData.x || waypoint.x,
+            y: waypoint.renderData.y || waypoint.y
+          }
+        }
+        
+      }
+
+      setShips(inSystemShips)
+    }
+
+    getShips()
   }, [system]);
 
   return <div ref={containerRef} className='border-4 border-white'>
     <Map
       containerRef={containerRef}
+      isLoading={isLoading}
       maxZoom={2.5}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
       mapCenter={mapCenter}
@@ -275,11 +301,31 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 key={index}
                 waypoint={waypoint}
                 selectedTrait={selectedTrait}
-                metadatas={waypointMetadatas}
                 onWaypointClick={handleWaypointClick}
                 zoomLevel={zoomLevel}
               />
             })
+        }
+      </Layer>
+      {/* System ships */}
+      <Layer>
+        {
+          ships.map((ship: IShipRender, index: number) => {
+            if (ship.renderData) {
+              const { x, y } = ship.renderData
+              return (
+                <Circle
+                  key={index}
+                  x={x}
+                  y={-y}
+                  radius={1}
+                  stroke="black"
+                  strokeWidth={.5}
+                  fill="white"
+                />
+              )
+            }
+          })
         }
       </Layer>
     </Map>

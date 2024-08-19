@@ -112,18 +112,14 @@ interface Fuel {
 }
 
 interface Location {
-  arrival: string;
-  departureTime: string;
-  destination: {
-    symbol: string;
-    systemSymbol: string;
-    type: string;
-    x: number;
-    y: number;
-  }
+  symbol: string;
+  systemSymbol: string;
+  type: string;
+  x: number;
+  y: number;
 }
 
-export interface Ship {
+export interface IShip {
   symbol?: string;
   type: string
   name: string
@@ -155,6 +151,13 @@ export interface Ship {
     name: string;
     factionSymbol: string;
     role: string;
+  }
+}
+
+export interface IShipRender extends IShip {
+  renderData: {
+    x: number;
+    y: number;
   }
 }
 

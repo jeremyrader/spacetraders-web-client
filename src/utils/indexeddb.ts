@@ -14,24 +14,30 @@ interface MyDB extends DBSchema {
   waypointStore: {
     key: string;
     value: { symbol?: string; [key: string]: any };
-  }
+  };
+  shipStore: {
+    key: string;
+    value: { symbol?: string; [key: string]: any };
+  };
 }
 
 const DB_NAME = 'spacetraders';
 const STATE_STORE = 'stateStore';
 const SYSTEMS_STORE = 'systemsStore';
 const WAYPOINT_STORE = 'waypointStore'
+const SHIP_STORE = 'shipStore'
 
 type StoreName = 
   typeof STATE_STORE | 
   typeof SYSTEMS_STORE | 
-  typeof WAYPOINT_STORE
+  typeof WAYPOINT_STORE |
+  typeof SHIP_STORE
 
 let dbPromise: Promise<IDBPDatabase<MyDB>>;
 
 export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
   if (!dbPromise) {
-    dbPromise = openDB<MyDB>(DB_NAME, 7, {
+    dbPromise = openDB<MyDB>(DB_NAME, 8, {
       upgrade(db, oldVersion, newVersion, transaction) {
         if (!db.objectStoreNames.contains(STATE_STORE)) {
           db.createObjectStore(STATE_STORE);
@@ -41,6 +47,9 @@ export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
         }
         if (!db.objectStoreNames.contains(WAYPOINT_STORE)) {
           db.createObjectStore(WAYPOINT_STORE, { keyPath: 'symbol', autoIncrement: true });
+        }
+        if (!db.objectStoreNames.contains(SHIP_STORE)) {
+          db.createObjectStore(SHIP_STORE, { keyPath: 'symbol', autoIncrement: true });
         }
       },
     });

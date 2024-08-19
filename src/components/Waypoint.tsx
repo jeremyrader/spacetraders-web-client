@@ -9,32 +9,20 @@ import { IWaypointRender, ITrait } from '@/types'
 interface WaypointProps {
   waypoint: IWaypointRender;
   selectedTrait: string | null;
-  metadatas: any[];
   zoomLevel: number;
   onWaypointClick: Function;
 }
 
-const Waypoint = ({waypoint, selectedTrait, metadatas, zoomLevel, onWaypointClick}: WaypointProps) => {
+const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick}: WaypointProps) => {
   const { orbits } = waypoint
   const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
   const waypointRef = useRef<Konva.Circle>(null);
 
-  const getIsHighlighted = (metadatas: any[], selectedTrait: string | null) => {
-    const waypointMetadata = metadatas.find((metadata) => metadata.symbol == waypoint.symbol)
-
-    let highlighted = false
-    if (waypointMetadata) {
-      const hasSelectedTrait = waypointMetadata.traits.find((trait: ITrait) => {
-        return trait.symbol == selectedTrait
-      })
-  
-      if (hasSelectedTrait) {
-        highlighted = true
-      }
-    }
-
-    return highlighted
+  const getIsHighlighted = (traits: ITrait[], selectedTrait: string | null) => {
+    return traits.find((trait: ITrait) => {
+      return trait.symbol == selectedTrait
+    })
   }
 
   const handleMouseEnter = () => {
@@ -45,7 +33,7 @@ const Waypoint = ({waypoint, selectedTrait, metadatas, zoomLevel, onWaypointClic
     document.body.style.cursor = 'default';
   };
 
-  const multiplier = getIsHighlighted(metadatas, selectedTrait) ? 3 : 1
+  const multiplier = getIsHighlighted(waypoint.traits, selectedTrait) ? 3 : 1
 
   return (
     <Fragment>
@@ -89,7 +77,6 @@ const Waypoint = ({waypoint, selectedTrait, metadatas, zoomLevel, onWaypointClic
               key={index}
               waypoint={orbital}
               selectedTrait={selectedTrait}
-              metadatas={metadatas}
               zoomLevel={zoomLevel}
               onWaypointClick={onWaypointClick}
             />
