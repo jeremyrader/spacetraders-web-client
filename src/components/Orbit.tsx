@@ -15,8 +15,8 @@ const Orbit = ({x, y, radius}: OrbitProps) => {
       y={-y}
       radius={radius}
       stroke="gray"
-      strokeWidth={1}
-      fill="transparent"
+      strokeWidth={.5}
+      opacity={.4}
     />
   )
 }
