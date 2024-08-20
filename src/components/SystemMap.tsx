@@ -210,8 +210,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     
   }, [system]);
 
-  console.log('selectedWaypoint', selectedWaypoint)
-
   return <div ref={containerRef}>
     <Map
       containerRef={containerRef}
