@@ -45,8 +45,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     // partially loaded before
 
     const currentSystem = await getObject('systemsStore', system.symbol)
-    const firstWaypoint = currentSystem.waypoints[0]
-    if (!firstWaypoint.traits || manual) {
+
+    if (currentSystem.waypoints.length > 0 && !currentSystem.waypoints[0].traits || manual) {
       const symbolParts = system.symbol.split('-')
       const results = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
 
@@ -110,8 +110,9 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }
 
   const SystemMapControls = () => {
-    const hasShipyard = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
-    const hasMarketplace = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
+
+    const hasShipyard = selectedWaypoint && !!selectedWaypoint.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
+    const hasMarketplace = selectedWaypoint && !!selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
 
     return (
       <MapControls onSelectMap={onSelectMap}>
