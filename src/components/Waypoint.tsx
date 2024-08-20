@@ -1,7 +1,7 @@
 'use client'
 
 import { Circle, Text, Group } from 'react-konva';
-import { useRef, useState, useEffect, Fragment } from 'react';
+import { useRef, useState, Fragment } from 'react';
 import Konva from 'konva'
 
 import WaypointMetadata from '@/components/WaypointMetadata'
@@ -17,7 +17,7 @@ interface WaypointProps {
 
 const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selectedWaypoint}: WaypointProps) => {
   const { symbol, orbits } = waypoint
-  const { x, y, radius } = waypoint.renderData
+  const { x, y, radius, color1, color2 } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
   const waypointRef = useRef<Konva.Circle>(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -74,7 +74,13 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               x={x}
               y={-y} // down on HTML canvas is positive
               radius={radius}
-              fill="white"
+              fillLinearGradientStartPoint={{ x: -50, y: 0 }}
+              fillLinearGradientEndPoint={{ x: 50, y: 0 }}
+              fillLinearGradientColorStops={[
+                0, color1,
+                0.7, color2,
+                1, 'white'
+              ]}
               stroke={isHighlighted ? "rgba(255, 204, 0, 0.4)" : ''}
               strokeWidth={isHighlighted ? 2 : 0}
               shadowBlur={10}
@@ -91,15 +97,15 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
                   x={x + 5}
                   y={-y - 20}
                   text={waypointTerminator}
-                  fontSize={14}                // Small, but readable size
-                  fontFamily="Arial"           // Clean, sans-serif font
-                  fill="rgba(255, 255, 255, 0.8)" // White with slight transparency
-                  padding={5}                  // Padding around the text
-                  align="center"               // Center align the text
-                  verticalAlign="middle"       // Center align vertically
-                  offsetX={waypointTerminator.length * 7}    // Adjust based on text length
-                  offsetY={10}                 // Slight offset from the star position
-                  listening={false}            // Disable event listeners if not needed
+                  fontSize={14}
+                  fontFamily="Arial"
+                  fill="rgba(255, 255, 255, 0.8)"
+                  padding={5}
+                  align="center"
+                  verticalAlign="middle"
+                  offsetX={waypointTerminator.length * 7}
+                  offsetY={10}
+                  listening={false}
                   opacity={.2}
                 />
               ) : null
@@ -121,16 +127,18 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               x={waypoint.x}
               y={-waypoint.y} // down on HTML canvas is positive
               radius={radius}
-              fillRadialGradientStartPoint={{ x: 0, y: 0 }}
-              fillRadialGradientStartRadius={0}
-              fillRadialGradientEndPoint={{ x: 0, y: 0 }}
-              fillRadialGradientEndRadius={radius}
-              fillRadialGradientColorStops={[0, '#258dbe', 1, '#25be49']}
+              fillLinearGradientStartPoint={{ x: -50, y: 0 }}
+              fillLinearGradientEndPoint={{ x: 50, y: 0 }}
+              fillLinearGradientColorStops={[
+                0, color1,
+                0.7, color2,
+                1, 'white'
+              ]}
               stroke={isHighlighted ? "rgba(255, 204, 0, 0.4)" : ''}
-              strokeWidth={isHighlighted ? 2 : 0} // Width of the outline
-              shadowBlur={10} // Soft glowing effect
-              shadowColor={isHighlighted ? '#ffcc00' : 'white'}  // Color of the glow
-              shadowOpacity={isHighlighted ? 1 : 0.6} // Intensity of the glow
+              strokeWidth={isHighlighted ? 2 : 0}
+              shadowBlur={10}
+              shadowColor={isHighlighted ? '#ffcc00' : 'white'}
+              shadowOpacity={isHighlighted ? 1 : 0.6}
               opacity={isObscured ? .2 : 1}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -142,15 +150,15 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
                   x={waypoint.x + 5}
                   y={-waypoint.y - 20}
                   text={waypointTerminator}
-                  fontSize={14}                // Small, but readable size
-                  fontFamily="Arial"           // Clean, sans-serif font
-                  fill="rgba(255, 255, 255, 0.8)" // White with slight transparency
-                  padding={5}                  // Padding around the text
-                  align="center"               // Center align the text
-                  verticalAlign="middle"       // Center align vertically
-                  offsetX={waypointTerminator.length * 7}    // Adjust based on text length
-                  offsetY={10}                 // Slight offset from the star position
-                  listening={false}            // Disable event listeners if not needed
+                  fontSize={14}
+                  fontFamily="Arial"
+                  fill="rgba(255, 255, 255, 0.8)"
+                  padding={5}
+                  align="center"
+                  verticalAlign="middle"
+                  offsetX={waypointTerminator.length * 7}
+                  offsetY={10}
+                  listening={false}
                   opacity={.2}
                 />
               ) : null

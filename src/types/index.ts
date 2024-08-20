@@ -76,6 +76,8 @@ export interface IWaypointRender extends IWaypoint {
     drawOrbit: boolean;
     x?: number;
     y?: number;
+    color1: string;
+    color2: string;
   }
   orbitals: IWaypointRender[];
 }
@@ -282,4 +284,4 @@ export type TWaypointType =
   | 'ARTIFICIAL_GRAVITY_WELL'
   | 'FUEL_STATION';
 
-export type TWaypointRenderDataMap = Record<TWaypointType, { radius: number, drawOrbit: boolean }>;
+export type TWaypointRenderDataMap = Record<TWaypointType, { radius: number, drawOrbit: boolean}>;

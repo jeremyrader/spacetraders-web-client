@@ -24,6 +24,73 @@ const isErrorWithMessage = (error: unknown): error is { message: string } => {
   return typeof error === 'object' && error !== null && 'message' in error;
 };
 
+const planetChoiceMap: { [key: number]: string[] } = {
+  1: ['#D6D1B1', '#6A89CC'],
+  2: ['#7FB77E', '#D4C7E8'],
+  3: ['#E5E5E5', '#C19FA5'],
+  4: ['#8E9A9A', '#C1B4A3'],
+  5: ['#F2D4C6', '#8FBFBF'],
+  6: ['#8E9775', '#E0D1B5'],
+  7: ['#DEC2C8', '#8998B3'],
+  8: ['#CAC3BC', '#B4C8A8'],
+  9: ['#A8B0B2', '#C3A6A6'],
+  10: ['#ECE0C7', '#A9879E']
+}
+
+const asteroidChoiceMap: { [key: number]: string[] } = {
+  1: ['#4E4B4A', '#8B7E74'],
+  2: ['#9A9E78', '#3D3D3D'],
+  3: ['#B7A99A', '#5A5C64'],
+}
+
+const satelliteChoiceMap: { [key: number]: string[] } = {
+  1: ['#3A7BD5', '#606060'],
+  2: ['#E2C044', '#4A6A8A'],
+  3: ['#2F4F4F', '#B0B0B0'],
+}
+
+function getRandomPlanetColors(): string[] {
+  const keys = Object.keys(planetChoiceMap);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  return planetChoiceMap[parseInt(randomKey)];
+}
+
+function getRandomAsteroidColors(): string[] {
+  const keys = Object.keys(asteroidChoiceMap);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  return asteroidChoiceMap[parseInt(randomKey)];
+}
+
+function getRandomSatelliteColors(): string[] {
+  const keys = Object.keys(satelliteChoiceMap);
+  const randomKey = keys[Math.floor(Math.random() * keys.length)];
+  return satelliteChoiceMap[parseInt(randomKey)];
+}
+
+const getWaypointColors = (type: string) => {
+  if (['PLANET', 'GAS_GIANT', 'MOON'].includes(type)) {
+    return getRandomPlanetColors()
+  }
+
+  if (['ASTEROID', 'ASTEROID_FIELD', 'ENGINEERED_ASTEROID'].includes(type)) {
+    return getRandomAsteroidColors()
+  }
+
+  if (['JUMP_GATE', 'ORBITAL_STATION', 'ASTEROID_BASE', 'DEBRIS_FIELD'].includes(type)) {
+    return getRandomSatelliteColors()
+  }
+
+  if (type == 'NEBULA') { 
+    return ['#6BC1C5', '#5D3FD3']
+  }
+
+  if (['GRAVITY_WELL', 'ARTIFICIAL_GRAVITY_WELL'].includes(type)) {
+    return ['#00A6FF', '#2E1A6B']
+  }
+
+  return ['white', 'white']
+}
+
 export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +196,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
             drawOrbit: true
           },
           'ASTEROID_BASE': {
-            radius: 1,
+            radius: 2,
             drawOrbit: false
           },
           'NEBULA': {
@@ -170,7 +237,11 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
           const waypointRenderData = waypointRenderDataMap[type as TWaypointType]
           const { radius, drawOrbit } = waypointRenderData
 
+          const waypointColors = getWaypointColors(type)
+
           waypoint.renderData = {
+            color1: waypointColors[0],
+            color2: waypointColors[1],
             radius: radius,
             drawOrbit: drawOrbit
           }
@@ -209,9 +280,13 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
               const x = parentWaypointCoords.x + orbitalCoordinates[index].x
               const y = parentWaypointCoords.y + orbitalCoordinates[index].y
 
+              const waypointColors = getWaypointColors(type)
+
               orbital.renderData = {
                 x: x,
                 y: y,
+                color1: waypointColors[0],
+                color2: waypointColors[1],
                 radius: radius,
                 drawOrbit: drawOrbit
               }
