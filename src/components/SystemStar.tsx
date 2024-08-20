@@ -19,7 +19,7 @@ const SystemStar = ({x, y, radius, color, isWaypointSelected}: SystemStarProps) 
       fillRadialGradientStartRadius={0}
       fillRadialGradientEndPoint={{ x: 0, y: 0 }}
       fillRadialGradientEndRadius={radius}
-      fillRadialGradientColorStops={[.005, 'white', .006, color, .025, 'rgba(0, 0, 255, 0)']}
+      fillRadialGradientColorStops={[.010, 'white', .011, color, .025, 'rgba(0, 0, 255, 0)']}
       opacity={isWaypointSelected ? 0.3 : 1}
     />
   )
