@@ -34,7 +34,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
   const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
   const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
-  const [selectedWaypointOutline, setSelectedWaypointOutline] = useState<{x: number, y: number, radius: number} | null>(null)
   const [mapCenter, setMapCenter] = useState<{x: number, y: number}>({x: 0, y: 0})
   const [ships, setShips] = useState<IShipRender[]>([])
 
@@ -157,18 +156,17 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     onSelectMap('universe')
   };
 
-  const handleWaypointClick = async (waypoint: IWaypointRender, waypointRef: React.RefObject<Konva.Circle>) => {
-
+  const handleWaypointClick = (newWaypoint: IWaypointRender, waypointRef: React.RefObject<Konva.Circle>) => {
     const x = waypointRef?.current?.x()
     const y = waypointRef?.current?.y()
     const radius = waypointRef?.current?.radius()
 
     if (x !== undefined && y !== undefined && radius !== undefined) {
-      setSelectedWaypointOutline({x: x, y: y, radius: radius})
       setMapCenter({x: x, y: -y})
     }
 
-    setSelectedWaypoint(waypoint)
+    setSelectedWaypoint(newWaypoint)
+    
   }
 
   const handleStageClick = (e) => {
@@ -302,8 +300,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 selectedTrait={selectedTrait}
                 onWaypointClick={handleWaypointClick}
                 zoomLevel={zoomLevel}
-                isObscured={!!selectedWaypoint && selectedWaypoint.symbol !== waypoint.symbol }
-                isSelected={selectedWaypoint != null && selectedWaypoint.symbol === waypoint.symbol}
+                selectedWaypoint={selectedWaypoint}
               />
             })
         }

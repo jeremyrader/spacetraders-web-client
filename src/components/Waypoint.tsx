@@ -11,12 +11,11 @@ interface WaypointProps {
   selectedTrait: string | null;
   zoomLevel: number;
   onWaypointClick: Function;
-  isSelected: boolean;
-  isObscured: boolean;
+  selectedWaypoint: IWaypointRender | null;
 }
 
-const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isObscured, isSelected}: WaypointProps) => {
-  const { symbol, orbits } = waypoint
+const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selectedWaypoint}: WaypointProps) => {
+  const { symbol, type, orbits } = waypoint
   const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
   const waypointRef = useRef<Konva.Circle>(null);
@@ -46,6 +45,9 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isObscur
   const symbolParts = symbol.split('-')
   const waypointTerminator = symbolParts[2]
 
+  const isObscured = !!selectedWaypoint && selectedWaypoint.symbol !== waypoint.symbol
+  const isSelected = selectedWaypoint != null && selectedWaypoint.symbol === waypoint.symbol
+
   return (
     <Fragment>
       {
@@ -57,8 +59,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isObscur
               selectedTrait={selectedTrait}
               zoomLevel={zoomLevel}
               onWaypointClick={onWaypointClick}
-              isSelected={isSelected}
-              isObscured={isObscured}
+              selectedWaypoint={selectedWaypoint}
             />
           )
         })
@@ -67,6 +68,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isObscur
         (orbits && x && y) ? (
           <Group>
             <Circle
+              waypoint
               ref={orbitalRef}
               x={x}
               y={-y} // down on HTML canvas is positive
@@ -98,6 +100,29 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isObscur
                 />
               ) : null
             }
+            {isSelected && (
+              <Text
+                name="waypoint-metadata"
+                x={x + radius}
+                y={-y - 30}
+                text={
+                  `
+                    Symbol: ${symbol}\n
+                    Type: ${type}\n
+                    Traits:\n
+                    ${
+                      waypoint.traits.map(trait=> {
+                        return `${trait.name}`
+                      })
+                    }
+                  `
+                }
+                fontSize={4}
+                fontFamily="Arial"
+                fill="rgba(255, 255, 255, 0.8)"
+                lineHeight={1.5}       // Line spacing for readability
+              />
+            )}
           </Group>
         ) : (
           <Group>
