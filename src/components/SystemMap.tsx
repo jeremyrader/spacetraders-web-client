@@ -169,7 +169,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     
   }
 
-  const handleStageClick = (e) => {
+  const handleStageClick = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const isWaypoint = !!e.target.attrs.waypoint
     const isWaypointMetadata = e.target.name() == 'waypoint-metadata'
     
