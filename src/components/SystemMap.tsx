@@ -227,19 +227,17 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
             return drawOrbit ? (
               <React.Fragment key={index}>
-                { 
-                  waypoint.orbitals.map((orbital, index: number) => {
-                    return (
-                      <Orbit 
-                        key={'orbital-' + index}
-                        x={x}
-                        y={y}
-                        radius={getDistance(x, y, orbital.renderData.x || 0, orbital.renderData.y || 0)}
-                        isWaypointSelected={!!selectedWaypoint}
-                      />
-                    )
-                  })
+                {
+                  waypoint.orbitals.length > 0 ? (
+                    <Orbit 
+                      x={x}
+                      y={y}
+                      radius={getDistance(x, y, waypoint.orbitals[0].renderData.x || 0, waypoint.orbitals[0].renderData.y || 0)}
+                      isWaypointSelected={!!selectedWaypoint}
+                    />
+                  ) : null
                 }
+                
                 <Orbit 
                   key={'waypoint-' + index}
                   x={0}
