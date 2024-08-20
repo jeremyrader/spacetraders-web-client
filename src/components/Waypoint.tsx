@@ -5,7 +5,7 @@ import { useRef, useState, useEffect, Fragment } from 'react';
 import Konva from 'konva'
 
 import WaypointMetadata from '@/components/WaypointMetadata'
-import { TWaypointType, IWaypointRender, ITrait } from '@/types'
+import { IWaypointRender, ITrait } from '@/types'
 
 interface WaypointProps {
   waypoint: IWaypointRender;
@@ -16,15 +16,11 @@ interface WaypointProps {
 }
 
 const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selectedWaypoint}: WaypointProps) => {
-  const { symbol, type, orbits } = waypoint
+  const { symbol, orbits } = waypoint
   const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
   const waypointRef = useRef<Konva.Circle>(null);
-  const traitsListRef = useRef<Konva.Text>(null);
-  const symbolOffsetRef = useRef<Konva.Text>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [traitsListOffset, setTraitsListOffset] = useState(0);
-  const [symbolOffset, setSymbolOffset] = useState(0);
 
   const getIsHighlighted = (traits: ITrait[], selectedTrait: string | null) => {
     return traits.find((trait: ITrait) => {
@@ -46,44 +42,12 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
     onWaypointClick(waypoint, waypointRef)
   };
 
-  const multiplier = getIsHighlighted(waypoint.traits, selectedTrait) ? 3 : 1
   const symbolParts = symbol.split('-')
   const waypointTerminator = symbolParts[2]
 
   const isObscured = !!selectedWaypoint && selectedWaypoint.symbol !== waypoint.symbol
   const isSelected = selectedWaypoint != null && selectedWaypoint.symbol === waypoint.symbol
-
-  const traitsList = waypoint.traits.map(trait=> {
-    return `${trait.name}\n`
-  }).join('').replace(/\n$/, '');
-
-  const waypointTypeNamingMap = {
-   'PLANET': 'Planet',
-   'GAS_GIANT': 'Gas Giant',
-   'MOON': 'Moon',
-   'ORBITAL_STATION': 'Orbital Station',
-   'JUMP_GATE': 'Jump Gate',
-   'ASTEROID_FIELD': 'Asteroid Field',
-   'ASTEROID': 'Asteroid',
-   'ENGINEERED_ASTEROID': 'Engineered Asteroid',
-   'ASTEROID_BASE': 'Asteroid Base',
-   'NEBULA': 'Nebula',
-   'DEBRIS_FIELD': 'Debris Field',
-   'GRAVITY_WELL': 'Gravity Well',
-   'ARTIFICIAL_GRAVITY_WELL': 'Artifical Gravity Well',
-   'FUEL_STATION': 'Fuel Station'
-  }
-
-  useEffect(() => {
-    if (traitsListRef.current) {
-      const textHeight = traitsListRef.current.height();
-      setTraitsListOffset(textHeight / 2)
-    }
-    if (symbolOffsetRef.current) {
-      const textHeight = symbolOffsetRef.current.height();
-      setSymbolOffset(textHeight / 2)
-    }
-  }, [isSelected]);
+  const isHighlighted = getIsHighlighted(waypoint.traits, selectedTrait)
 
   return (
     <Fragment>
@@ -109,10 +73,13 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               ref={orbitalRef}
               x={x}
               y={-y} // down on HTML canvas is positive
-              radius={radius * multiplier}
+              radius={radius}
               fill="white"
-              stroke="black"
-              strokeWidth={0.1}
+              stroke={isHighlighted ? "rgba(255, 204, 0, 0.4)" : ''}
+              strokeWidth={isHighlighted ? 2 : 0}
+              shadowBlur={10}
+              shadowColor={isHighlighted ? '#ffcc00' : 'white'}
+              shadowOpacity={isHighlighted ? 1 : 0.6}
               opacity={isObscured ? .2 : 1}
               onClick={() => { onWaypointClick(waypoint, orbitalRef) }}
               onMouseEnter={handleMouseEnter}
@@ -153,14 +120,17 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               waypoint
               x={waypoint.x}
               y={-waypoint.y} // down on HTML canvas is positive
-              radius={radius * multiplier}
+              radius={radius}
               fillRadialGradientStartPoint={{ x: 0, y: 0 }}
               fillRadialGradientStartRadius={0}
               fillRadialGradientEndPoint={{ x: 0, y: 0 }}
               fillRadialGradientEndRadius={radius}
               fillRadialGradientColorStops={[0, '#258dbe', 1, '#25be49']}
-              stroke="black"
-              strokeWidth={0.1}
+              stroke={isHighlighted ? "rgba(255, 204, 0, 0.4)" : ''}
+              strokeWidth={isHighlighted ? 2 : 0} // Width of the outline
+              shadowBlur={10} // Soft glowing effect
+              shadowColor={isHighlighted ? '#ffcc00' : 'white'}  // Color of the glow
+              shadowOpacity={isHighlighted ? 1 : 0.6} // Intensity of the glow
               opacity={isObscured ? .2 : 1}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
