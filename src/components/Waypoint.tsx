@@ -19,7 +19,11 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
   const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
   const waypointRef = useRef<Konva.Circle>(null);
+  const traitsListRef = useRef<Konva.Text>(null);
+  const symbolOffsetRef = useRef<Konva.Text>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [traitsListOffset, setTraitsListOffset] = useState(0);
+  const [symbolOffset, setSymbolOffset] = useState(0);
 
   const getIsHighlighted = (traits: ITrait[], selectedTrait: string | null) => {
     return traits.find((trait: ITrait) => {
@@ -47,6 +51,38 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
 
   const isObscured = !!selectedWaypoint && selectedWaypoint.symbol !== waypoint.symbol
   const isSelected = selectedWaypoint != null && selectedWaypoint.symbol === waypoint.symbol
+
+  const traitsList = waypoint.traits.map(trait=> {
+    return `${trait.name}\n`
+  }).join('').replace(/\n$/, '');
+
+  const waypointTypeNamingMap = {
+   'PLANET': 'Planet',
+   'GAS_GIANT': 'Gas Giant',
+   'MOON': 'Moon',
+   'ORBITAL_STATION': 'Orbital Station',
+   'JUMP_GATE': 'Jump Gate',
+   'ASTEROID_FIELD': 'Asteroid Field',
+   'ASTEROID': 'Asteroid',
+   'ENGINEERED_ASTEROID': 'Engineered Asteroid',
+   'ASTEROID_BASE': 'Asteroid Base',
+   'NEBULA': 'Nebula',
+   'DEBRIS_FIELD': 'Debris Field',
+   'GRAVITY_WELL': 'Gravity Well',
+   'ARTIFICIAL_GRAVITY_WELL': 'Artifical Gravity Well',
+   'FUEL_STATION': 'Fuel Station'
+  }
+
+  useEffect(() => {
+    if (traitsListRef.current) {
+      const textHeight = traitsListRef.current.height();
+      setTraitsListOffset(textHeight / 2)
+    }
+    if (symbolOffsetRef.current) {
+      const textHeight = symbolOffsetRef.current.height();
+      setSymbolOffset(textHeight / 2)
+    }
+  }, [isSelected]);
 
   return (
     <Fragment>
@@ -164,27 +200,37 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               ) : null
             }
             {isSelected && (
-              <Text
-                name="waypoint-metadata"
-                x={waypoint.x + radius}
-                y={-waypoint.y - 30}
-                text={
-                  `
-                    Symbol: ${waypoint.symbol}\n
-                    Type: ${waypoint.type}\n
-                    Traits:\n
-                    ${
-                      waypoint.traits.map(trait=> {
-                        return `${trait.name}`
-                      })
-                    }
-                  `
-                }
-                fontSize={4}
-                fontFamily="Arial"
-                fill="rgba(255, 255, 255, 0.8)"
-                lineHeight={1.5}       // Line spacing for readability
-              />
+              <Group>
+                <Text
+                  ref={symbolOffsetRef}
+                  name="waypoint-metadata"
+                  x={waypoint.x - 140}
+                  y={-waypoint.y - symbolOffset}
+                  text={
+                    `
+                      ${waypoint.symbol}
+                      ${waypointTypeNamingMap[waypoint.type as string]}
+                    `
+                  }
+                  fontSize={10}
+                  fontFamily="Arial"
+                  fill="rgba(255, 255, 255, 0.8)"
+                  lineHeight={1.5}
+                  align="right"
+                />
+                <Text
+                  ref={traitsListRef}
+                  name="waypoint-metadata"
+                  x={waypoint.x + 20}
+                  y={-waypoint.y - traitsListOffset}
+                  text={traitsList}
+                  fontSize={10}
+                  fontFamily="Arial"
+                  fill="rgba(255, 255, 255, 0.8)"
+                  lineHeight={1.5}       // Line spacing for readability
+                />
+                
+              </Group>
             )}
           </Group>
         )
