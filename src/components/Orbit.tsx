@@ -17,7 +17,7 @@ const Orbit = ({x, y, radius, isWaypointSelected}: OrbitProps) => {
       radius={radius}
       stroke="gray"
       strokeWidth={.5}
-      opacity={isWaypointSelected ? .1 : .4}
+      opacity={isWaypointSelected ? .1 : .2}
     />
   )
 }
