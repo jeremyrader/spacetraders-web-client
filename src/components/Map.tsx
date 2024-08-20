@@ -11,6 +11,7 @@ interface MapProps {
   children: ReactNode;
   maxZoom: number;
   onZoom: any;
+  onStageClick: Function;
   mapCenter: {
     x: number;
     y: number;
@@ -47,7 +48,7 @@ const moveAmount = 10;
 //   }
 // });
 
-const Map: React.FC<MapProps> = ({ containerRef, isLoading, children, maxZoom, onZoom, mapCenter = {x: 0, y: 0}, MapControls }) => {
+const Map: React.FC<MapProps> = ({ containerRef, isLoading, children, maxZoom, onZoom, onStageClick, mapCenter = {x: 0, y: 0}, MapControls }) => {
   const stageRef = useRef<Konva.Stage>(null);
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
@@ -153,6 +154,7 @@ const Map: React.FC<MapProps> = ({ containerRef, isLoading, children, maxZoom, o
         height={850}
         style={{ backgroundColor: 'black' }}
         onWheel={handleWheel}
+        onClick={(event) => { onStageClick(event) }}
         draggable
       >
         {

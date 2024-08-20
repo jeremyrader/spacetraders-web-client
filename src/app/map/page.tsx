@@ -32,7 +32,7 @@ function Map() {
   }
 
   return <DataProvider>
-    <div className="h-screen">
+    <div className="min-h-screen">
       <Navbar></Navbar>
       <main className="flex flex-col p-4">
         {

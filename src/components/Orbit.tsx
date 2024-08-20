@@ -5,10 +5,11 @@ import { Circle } from 'react-konva';
 interface OrbitProps {
   x: number;
   y: number;
-  radius: number
+  radius: number;
+  isWaypointSelected: boolean;
 }
 
-const Orbit = ({x, y, radius}: OrbitProps) => {
+const Orbit = ({x, y, radius, isWaypointSelected}: OrbitProps) => {
   return (
     <Circle
       x={x}
@@ -16,7 +17,7 @@ const Orbit = ({x, y, radius}: OrbitProps) => {
       radius={radius}
       stroke="gray"
       strokeWidth={.5}
-      opacity={.4}
+      opacity={isWaypointSelected ? .4 : .2}
     />
   )
 }

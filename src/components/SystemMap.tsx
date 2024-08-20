@@ -26,6 +26,7 @@ const maxZoom = 3
 
 function SystemMap({system, onSelectMap}: SystemMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const waypointLayerRef = useRef<Konva.Layer>(null);
 
   const [zoomLevel, setZoomLevel] = useState(maxZoom);
   const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypointRender | null>(null);
@@ -110,7 +111,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }
 
   const SystemMapControls = () => {
-
     const hasShipyard = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
     const hasMarketplace = selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
 
@@ -171,8 +171,17 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     setSelectedWaypoint(waypoint)
   }
 
-  useEffect(() => {
+  const handleStageClick = (e) => {
+    const isWaypoint = !!e.target.attrs.waypoint
+    const isWaypointMetadata = e.target.name() == 'waypoint-metadata'
+    
+    if (!(isWaypoint || isWaypointMetadata)) {
+      setSelectedWaypoint(null)
+    }
 
+  }
+
+  useEffect(() => {
     const getShips = async () => {
       const ships: IShipRender[] = await getData('shipStore')
       const inSystemShips = ships.filter(ship => ship.nav.route.destination.systemSymbol == system.symbol)
@@ -187,7 +196,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
             color: 'white'
           }
         }
-        
       }
 
       setShips(inSystemShips)
@@ -202,12 +210,15 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     
   }, [system]);
 
+  console.log('selectedWaypoint', selectedWaypoint)
+
   return <div ref={containerRef}>
     <Map
       containerRef={containerRef}
       isLoading={isLoading}
       maxZoom={maxZoom}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
+      onStageClick={handleStageClick}
       mapCenter={mapCenter}
       MapControls={SystemMapControls}
     >
@@ -228,6 +239,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                         x={x}
                         y={y}
                         radius={getDistance(x, y, orbital.renderData.x || 0, orbital.renderData.y || 0)}
+                        isWaypointSelected={!!selectedWaypoint}
                       />
                     )
                   })
@@ -237,34 +249,21 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                   x={0}
                   y={0}
                   radius={getDistance(0, 0, x, y)}
+                  isWaypointSelected={!!selectedWaypoint}
                 />
                 </React.Fragment>
             ) : null
           })
         }
       </Layer>
+      {/* System Star */}
       <Layer>
-        {/* System Star */}
         <SystemStar
           x={0}
           y={0}
           radius={100}
           color={"white"} // hard code for now. TODO: pull in color from system
         />
-      </Layer>
-      <Layer>
-        {/* Selected waypoint outline */}
-        {
-          !!(selectedWaypoint && selectedWaypointOutline) && (
-            <Circle
-              x={selectedWaypointOutline.x}
-              y={selectedWaypointOutline.y}
-              radius={selectedWaypointOutline.radius + 2}
-              stroke={selectedWaypoint.type.includes('ASTEROID') ? 'white' : 'black'}
-              strokeWidth={1}
-              opacity={0.7}
-            />
-        )}
       </Layer>
       {/* System ships */}
       <Layer>
@@ -282,6 +281,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                   stroke="black"
                   strokeWidth={.5}
                   fill={color}
+                  opacity={!!selectedWaypoint ? 0 : 1}
                 />
               )
             }
@@ -289,7 +289,10 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         }
       </Layer>
       {/* Waypoints Layer */}
-      <Layer>
+      {
+        /* if no waypoint is selected or this waypoint is selected   */
+      }
+      <Layer ref={waypointLayerRef}>
         {
           system.waypoints
             .filter((waypoint: IWaypointRender) => !waypoint.orbits)
@@ -301,7 +304,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                 selectedTrait={selectedTrait}
                 onWaypointClick={handleWaypointClick}
                 zoomLevel={zoomLevel}
-                isSelected={selectedWaypoint?.symbol === waypoint.symbol}
+                isObscured={!!selectedWaypoint && selectedWaypoint.symbol !== waypoint.symbol }
+                isSelected={selectedWaypoint != null && selectedWaypoint.symbol === waypoint.symbol}
               />
             })
         }

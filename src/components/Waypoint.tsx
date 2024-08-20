@@ -12,9 +12,10 @@ interface WaypointProps {
   zoomLevel: number;
   onWaypointClick: Function;
   isSelected: boolean;
+  isObscured: boolean;
 }
 
-const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelected}: WaypointProps) => {
+const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isObscured, isSelected}: WaypointProps) => {
   const { symbol, orbits } = waypoint
   const { x, y, radius } = waypoint.renderData
   const orbitalRef = useRef<Konva.Circle>(null);
@@ -57,6 +58,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelect
               zoomLevel={zoomLevel}
               onWaypointClick={onWaypointClick}
               isSelected={isSelected}
+              isObscured={isObscured}
             />
           )
         })
@@ -72,6 +74,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelect
               fill="white"
               stroke="black"
               strokeWidth={0.1}
+              opacity={isObscured ? .2 : 1}
               onClick={() => { onWaypointClick(waypoint, orbitalRef) }}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -100,6 +103,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelect
           <Group>
             <Circle
               ref={waypointRef}
+              waypoint
               x={waypoint.x}
               y={-waypoint.y} // down on HTML canvas is positive
               radius={radius * multiplier}
@@ -110,6 +114,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelect
               fillRadialGradientColorStops={[0, '#258dbe', 1, '#25be49']}
               stroke="black"
               strokeWidth={0.1}
+              opacity={isObscured ? .2 : 1}
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
               onClick={handleClick}
@@ -135,6 +140,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, isSelect
             }
             {isSelected && (
               <Text
+                name="waypoint-metadata"
                 x={waypoint.x + radius}
                 y={-waypoint.y - 30}
                 text={
