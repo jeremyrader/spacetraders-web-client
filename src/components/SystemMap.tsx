@@ -271,8 +271,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         <SystemStar
           x={0}
           y={0}
-          radius={400}
-          color={"white"} // hard code for now. TODO: pull in color from system
+          radius={800}
+          color={system.renderData.color} // hard code for now. TODO: pull in color from system
           isWaypointSelected={!!selectedWaypoint}
         />
       </Layer>
