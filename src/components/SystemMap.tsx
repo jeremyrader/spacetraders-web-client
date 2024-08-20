@@ -208,6 +208,22 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     
   }, [system]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedWaypoint(null)
+      }
+    };
+
+    // Attach the event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Clean up the event listener on unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return <div ref={containerRef}>
     <Map
       containerRef={containerRef}
