@@ -47,7 +47,7 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
 
   const isObscured = !!selectedWaypoint && selectedWaypoint.symbol !== waypoint.symbol
   const isSelected = selectedWaypoint != null && selectedWaypoint.symbol === waypoint.symbol
-  const isHighlighted = getIsHighlighted(waypoint.traits, selectedTrait)
+  const isHighlighted = waypoint.traits ? getIsHighlighted(waypoint.traits, selectedTrait) : false
 
   return (
     <Fragment>
