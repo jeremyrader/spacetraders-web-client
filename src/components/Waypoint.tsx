@@ -1,10 +1,11 @@
 'use client'
 
-import { Circle, Text, Rect, Group } from 'react-konva';
+import { Circle, Text, Group } from 'react-konva';
 import { useRef, useState, useEffect, Fragment } from 'react';
 import Konva from 'konva'
 
-import { IWaypointRender, ITrait } from '@/types'
+import WaypointMetadata from '@/components/WaypointMetadata'
+import { TWaypointType, IWaypointRender, ITrait } from '@/types'
 
 interface WaypointProps {
   waypoint: IWaypointRender;
@@ -137,26 +138,11 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               ) : null
             }
             {isSelected && (
-              <Text
-                name="waypoint-metadata"
-                x={x + radius}
-                y={-y - 30}
-                text={
-                  `
-                    Symbol: ${symbol}\n
-                    Type: ${type}\n
-                    Traits:\n
-                    ${
-                      waypoint.traits.map(trait=> {
-                        return `${trait.name}`
-                      })
-                    }
-                  `
-                }
-                fontSize={4}
-                fontFamily="Arial"
-                fill="rgba(255, 255, 255, 0.8)"
-                lineHeight={1.5}       // Line spacing for readability
+              <WaypointMetadata 
+                x={x}
+                y={y}
+                waypoint={waypoint}
+                isSelected={isSelected}
               />
             )}
           </Group>
@@ -200,37 +186,12 @@ const Waypoint = ({waypoint, selectedTrait, zoomLevel, onWaypointClick, selected
               ) : null
             }
             {isSelected && (
-              <Group>
-                <Text
-                  ref={symbolOffsetRef}
-                  name="waypoint-metadata"
-                  x={waypoint.x - 140}
-                  y={-waypoint.y - symbolOffset}
-                  text={
-                    `
-                      ${waypoint.symbol}
-                      ${waypointTypeNamingMap[waypoint.type as string]}
-                    `
-                  }
-                  fontSize={10}
-                  fontFamily="Arial"
-                  fill="rgba(255, 255, 255, 0.8)"
-                  lineHeight={1.5}
-                  align="right"
-                />
-                <Text
-                  ref={traitsListRef}
-                  name="waypoint-metadata"
-                  x={waypoint.x + 20}
-                  y={-waypoint.y - traitsListOffset}
-                  text={traitsList}
-                  fontSize={10}
-                  fontFamily="Arial"
-                  fill="rgba(255, 255, 255, 0.8)"
-                  lineHeight={1.5}       // Line spacing for readability
-                />
-                
-              </Group>
+              <WaypointMetadata 
+                x={waypoint.x}
+                y={waypoint.y}
+                waypoint={waypoint}
+                isSelected={isSelected}
+              />
             )}
           </Group>
         )
