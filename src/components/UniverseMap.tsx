@@ -141,6 +141,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       isLoading={isLoading}
       maxZoom={1}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
+      onStageClick={() => {}}
       mapCenter={mapCenter}
       MapControls={UniverseMapControls}
     >
