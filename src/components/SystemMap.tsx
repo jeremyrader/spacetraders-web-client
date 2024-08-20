@@ -289,8 +289,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
                   x={x}
                   y={-y}
                   radius={1}
-                  stroke="black"
-                  strokeWidth={.5}
                   fill={color}
                   opacity={!!selectedWaypoint ? 0 : 1}
                 />
