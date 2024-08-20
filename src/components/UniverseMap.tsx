@@ -96,8 +96,22 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const UniverseMapControls = () => {
     return (
       <MapControls onSelectMap={onSelectMap}>
-        <button onClick={() => handleEnterSystemClick(selectedStar)} type="button" className="btn btn-primary">View System Map</button>
-        <p>{selectedStar?.symbol}</p>
+        <button
+          onClick={() => handleEnterSystemClick(selectedStar)}
+          type="button"
+          className="px-4 py-2 
+            rounded 
+            bg-blue-500 
+            hover:bg-blue-700
+            click:bg-blue-900
+            text-lg font-semibold 
+            text-white 
+            tracking-wide 
+            uppercase 
+            transition-colors 
+            duration-300">
+            View System Map
+        </button>
       </MapControls>
     )
   }

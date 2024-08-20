@@ -115,11 +115,86 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
     return (
       <MapControls onSelectMap={onSelectMap}>
-        <button onClick={handleSelectBack} className="btn btn-primary mr-2">Back to Galaxy Map</button>
-        <button onClick={() => {fetchWaypoints(true) }} className="btn btn-primary">Rescan System</button>
-        <div className="flex">
-          <button onClick={() => {highlightTrait('MARKETPLACE')}} className="btn btn-primary mr-2">Marketplaces</button>
-          <button onClick={() => {highlightTrait('SHIPYARD')}} className="btn btn-primary">Shipyards</button>
+        <div className="flex flex-col">
+          <button
+            onClick={handleSelectBack}
+            type="button"
+            className="
+              px-4 py-2 
+              rounded 
+              bg-blue-700 
+              hover:bg-blue-800
+              click:bg-blue-900
+              text-lg font-semibold 
+              text-white 
+              tracking-wide 
+              uppercase 
+              transition-colors 
+              duration-300
+              mb-2
+            "
+          >
+            View Universe Map
+          </button>
+          <button
+            onClick={() => {fetchWaypoints(true) }}
+            type="button"
+            className="
+              px-4 py-2 
+              rounded 
+              bg-blue-700
+              hover:bg-blue-800
+              click:bg-blue-900
+              text-lg font-semibold 
+              text-white 
+              tracking-wide 
+              uppercase 
+              transition-colors 
+              duration-300
+              mb-8
+            "
+          >
+            Re-fetch Waypoints
+          </button>
+          <button
+            onClick={() => {highlightTrait('MARKETPLACE')}}
+            type="button"
+            className="
+              px-4 py-2 
+              rounded 
+              bg-blue-700
+              hover:bg-blue-800
+              click:bg-blue-900
+              text-lg font-semibold 
+              text-white 
+              tracking-wide 
+              uppercase 
+              transition-colors 
+              duration-300
+              mb-2
+            "
+          >
+            Marketplaces
+          </button>
+          <button
+            onClick={() => {highlightTrait('SHIPYARD')}}
+            type="button"
+            className="
+              px-4 py-2 
+              rounded 
+              bg-blue-700
+              hover:bg-blue-800
+              click:bg-blue-900
+              text-lg font-semibold 
+              text-white 
+              tracking-wide 
+              uppercase 
+              transition-colors 
+              duration-300
+            "
+          >
+            Shipyards
+          </button>
         </div>
         {
           isLoading ? (
