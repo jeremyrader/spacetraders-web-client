@@ -110,9 +110,9 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   }
 
   const SystemMapControls = () => {
-
-    const hasShipyard = selectedWaypoint && !!selectedWaypoint.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
-    const hasMarketplace = selectedWaypoint && !!selectedWaypoint?.traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
+    console.log('selectedWaypoint', selectedWaypoint)
+    const hasShipyard = selectedWaypoint && !!selectedWaypoint.traits && !!selectedWaypoint.traits.find((trait: ITrait) => trait.symbol == 'SHIPYARD')
+    const hasMarketplace = selectedWaypoint && !!selectedWaypoint?.traits && !!selectedWaypoint.traits.find((trait: ITrait) => trait.symbol == 'MARKETPLACE')
 
     return (
       <MapControls onSelectMap={onSelectMap}>
