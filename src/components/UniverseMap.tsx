@@ -141,7 +141,14 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
       isLoading={isLoading}
       maxZoom={1}
       onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
-      onStageClick={() => {}}
+      onStageClick={(e: Konva.KonvaEventObject<MouseEvent>) => { 
+        const isSystem = !!e.target.attrs.system
+        
+        if (!isSystem) {
+          setSelectedStar(null) 
+        }
+        
+      }}
       mapCenter={mapCenter}
       MapControls={UniverseMapControls}
     >
@@ -161,20 +168,6 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
           ))
         }
       </Layer>
-      {/* Selected star */}
-      <Layer>
-      {
-        selectedStar && (
-          <Circle
-            x={selectedStar.x}
-            y={-selectedStar.y}
-            radius={20} // Larger circle
-            stroke="white"
-            strokeWidth={2}
-            opacity={0.5}
-          />
-        )}
-      </Layer>
       {/* System stars */}
       <Layer ref={layerRef}>
         {
@@ -185,6 +178,8 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
                 system={system}
                 zoomLevel={zoomLevel}
                 onSystemClick={handleStarClick}
+                selectedSystem={selectedStar}
+                isSelected={selectedStar?.symbol == system.symbol}
               />
             )
           })

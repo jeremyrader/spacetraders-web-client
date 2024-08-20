@@ -284,4 +284,15 @@ export type TWaypointType =
   | 'ARTIFICIAL_GRAVITY_WELL'
   | 'FUEL_STATION';
 
+  export type TSystemType = 
+  | 'NEUTRON_STAR'
+  | 'RED_STAR'
+  | 'ORANGE_STAR'
+  | 'BLUE_STAR'
+  | 'YOUNG_STAR'
+  | 'WHITE_DWARF'
+  | 'BLACK_HOLE'
+  | 'HYPERGIANT'
+  | 'NEBULA'
+
 export type TWaypointRenderDataMap = Record<TWaypointType, { radius: number, drawOrbit: boolean}>;

@@ -3,15 +3,18 @@
 import { Circle } from 'react-konva';
 import { Fragment } from 'react';
 
-import { ISystemRender } from '@/types'
+import SystemMetadata from '@/components/SystemMetadata'
+import { ISystemRender } from '@/types';
 
 interface SystemProps {
   system: ISystemRender;
   zoomLevel: number;
   onSystemClick: Function;
+  isSelected: boolean;
+  selectedSystem: ISystemRender | null;
 }
 
-const System = ({system, zoomLevel, onSystemClick}: SystemProps) => {
+const System = ({system, zoomLevel, onSystemClick, isSelected, selectedSystem}: SystemProps) => {
   const { color, radius } = system.renderData
   const { x, y } = system
 
@@ -31,6 +34,7 @@ const System = ({system, zoomLevel, onSystemClick}: SystemProps) => {
     <Fragment>
       {/* System star */}
       <Circle
+        system
         x={x}
         y={-y}  // down on HTML canvas is positive
         radius={radius}
@@ -39,8 +43,20 @@ const System = ({system, zoomLevel, onSystemClick}: SystemProps) => {
         fillRadialGradientEndPoint={{ x: 0, y: 0 }}
         fillRadialGradientEndRadius={radius}
         fillRadialGradientColorStops={[.3, 'white', calculateColorFill(zoomLevel), color, 1, 'rgba(0, 0, 255, 0)']}
+        opacity={!selectedSystem || isSelected ? 1 : .2}
         onClick={() => onSystemClick(system)}
       />
+      {
+        isSelected ? (
+          <SystemMetadata
+            x={x}
+            y={y}
+            system={system}
+            isSelected={isSelected}
+          />
+        ) : null
+      }
+      
     </Fragment>
   )
 }
