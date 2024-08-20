@@ -259,6 +259,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           y={0}
           radius={100}
           color={"white"} // hard code for now. TODO: pull in color from system
+          isWaypointSelected={!!selectedWaypoint}
         />
       </Layer>
       {/* System ships */}
