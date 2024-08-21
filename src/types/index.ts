@@ -113,12 +113,19 @@ interface Fuel {
   current: number;
 }
 
-interface Location {
+export interface IWaypointLocation {
   symbol: string;
   systemSymbol: string;
   type: string;
   x: number;
   y: number;
+}
+
+export interface IRoute {
+  arrival: string;
+  departureTime: string;
+  destination: IWaypointLocation
+  origin: IWaypointLocation
 }
 
 export interface IShip {
@@ -139,12 +146,7 @@ export interface IShip {
   fuel?: Fuel
   nav: {
     flightMode: string;
-    route: {
-      arrival: string;
-      departureTime: string;
-      destination: Location
-      origin: Location
-    }
+    route: IRoute;
     status: string;
     systemSymbol: string;
     waypointSymbol: string;
@@ -158,8 +160,6 @@ export interface IShip {
 
 export interface IShipRender extends IShip {
   renderData: {
-    x: number;
-    y: number;
     color: string;
   }
 }

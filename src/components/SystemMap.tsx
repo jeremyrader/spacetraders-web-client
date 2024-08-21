@@ -1,6 +1,6 @@
 'use client'
 
-import { Layer, Circle } from 'react-konva';
+import { Layer, Circle, Line, Group } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
 import React from 'react';
 import Konva from 'konva';
@@ -12,10 +12,11 @@ import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
 import ShipyardUI from './ShipyardUI';
 import MarketUI from './MarketUI'
+import Ship from './FleetLayer'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
-import { ISystemRender, IWaypointRender, IShipRender, ITrait } from '../types'
+import { ISystemRender, IWaypointRender, IShipRender, ITrait, IRoute, IWaypointLocation } from '../types'
 
 interface SystemMapProps {
   system: ISystemRender;
@@ -254,6 +255,24 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
 
   }
 
+  function getCurrentLocation(route: IRoute): IWaypointLocation {
+    const currentTime = new Date().getTime();
+    const departureTime = new Date(route.departureTime).getTime();
+    const arrivalTime = new Date(route.arrival).getTime();
+    const currentTimeMillis = new Date(currentTime).getTime();
+  
+    if (currentTimeMillis <= departureTime) {
+      return route.origin;
+    } else if (currentTimeMillis >= arrivalTime) {
+      return route.destination;
+    } else {
+      const progress = (currentTimeMillis - departureTime) / (arrivalTime - departureTime);
+      const currentX = route.origin.x + progress * (route.destination.x - route.origin.x);
+      const currentY = route.origin.y + progress * (route.destination.y - route.origin.y);
+      return { ...route.origin, x: currentX, y: currentY };
+    }
+  }
+
   useEffect(() => {
     const getShips = async () => {
       const ships: IShipRender[] = await getData('shipStore')
@@ -351,31 +370,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           isWaypointSelected={!!selectedWaypoint}
         />
       </Layer>
-      {/* System ships */}
-      <Layer>
-        {
-          ships.map((ship: IShipRender, index: number) => {
-            if (ship.renderData) {
-              const { x, y, color } = ship.renderData
-
-              return (
-                <Circle
-                  key={index}
-                  x={x}
-                  y={-y}
-                  radius={1}
-                  fill={color}
-                  opacity={!!selectedWaypoint ? 0 : 1}
-                />
-              )
-            }
-          })
-        }
-      </Layer>
+      <Ship ships={ships} isWaypointSelected={!!selectedWaypoint} />
       {/* Waypoints Layer */}
-      {
-        /* if no waypoint is selected or this waypoint is selected   */
-      }
       <Layer ref={waypointLayerRef}>
         {
           system.waypoints
