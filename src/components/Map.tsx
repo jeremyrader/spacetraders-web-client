@@ -189,6 +189,7 @@ const Map: React.FC<MapProps> = ({
         fillRadialGradientColorStops: [0.2, 'white', 0.6, 'blue', 0.8, 'black'],
       });
       layer.add(konvaCircle);
+      layer.moveToBottom();
     });
 
     if (stageRef) {
