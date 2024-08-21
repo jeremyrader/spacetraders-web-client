@@ -1,6 +1,6 @@
 'use client';
 
-import { Layer, Circle } from 'react-konva';
+import { Layer } from 'react-konva';
 import { useState, useRef, useEffect, useContext } from 'react';
 import React from 'react';
 import Konva from 'konva';
@@ -11,7 +11,7 @@ import MapControls from './MapControls';
 import System from './System';
 import Nebula from './Nebula';
 
-import { ISystem } from '@/types';
+import { ISystemRender } from '@/types';
 
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -43,7 +43,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const [systems, setSystems] = useState<any[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [mapCenter, setMapCenter] = useState({ x: 0, y: 0 });
-  const [selectedStar, setSelectedStar] = useState<ISystem | null>(null);
+  const [selectedStar, setSelectedStar] = useState<ISystemRender | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const massiveCircleCenter = {
@@ -82,12 +82,12 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     throw new Error('DataContext must be used within a DataProvider');
   }
 
-  const handleStarClick = (star: ISystem) => {
+  const handleStarClick = (star: ISystemRender) => {
     setSelectedStar(star);
     setMapCenter({ x: star.x, y: star.y });
   };
 
-  const handleEnterSystemClick = (star: ISystem | null) => {
+  const handleEnterSystemClick = (star: ISystemRender | null) => {
     if (star) {
       onSelectMap('system', star);
     }
@@ -170,7 +170,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
         MapControls={UniverseMapControls}
       >
         {/* Background Nebula Layer */}
-        <Layer>
+        {/* <Layer>
           {nebulas.map((nebula, index) => (
             <Nebula
               key={index}
@@ -182,7 +182,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
               zoomLevel={zoomLevel}
             />
           ))}
-        </Layer>
+        </Layer> */}
         {/* System stars */}
         <Layer ref={layerRef}>
           {systems.map((system, index) => {

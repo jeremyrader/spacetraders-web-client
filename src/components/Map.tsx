@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 import Konva from 'konva';
-import { Stage, Layer, Text } from 'react-konva';
+import { Stage, Layer, Text, Group, Circle } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
 
 interface MapProps {
@@ -48,6 +48,16 @@ const moveAmount = 10;
 //   }
 // });
 
+const generateStars = (count: number) => {
+  const stars = [];
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * 2000 - 1000; // Random x between -1000 and 1000
+    const y = Math.random() * 2000 - 1000; // Random y between -1000 and 1000
+    stars.push({ x, y });
+  }
+  return stars;
+};
+
 const Map: React.FC<MapProps> = ({
   containerRef,
   isLoading,
@@ -59,6 +69,8 @@ const Map: React.FC<MapProps> = ({
   MapControls,
 }) => {
   const stageRef = useRef<Konva.Stage>(null);
+  const layerRef = useRef<Konva.Layer>(null);
+
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 });
 
   const handleWheel = (wheelEvent: Konva.KonvaEventObject<WheelEvent>) => {
@@ -151,6 +163,40 @@ const Map: React.FC<MapProps> = ({
     };
   }, [containerRef]);
 
+  useEffect(() => {
+    if (layerRef.current) {
+      layerRef.current.cache();
+      layerRef.current.clearBeforeDraw(false);
+      layerRef.current.getLayer().batchDraw();
+    }
+  }, []);
+
+  useEffect(() => {
+    const stars = generateStars(10000); // Adjust the number of stars as needed
+    const layer = new Konva.Layer();
+
+    stars.forEach((star) => {
+      const konvaCircle = new Konva.Circle({
+        x: star.x,
+        y: star.y,
+        radius: 0.4,
+        fill: 'white',
+        shadowBlur: 10,
+        shadowColor: 'white',
+        shadowOpacity: 1,
+        opacity: 0.2,
+      });
+      layer.add(konvaCircle);
+    });
+
+    if (stageRef) {
+      const stage = stageRef.current?.getStage();
+      if (stage) {
+        stage.add(layer);
+      }
+    }
+  }, [isLoading]);
+
   return (
     <div className="relative">
       <Stage
@@ -164,18 +210,7 @@ const Map: React.FC<MapProps> = ({
         }}
         draggable
       >
-        {isLoading ? (
-          <Layer>
-            <Text
-              text="Loading map..."
-              fontSize={15}
-              offsetX={50}
-              fill="white"
-            />
-          </Layer>
-        ) : (
-          children
-        )}
+        {children}
       </Stage>
       {/* Fixed text */}
       {!isLoading ? <MapControls /> : null}

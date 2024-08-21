@@ -332,7 +332,6 @@ function SystemMap({ system, onSelectMap }: SystemMapProps) {
         <Layer ref={waypointLayerRef}>
           {system.waypoints
             .filter((waypoint: IWaypointRender) => !waypoint.orbits)
-            .sort((a, b) => b.x - a.x)
             .map((waypoint: IWaypointRender, index: number) => {
               return (
                 <Waypoint
