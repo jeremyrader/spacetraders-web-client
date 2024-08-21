@@ -268,6 +268,23 @@ export interface Inventory {
   units: number;
 }
 
+interface ShipyardTransaction {
+  agentSymbol: string;
+  price: number;
+  shipSymbol: string;
+  shipType: string;
+  timestamp: string;
+  waypointSymbol: string;
+}
+
+export interface IShipyard {
+  modificationsFee: string;
+  shipTypes: { type: string }[];
+  ships: IShip[];
+  symbol: string;
+  transactions: ShipyardTransaction[]
+}
+
 export type TWaypointType = 
   | 'PLANET'
   | 'GAS_GIANT'
@@ -294,5 +311,19 @@ export type TWaypointType =
   | 'BLACK_HOLE'
   | 'HYPERGIANT'
   | 'NEBULA'
+
+  export type TShipType = 
+  | 'SHIP_PROBE'
+  | 'SHIP_MINING_DRONE'
+  | 'SHIP_SIPHON_DRONE'
+  | 'SHIP_INTERCEPTOR'
+  | 'SHIP_LIGHT_HAULER'
+  | 'SHIP_COMMAND_FRIGATE'
+  | 'SHIP_EXPLORER'
+  | 'SHIP_HEAVY_FREIGHTER'
+  | 'SHIP_LIGHT_SHUTTLE'
+  | 'SHIP_ORE_HOUND'
+  | 'SHIP_REFINING_FREIGHTER'
+  | 'SHIP_SURVEYOR'
 
 export type TWaypointRenderDataMap = Record<TWaypointType, { radius: number, drawOrbit: boolean}>;

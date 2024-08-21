@@ -2,6 +2,7 @@
 
 import { Layer } from 'react-konva';
 import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import Konva from 'konva';
 
@@ -10,14 +11,14 @@ import MapControls from './MapControls';
 import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
-import ShipyardUI from './ShipyardUI';
 import MarketUI from './MarketUI'
 import FleetLayer from './FleetLayer'
 import MapButton from './MapButton'
 
+
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
-import { ISystemRender, IWaypointRender, IShipRender, ITrait } from '../types'
+import { ISystemRender, IWaypointRender, IShipRender, ITrait, ISystem } from '../types'
 
 interface SystemMapProps {
   system: ISystemRender;
@@ -27,6 +28,8 @@ interface SystemMapProps {
 const maxZoom = 3
 
 function SystemMap({system, onSelectMap}: SystemMapProps) {
+  const router = useRouter();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const waypointLayerRef = useRef<Konva.Layer>(null);
 
@@ -91,8 +94,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     }
   }
 
-  const handleSelectShipyard = () => {
-    setIsShipyardSelected(true)
+  const handleSelectShipyard = (systemSymbol: string, waypointSymbol: string) => {
+    router.push(`/shipyard?systemSymbol=${systemSymbol}&waypointSymbol=${waypointSymbol}`);
   }
 
   const handleSelectMarketplace = () => {
@@ -137,7 +140,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           }
           {
             (selectedWaypoint && hasShipyard) ? (
-              <MapButton onClick={handleSelectShipyard} text="Go to Shipyard" />
+              <MapButton onClick={() => handleSelectShipyard(system.symbol, selectedWaypoint.symbol)} text="Go to Shipyard" />
             ) : null
           }
         </div>
@@ -152,11 +155,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
         {
           selectedWaypoint && isMarketplaceSelected && hasMarketplace ? (
             <MarketUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint.symbol}/>
-          ) : null
-        }
-        {
-          selectedWaypoint && isShipyardSelected && hasShipyard ? (
-            <ShipyardUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint.symbol}/>
           ) : null
         }
         { isShipyardSelected && hasShipyard ? (
