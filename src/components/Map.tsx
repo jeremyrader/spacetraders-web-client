@@ -179,12 +179,17 @@ const Map: React.FC<MapProps> = ({
       const konvaCircle = new Konva.Circle({
         x: star.x,
         y: star.y,
-        radius: 0.4,
-        fill: 'white',
+        radius: 1,
+        // fill: 'white',
         shadowBlur: 10,
         shadowColor: 'white',
         shadowOpacity: 1,
-        opacity: 0.2,
+        opacity: 0.15,
+        fillRadialGradientStartPoint: { x: 0, y: 0 },
+        fillRadialGradientStartRadius: 0,
+        fillRadialGradientEndPoint: { x: 0, y: 0 },
+        fillRadialGradientEndRadius: 1,
+        fillRadialGradientColorStops: [0.2, 'white', 0.6, 'blue', 0.8, 'black'],
       });
       layer.add(konvaCircle);
     });
@@ -195,7 +200,7 @@ const Map: React.FC<MapProps> = ({
         stage.add(layer);
       }
     }
-  }, [isLoading]);
+  }, []);
 
   return (
     <div className="relative">
