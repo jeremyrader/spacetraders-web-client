@@ -9,7 +9,6 @@ import DataContext from '../contexts/DataContext';
 import Map from './Map';
 import MapControls from './MapControls';
 import System from './System';
-import Nebula from './Nebula';
 
 import { ISystemRender } from '@/types';
 
@@ -65,19 +64,21 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     return (
       <MapControls onSelectMap={onSelectMap}>
         <button
+          disabled={!selectedStar}
           onClick={() => handleEnterSystemClick(selectedStar)}
           type="button"
-          className="px-4 py-2 
+          className={`
+            px-4 py-2 
             rounded 
-            bg-blue-500 
-            hover:bg-blue-700
+            ${!selectedStar ? 'bg-zinc-300' : 'bg-blue-500'}
+            ${!selectedStar ? '' : 'hover:bg-blue-700'}
             click:bg-blue-900
             text-lg font-semibold 
             text-white 
             tracking-wide 
             uppercase 
             transition-colors 
-            duration-300"
+            duration-300`}
         >
           View System Map
         </button>
