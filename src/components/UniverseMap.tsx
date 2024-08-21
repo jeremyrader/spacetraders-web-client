@@ -46,38 +46,6 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const [selectedStar, setSelectedStar] = useState<ISystemRender | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const massiveCircleCenter = {
-    x: 0,
-    y: 0,
-  };
-  const massiveCircleRadius = 60000; // Radius of the massive circle
-
-  // TODO: Handle at ingestion time
-  // Generate nebulas only once and store in state
-  const [nebulas] = useState(() => {
-    const nebulas = [];
-    const numNebulas = 10000; // Attempt to generate 50 nebulas
-
-    for (let i = 0; i < numNebulas; i++) {
-      const point = getRandomPointInCircle(massiveCircleRadius);
-
-      // Calculate the probability of placing a nebula based on distance
-      const probability = 1 - point.distance / massiveCircleRadius;
-
-      if (Math.random() < probability) {
-        nebulas.push({
-          x: massiveCircleCenter.x + point.x,
-          y: massiveCircleCenter.y + point.y,
-          radius: getRandomInt(1000, 2000), // Large radius for diffuse nebula
-          color1: `rgba(${getRandomInt(100, 255)}, ${getRandomInt(50, 150)}, ${getRandomInt(150, 255)}, ${getRandomFloat(0.2, 0.5)})`,
-          color2: `rgba(${getRandomInt(50, 150)}, ${getRandomInt(0, 100)}, ${getRandomInt(100, 200)}, 0)`, // Fade to transparent
-        });
-      }
-    }
-
-    return nebulas;
-  });
-
   if (!context) {
     throw new Error('DataContext must be used within a DataProvider');
   }
@@ -169,20 +137,6 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
         mapCenter={mapCenter}
         MapControls={UniverseMapControls}
       >
-        {/* Background Nebula Layer */}
-        {/* <Layer>
-          {nebulas.map((nebula, index) => (
-            <Nebula
-              key={index}
-              x={nebula.x}
-              y={nebula.y}
-              radius={nebula.radius}
-              color1={nebula.color1}
-              color2={nebula.color2}
-              zoomLevel={zoomLevel}
-            />
-          ))}
-        </Layer> */}
         {/* System stars */}
         <Layer ref={layerRef}>
           {systems.map((system, index) => {
