@@ -160,7 +160,7 @@ const Map: React.FC<MapProps> = ({ containerRef, isLoading, children, maxZoom, o
         {
           isLoading ? (
             <Layer>
-              <Text text="Map is loading..." fontSize={15} fill="white" />
+              <Text text="Loading map..." fontSize={15} offsetX={50} fill="white" />
             </Layer>
           ) : children
         }
