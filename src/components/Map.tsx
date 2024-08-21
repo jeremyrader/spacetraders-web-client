@@ -76,22 +76,20 @@ const Map: React.FC<MapProps> = ({
   const handleWheel = (wheelEvent: Konva.KonvaEventObject<WheelEvent>) => {
     wheelEvent.evt.preventDefault();
 
-    const scaleBy = 1.2; // Zoom factor
+    const scaleBy = 1.1; // Zoom factor
     const stage = stageRef.current;
 
     if (stage) {
       const oldScale = stage.scaleX();
 
-      const scaleFactor = 1 + Math.log(1 + scaleBy) / 10;
-
       // Determine the new scale factor based on scroll direction
       let newScale = oldScale;
       if (wheelEvent.evt.deltaY < 0) {
         // Zoom in (scrolling up)
-        newScale = oldScale * scaleFactor;
+        newScale = oldScale * scaleBy;
       } else if (wheelEvent.evt.deltaY > 0) {
         // Zoom out (scrolling down)
-        newScale = oldScale / scaleFactor;
+        newScale = oldScale / scaleBy;
       }
 
       newScale = Math.min(newScale, maxZoom);
@@ -180,7 +178,6 @@ const Map: React.FC<MapProps> = ({
         x: star.x,
         y: star.y,
         radius: 1,
-        // fill: 'white',
         shadowBlur: 10,
         shadowColor: 'white',
         shadowOpacity: 1,
