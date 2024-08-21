@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
 
 import UniverseMap from '@/components/UniverseMap';
@@ -30,6 +30,29 @@ function Map() {
       setSelectedSystem(system)
     }
   }
+  
+  useEffect(() => {
+    const selectedMap = sessionStorage.getItem('selectedMap');
+    const selectedSystem = sessionStorage.getItem('selectedSystem')
+
+    if (selectedMap !== null) {
+      setSelectedMap(selectedMap);
+    }
+
+    if (selectedSystem !== null) {
+      setSelectedSystem(JSON.parse(selectedSystem));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedMap !== null) {
+      sessionStorage.setItem('selectedMap', selectedMap)
+    }
+
+    if (selectedSystem !== null) {
+      sessionStorage.setItem('selectedSystem', JSON.stringify(selectedSystem))
+    }
+  }, [selectedMap]);
 
   return <DataProvider>
     <div className="min-h-screen">
