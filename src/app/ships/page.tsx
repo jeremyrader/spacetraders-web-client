@@ -28,9 +28,9 @@ function Ships() {
   return <DataProvider>
     <Navbar></Navbar>
     <main className="flex min-h-screen flex-col p-24">
-      <h1>My Ships</h1>
+      <h1 className="text-xl text-center mb-8">My Ships</h1>
       <div className="overflow-x-auto">
-      <table className="table">
+      <table className="table mb-8">
         {/* head */}
         <thead>
           <tr>
@@ -53,7 +53,7 @@ function Ships() {
                 <th>{ship.symbol}</th>
                 <th>{ship.frame.name}</th>
                 <th>{ship.registration.role}</th>
-                <th>{ship.cargo?.capacity} / {ship.cargo?.capacity}</th>
+                <th>{ship.cargo?.units} / {ship.cargo?.capacity}</th>
                 <th>{ship.fuel?.current} / {ship.fuel?.capacity}</th>
                 <th>{ship.nav.flightMode}</th>
                 <th>{ship.nav.status}</th>
@@ -71,7 +71,7 @@ function Ships() {
           }
         </tbody>
       </table>
-
+      <h2 className="text-lg text-center mb-4">Cargo</h2>
       <table className="table">
         {/* head */}
         <thead>
