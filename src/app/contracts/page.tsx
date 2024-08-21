@@ -23,67 +23,62 @@ function Dashboard() {
   return <DataProvider>
     <Navbar></Navbar>
     <main className="flex min-h-screen flex-col p-24">
-      <h1 className="text-xl text-center">Contracts</h1>
-      <div className="mb-24">
-        <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-            <tr>
-                <th>Type</th>
-                <th>Accepted</th>
-                <th>Fulfilled</th>
-                <th>Expiration</th>
-                <th>Deadline to Fulfill</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
+      <h1 className="text-xl text-center p-8">Contracts</h1>
+
+      {
+        contracts && contracts.map((contract, index) => (
+          <div key={index} className="collapse collapse-arrow bg-base-200">
+            <input type="radio" name="my-accordion-2" defaultChecked />
+            <div className="collapse-title text-xl font-medium">
+
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Accepted</th>
+                  <th>Fulfilled</th>
+                  <th>Expiration</th>
+                  <th>Deadline to Fulfill</th>
+                </tr>
+              </thead>
               <tbody>
-                {
-                  contracts.map((contract, index) => (
-                    <Fragment key={index}>
-                        <tr>
-                          <th>{contract.type}</th>
-                          <th>{contract.accepted ? 'Yes': 'No'}</th>
-                          <th>{contract.fulfilled ? 'Yes': 'No'}</th>
-                          <th>{contract.expiration}</th>
-                          <th>{contract.deadlineToAccept}</th>
-                        </tr>
-                        <tr>
-                          <th colSpan={5}>
-                          {
-                            contract.terms.deliver.map((delivery, index) => (
-                              <div className="my-4" key={index}>
-                                  <p>Trade Symbol: {delivery.tradeSymbol}</p>
-                                  <p>Trade Destination: {delivery.destinationSymbol}</p>
-                                  <p>Units Required: {delivery.unitsRequired}</p>
-                                  <p>Units Fulfilled: {delivery.unitsFulfilled}</p>
-                              </div>
-                            ))
-                          }
-                          {
-                            contracts.map((contract, index) => (
-                              <div className="mt-4" key={index}>
-                                <p>
-                                  Terms:
-                                </p>    
-                                <p>Deadline: {contract.terms.deadline}</p>
-                                <p>Payment on Accept: {contract.terms.payment.onAccepted}</p>
-                                <p>Payment on Fulfillment: {contract.terms.payment.onFulfilled}</p>
-                              </div>
-                            ))
-                          }
-                          </th>
-                        </tr>
-                    </Fragment>
-                  ))
-                }
+                <tr>
+                  <th>{contract.type}</th>
+                  <th>{contract.accepted ? 'Yes': 'No'}</th>
+                  <th>{contract.fulfilled ? 'Yes': 'No'}</th>
+                  <th>{contract.expiration}</th>
+                  <th>{contract.deadlineToAccept}</th>
+                </tr>
               </tbody>
-          </table>
-        </div>
-
-        
-      </div>
-
+            </table>
+            </div>
+            
+            <div className="collapse-content flex">
+              <div className="p-4">
+                <p className="font-bold">Payment</p>
+                <p>On Accepted: {contract.terms.payment.onAccepted}</p>
+                <p>On Fulfilled: {contract.terms.payment.onFulfilled}</p>
+              </div>
+              <div className="p-4">
+                <p className="font-bold">Deadline</p>
+                <p>{contract.terms.deadline}</p>
+              </div>
+              {
+                contract.terms.deliver.map((delivery, index) => (
+                  <div className="p-4" key={index}>
+                    <p className="font-bold">Delivery</p>
+                    <p>Trade Symbol: {delivery.tradeSymbol}</p>
+                    <p>Trade Destination: {delivery.destinationSymbol}</p>
+                    <p>Units Required: {delivery.unitsRequired}</p>
+                    <p>Units Fulfilled: {delivery.unitsFulfilled}</p>
+                  </div>
+                ))
+              }
+              
+            </div>
+          </div>
+        ))
+      }
     </main>
   </DataProvider>
 }
