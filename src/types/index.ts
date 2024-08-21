@@ -226,13 +226,13 @@ interface Crew {
   capacity: number
 }
 
-export interface Commodity {
+export interface ICommodity {
   symbol: string;
   name: string;
   description: string;
 }
 
-interface Transaction {
+export interface ITransaction {
   waypointSymbol: string;
   shipSymbol: string;
   tradeSymbol: string;
@@ -243,7 +243,7 @@ interface Transaction {
   timestamp: string;
 }
 
-export interface TradeGood {
+export interface ITradeGood {
   symbol: string;
   tradeVolume: string;
   type: string;
@@ -252,13 +252,13 @@ export interface TradeGood {
   sellPrice: number;
 }
 
-export interface Market {
+export interface IMarket {
   symbol: string;
   imports: any[];
   exports: any[]
-  exchange: Commodity[]
-  transactions: Transaction[]
-  tradeGoods: TradeGood[]
+  exchange: ICommodity[]
+  transactions: ITransaction[]
+  tradeGoods: ITradeGood[]
 }
 
 export interface Inventory {

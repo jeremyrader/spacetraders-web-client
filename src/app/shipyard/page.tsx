@@ -3,20 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { fetchResource, postRequest } from '@/utils/v2'
+import { fetchResource } from '@/utils/v2'
 import { IShip, IShipyard } from '@/types'
 
 import Navbar from '@/components/Navbar';
 import { TShipType } from '@/types'
 
-interface ShipyardProps {
-  systemSymbol: string;
-  waypointSymbol: string;
-}
-
 const ShipyardUI = () => {
   const searchParams = useSearchParams();
-
   const [shipyardData, setShipyardData] = useState<IShipyard>()
   const [selectedView, setSelectedView] = useState<string>('Ships')
 
@@ -68,7 +62,6 @@ const ShipyardUI = () => {
                   </div>
                 ) : null
             }
-
             {
               (shipyardData.ships && shipyardData.transactions) ? (
                 <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-8">
@@ -77,7 +70,6 @@ const ShipyardUI = () => {
                 </ul>
               ) : null
             } 
-
             {
               (shipyardData.ships && selectedView === 'Ships') ? (
                 <>

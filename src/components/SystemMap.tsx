@@ -11,7 +11,6 @@ import MapControls from './MapControls';
 import Waypoint from '@/components/Waypoint'
 import Orbit from '@/components/Orbit'
 import SystemStar from '@/components/SystemStar'
-import MarketUI from './MarketUI'
 import FleetLayer from './FleetLayer'
 import MapButton from './MapButton'
 
@@ -37,8 +36,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
   const [selectedWaypoint, setSelectedWaypoint] = useState<IWaypointRender | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedTrait, setSelectedTrait] = useState<string | null>(null)
-  const [isShipyardSelected, setIsShipyardSelected] = useState<boolean>(false)
-  const [isMarketplaceSelected, setIsMarketplaceSelected] = useState<boolean>(false)
   const [mapCenter, setMapCenter] = useState<{x: number, y: number}>({x: 0, y: 0})
   const [ships, setShips] = useState<IShipRender[]>([])
 
@@ -98,16 +95,8 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     router.push(`/shipyard?systemSymbol=${systemSymbol}&waypointSymbol=${waypointSymbol}`);
   }
 
-  const handleSelectMarketplace = () => {
-    setIsMarketplaceSelected(true)
-  }
-
-  const handleCloseShipyardUI = () => {
-    setIsShipyardSelected(false)
-  }
-
-  const handleCloseMarketUI = () => {
-    setIsMarketplaceSelected(false)
+  const handleSelectMarketplace = (systemSymbol: string, waypointSymbol: string) => {
+    router.push(`/marketplace?systemSymbol=${systemSymbol}&waypointSymbol=${waypointSymbol}`);
   }
 
   function getDistance(x1: number, y1: number, x2: number, y2: number): number {
@@ -135,7 +124,7 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           }
           {
             (selectedWaypoint && hasMarketplace) ? (
-              <MapButton onClick={handleSelectMarketplace} text="Go to Marketplace" />
+              <MapButton onClick={() => handleSelectMarketplace(system.symbol, selectedWaypoint.symbol)} text="Go to Marketplace" />
             ) : null
           }
           {
@@ -151,20 +140,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
               <span className="loading loading-spinner loading-md"></span>
             </>
           ): null
-        }
-        {
-          selectedWaypoint && isMarketplaceSelected && hasMarketplace ? (
-            <MarketUI systemSymbol={system.symbol} waypointSymbol={selectedWaypoint.symbol}/>
-          ) : null
-        }
-        { isShipyardSelected && hasShipyard ? (
-            <button className="btn" onClick={handleCloseShipyardUI}>Close Shipyard UI</button>
-          ) : null
-        }
-
-        { isMarketplaceSelected && hasMarketplace ? (
-            <button className="btn" onClick={handleCloseMarketUI}>Close Market UI</button>
-          ) : null
         }
       </MapControls>
     )
