@@ -122,10 +122,12 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
           <MapButton onClick={() => {fetchWaypoints(true)}} text="Re-fetch Waypoints" />
           {
             !selectedWaypoint ? (
-              <>
-                <MapButton onClick={() => {highlightTrait('MARKETPLACE')}} text="Marketplaces" />
-                <MapButton onClick={() => {highlightTrait('SHIPYARD')}} text="Shipyards" />
-              </>
+              <MapButton onClick={() => {highlightTrait('MARKETPLACE')}} isSelected={selectedTrait == 'MARKETPLACE'} text="Marketplaces" />
+            ) : null
+          }
+          {
+            !selectedWaypoint ? (
+              <MapButton onClick={() => {highlightTrait('SHIPYARD')}} isSelected={selectedTrait == 'SHIPYARD'}  text="Shipyards" />
             ) : null
           }
           {
