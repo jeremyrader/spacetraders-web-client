@@ -10,13 +10,15 @@ import AnnouncementsCard from '@/components/AnnouncementsCard';
 import LinksCard from '@/components/LinksCard'
 import StatsCard from '@/components/StatsCard'
 import LeaderboardCard from '@/components/LeaderBoardCard';
+import AgentCard from '@/components/AgentCard';
 
 import { fetchResource } from '@/utils/v2'
 
-import { IServerStatus } from '@/types'
+import { IServerStatus, IAgent } from '@/types'
 
 export default function Home() {
   const [status, setStatus] = useState<IServerStatus | null>(null)
+  const [agent, setAgent] = useState<IAgent | null>(null)
 
   const callsign = window.localStorage.getItem('callsign')
 
@@ -26,9 +28,20 @@ export default function Home() {
       const status = await fetchResource('')
       setStatus(status)
     }
-
     getStatus()
   }, [])
+
+  useEffect(() => {
+    async function fetchAgent() {
+      const result = await fetchResource('my/agent')
+      
+      if (result.data) {
+        setAgent(result.data)
+      }
+    }
+
+    fetchAgent();
+  }, []);
 
   return (
     <DataProvider>
@@ -39,6 +52,7 @@ export default function Home() {
             <LoginForm></LoginForm>
           ) : (
             <div className="flex w-full">
+
               <div className="flex flex-col w-1/3 p-4">
                 {
                   status && (
@@ -69,6 +83,11 @@ export default function Home() {
               <div className="divider divider-horizontal"></div>
 
               <div className="flex flex-col w-2/3 p-4">
+                {
+                  agent && (
+                    <AgentCard agent={agent} />
+                  )
+                }
                 { 
                   status && (
                     <LeaderboardCard

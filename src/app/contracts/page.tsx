@@ -3,48 +3,28 @@
 import { useState, useEffect } from 'react';
 import { Fragment } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
-import { fetchResource, fetchResourcePaginated, postRequest } from '../../utils/v2';
+import { fetchResourcePaginated } from '../../utils/v2';
 
 import Navbar from '@/components/Navbar';
-import { IAgent, IContract } from '@/types'
+import { IContract } from '@/types'
 
 function Dashboard() {
-  const [agent, setAgent] = useState<IAgent | null>(null)
   const [contracts, setContracts] = useState<IContract[]>([])
 
-  const handleAcceptContract = async (contractId: string) => {
-    const response = await postRequest(`my/contracts/${contractId}/accept`)
-  }
-
   useEffect(() => {
-    async function fetchAgent() {
-      const result = await fetchResource('my/agent')
-      setAgent(result.data)
-    }
-
     async function fetchContracts() {
       const result = await fetchResourcePaginated('my/contracts')
         setContracts(result);
     }
 
-    fetchAgent();
     fetchContracts();
   }, []);
 
   return <DataProvider>
     <Navbar></Navbar>
     <main className="flex min-h-screen flex-col p-24">
-      Dashboard
+      <h1 className="text-xl text-center">Contracts</h1>
       <div className="mb-24">
-        <p>Account ID: {agent?.accountId}</p>
-        <p>Symbol: {agent?.symbol}</p>
-        <p>Headquarters: {agent?.headquarters}</p>
-        <p>Credits: {agent?.credits}</p>
-        <p>Starting Faction: {agent?.startingFaction}</p>
-        <p>Ship Count: {agent?.shipCount}</p>
-
-        <p className="mt-8">Contracts:</p>
-
         <div className="overflow-x-auto">
           <table className="table">
             <thead>
@@ -67,17 +47,6 @@ function Dashboard() {
                           <th>{contract.fulfilled ? 'Yes': 'No'}</th>
                           <th>{contract.expiration}</th>
                           <th>{contract.deadlineToAccept}</th>
-                          <th>
-                            {
-                              !contract.accepted ? (
-                                <button className="btn" onClick={() => {
-                                  handleAcceptContract(contract.id)
-                                }}>
-                                  Accept
-                                </button>
-                              ) : null
-                            }
-                          </th>
                         </tr>
                         <tr>
                           <th colSpan={5}>
