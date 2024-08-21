@@ -13,6 +13,7 @@ import SystemStar from '@/components/SystemStar'
 import ShipyardUI from './ShipyardUI';
 import MarketUI from './MarketUI'
 import FleetLayer from './FleetLayer'
+import MapButton from './MapButton'
 
 import { getObject, getData, saveData } from '../utils/indexeddb';
 import { fetchResourcePaginated } from '../utils/v2'
@@ -117,85 +118,26 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     return (
       <MapControls onSelectMap={onSelectMap}>
         <div className="flex flex-col">
-          <button
-            onClick={handleSelectBack}
-            type="button"
-            className="
-              px-4 py-2 
-              rounded 
-              bg-blue-700 
-              hover:bg-blue-800
-              click:bg-blue-900
-              text-lg font-semibold 
-              text-white 
-              tracking-wide 
-              uppercase 
-              transition-colors 
-              duration-300
-              mb-2
-            "
-          >
-            View Universe Map
-          </button>
-          <button
-            onClick={() => {fetchWaypoints(true) }}
-            type="button"
-            className="
-              px-4 py-2 
-              rounded 
-              bg-blue-700
-              hover:bg-blue-800
-              click:bg-blue-900
-              text-lg font-semibold 
-              text-white 
-              tracking-wide 
-              uppercase 
-              transition-colors 
-              duration-300
-              mb-8
-            "
-          >
-            Re-fetch Waypoints
-          </button>
-          <button
-            onClick={() => {highlightTrait('MARKETPLACE')}}
-            type="button"
-            className="
-              px-4 py-2 
-              rounded 
-              bg-blue-700
-              hover:bg-blue-800
-              click:bg-blue-900
-              text-lg font-semibold 
-              text-white 
-              tracking-wide 
-              uppercase 
-              transition-colors 
-              duration-300
-              mb-2
-            "
-          >
-            Marketplaces
-          </button>
-          <button
-            onClick={() => {highlightTrait('SHIPYARD')}}
-            type="button"
-            className="
-              px-4 py-2 
-              rounded 
-              bg-blue-700
-              hover:bg-blue-800
-              click:bg-blue-900
-              text-lg font-semibold 
-              text-white 
-              tracking-wide 
-              uppercase 
-              transition-colors 
-              duration-300
-            "
-          >
-            Shipyards
-          </button>
+          <MapButton onClick={handleSelectBack} text="View Universe Map" />
+          <MapButton onClick={() => {fetchWaypoints(true)}} text="Re-fetch Waypoints" />
+          {
+            !selectedWaypoint ? (
+              <>
+                <MapButton onClick={() => {highlightTrait('MARKETPLACE')}} text="Marketplaces" />
+                <MapButton onClick={() => {highlightTrait('SHIPYARD')}} text="Shipyards" />
+              </>
+            ) : null
+          }
+          {
+            (selectedWaypoint && hasMarketplace) ? (
+              <MapButton onClick={handleSelectMarketplace} text="Go to Marketplace" />
+            ) : null
+          }
+          {
+            (selectedWaypoint && hasShipyard) ? (
+              <MapButton onClick={handleSelectShipyard} text="Go to Shipyard" />
+            ) : null
+          }
         </div>
         {
           isLoading ? (
