@@ -51,28 +51,28 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
       const symbolParts = system.symbol.split('-')
       const results = await fetchResourcePaginated(`systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`)
 
-      type accType = Record<string, typeof results[string]>
+      type accType = Record<string, typeof results[string]> 
 
-      const waypointsIndexedBySymbol = results.reduce((acc: accType, result: IWaypointRender) => {
-        acc[result.symbol] = result;
-        return acc;
-      }, {} as accType);
+      function updateWaypoint(waypoint: IWaypointRender): IWaypointRender {
+       
+        const waypointsIndexedBySymbol = results.reduce((acc: accType, result: IWaypointRender) => {
+          acc[result.symbol] = result;
+          return acc;
+        }, {} as accType);
 
-      function updateTraits(waypoint: IWaypointRender, getTraits: (symbol: string) => ITrait[]): IWaypointRender {
-        waypoint.traits = getTraits(waypoint.symbol);
-        waypoint.orbitals = waypoint.orbitals.map(orbital => updateTraits(orbital, getTraits));
+        waypoint.traits = waypointsIndexedBySymbol[waypoint.symbol].traits
+        waypoint.chart = waypointsIndexedBySymbol[waypoint.symbol].chart
+        waypoint.faction = waypointsIndexedBySymbol[waypoint.symbol].faction
+
+        waypoint.orbitals = waypoint.orbitals.map(orbital => updateWaypoint(orbital));
       
         saveData('waypointStore', [waypoint])
 
         return waypoint;
       }
-
-      const getTraits = (symbol: string) => {
-        return waypointsIndexedBySymbol[symbol].traits
-      };
       
       for (let waypoint of currentSystem.waypoints) {
-        waypoint = updateTraits(waypoint, getTraits);
+        waypoint = updateWaypoint(waypoint);
       }
 
       saveData('systemsStore', [currentSystem])
@@ -252,7 +252,6 @@ function SystemMap({system, onSelectMap}: SystemMapProps) {
     if (!(isWaypoint || isWaypointMetadata)) {
       setSelectedWaypoint(null)
     }
-
   }
 
   useEffect(() => {
