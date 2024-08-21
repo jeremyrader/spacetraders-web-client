@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Layer, Circle } from 'react-konva';
 import { useState, useRef, useEffect, useContext } from 'react';
@@ -6,12 +6,12 @@ import React from 'react';
 import Konva from 'konva';
 import DataContext from '../contexts/DataContext';
 
-import Map from './Map'
+import Map from './Map';
 import MapControls from './MapControls';
-import System from './System'
-import Nebula from './Nebula'
+import System from './System';
+import Nebula from './Nebula';
 
-import { ISystem } from '@/types'
+import { ISystem } from '@/types';
 
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -42,9 +42,9 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [systems, setSystems] = useState<any[]>([]);
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [mapCenter, setMapCenter] = useState({x: 0, y: 0});
+  const [mapCenter, setMapCenter] = useState({ x: 0, y: 0 });
   const [selectedStar, setSelectedStar] = useState<ISystem | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const massiveCircleCenter = {
     x: 0,
@@ -84,14 +84,14 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
   const handleStarClick = (star: ISystem) => {
     setSelectedStar(star);
-    setMapCenter({x: star.x, y: star.y})
+    setMapCenter({ x: star.x, y: star.y });
   };
 
   const handleEnterSystemClick = (star: ISystem | null) => {
     if (star) {
-      onSelectMap('system', star)
+      onSelectMap('system', star);
     }
-  }
+  };
 
   const UniverseMapControls = () => {
     return (
@@ -109,12 +109,13 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
             tracking-wide 
             uppercase 
             transition-colors 
-            duration-300">
-            View System Map
+            duration-300"
+        >
+          View System Map
         </button>
       </MapControls>
-    )
-  }
+    );
+  };
 
   useEffect(() => {
     const getSystems = async () => {
@@ -124,20 +125,23 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
 
           setSystems(systems);
 
-          const mapCenterSymbol = window.localStorage.getItem('headquarters')
+          const mapCenterSymbol = window.localStorage.getItem('headquarters');
 
           if (mapCenterSymbol) {
-            const symbolParts = mapCenterSymbol.split('-')
-            const mapCenter = systems.find(system => system.symbol == `${symbolParts[0]}-${symbolParts[1]}`)
+            const symbolParts = mapCenterSymbol.split('-');
+            const mapCenter = systems.find(
+              (system) =>
+                system.symbol == `${symbolParts[0]}-${symbolParts[1]}`,
+            );
 
-            setSelectedStar(mapCenter)
+            setSelectedStar(mapCenter);
 
             if (mapCenter) {
-              setMapCenter({x: mapCenter.x, y: mapCenter.y})
+              setMapCenter({ x: mapCenter.x, y: mapCenter.y });
             }
           }
 
-          setIsLoading(false)
+          setIsLoading(false);
         } catch (error) {
           console.error('Error fetching data from IndexedDB:', error);
         } finally {
@@ -146,30 +150,28 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     };
 
     getSystems();
-
   }, []);
 
-  return <div ref={containerRef}>
-    <Map
-      containerRef={containerRef}
-      isLoading={isLoading}
-      maxZoom={1}
-      onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
-      onStageClick={(e: Konva.KonvaEventObject<MouseEvent>) => { 
-        const isSystem = !!e.target.attrs.system
-        
-        if (!isSystem) {
-          setSelectedStar(null) 
-        }
-        
-      }}
-      mapCenter={mapCenter}
-      MapControls={UniverseMapControls}
-    >
-      {/* Background Nebula Layer */}
-      <Layer>
-        {
-          nebulas.map((nebula, index) => (
+  return (
+    <div ref={containerRef}>
+      <Map
+        containerRef={containerRef}
+        isLoading={isLoading}
+        maxZoom={1}
+        onZoom={(zoomLevel: number) => setZoomLevel(zoomLevel)}
+        onStageClick={(e: Konva.KonvaEventObject<MouseEvent>) => {
+          const isSystem = !!e.target.attrs.system;
+
+          if (!isSystem) {
+            setSelectedStar(null);
+          }
+        }}
+        mapCenter={mapCenter}
+        MapControls={UniverseMapControls}
+      >
+        {/* Background Nebula Layer */}
+        <Layer>
+          {nebulas.map((nebula, index) => (
             <Nebula
               key={index}
               x={nebula.x}
@@ -179,13 +181,11 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
               color2={nebula.color2}
               zoomLevel={zoomLevel}
             />
-          ))
-        }
-      </Layer>
-      {/* System stars */}
-      <Layer ref={layerRef}>
-        {
-          systems.map((system, index) => {
+          ))}
+        </Layer>
+        {/* System stars */}
+        <Layer ref={layerRef}>
+          {systems.map((system, index) => {
             return (
               <System
                 key={index}
@@ -195,12 +195,12 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
                 selectedSystem={selectedStar}
                 isSelected={selectedStar?.symbol == system.symbol}
               />
-            )
-          })
-        }
-      </Layer>
-    </Map>
-  </div>
-}
+            );
+          })}
+        </Layer>
+      </Map>
+    </div>
+  );
+};
 
 export default UniverseMap;

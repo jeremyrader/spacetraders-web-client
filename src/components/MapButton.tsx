@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
 interface MapButtonProps {
-  onClick: React.MouseEventHandler<HTMLButtonElement>
-  text: string
+  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  text: string;
   isSelected?: boolean;
 }
 
-const MapButton = ({onClick, text, isSelected = false}: MapButtonProps) => {
-  const buttonClass =`
+const MapButton = ({ onClick, text, isSelected = false }: MapButtonProps) => {
+  const buttonClass = `
     px-4 py-2
     rounded 
     ${isSelected ? 'bg-blue-900' : 'bg-blue-700'}
@@ -20,17 +20,13 @@ const MapButton = ({onClick, text, isSelected = false}: MapButtonProps) => {
     transition-colors 
     duration-300
     mb-2
-  `
+  `;
 
   return (
-    <button
-      onClick={onClick}
-      type="button"
-      className={buttonClass}
-    >
+    <button onClick={onClick} type="button" className={buttonClass}>
       {text}
     </button>
-  )
-}
+  );
+};
 
-export default MapButton
+export default MapButton;

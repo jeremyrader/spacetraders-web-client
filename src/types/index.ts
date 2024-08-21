@@ -33,7 +33,7 @@ interface ContractTerms {
     destinationSymbol: string;
     unitsRequired: number;
     unitsFulfilled: number;
-  }[]
+  }[];
 }
 
 export interface IContract {
@@ -56,17 +56,17 @@ export interface IWaypoint {
   type: string;
   x: number;
   y: number;
-  orbitals: IOrbital[]
-  traits: ITrait[]
-  orbits: string
-  modifiers: any[]
+  orbitals: IOrbital[];
+  traits: ITrait[];
+  orbits: string;
+  modifiers: any[];
   chart: {
     submittedBy: string;
     submittedOn: string;
-  }
+  };
   faction: {
     symbol: string;
-  }
+  };
   isUnderConstruction: boolean;
 }
 
@@ -78,7 +78,7 @@ export interface IWaypointRender extends IWaypoint {
     y?: number;
     color1: string;
     color2: string;
-  }
+  };
   orbitals: IWaypointRender[];
 }
 
@@ -87,21 +87,21 @@ export interface ISystem {
   type: string;
   x: number;
   y: number;
-  waypoints: IWaypoint[]
+  waypoints: IWaypoint[];
 }
 
 export interface ISystemRender extends ISystem {
   renderData: {
     radius: number;
     color: string;
-  }
+  };
   waypoints: IWaypointRender[];
 }
 
 interface Cargo {
   capacity: number;
   units: number;
-  inventory: any[]
+  inventory: any[];
 }
 
 interface Fuel {
@@ -109,7 +109,7 @@ interface Fuel {
   consumed: {
     amount: number;
     timestamp: string;
-  }
+  };
   current: number;
 }
 
@@ -124,106 +124,106 @@ export interface IWaypointLocation {
 export interface IRoute {
   arrival: string;
   departureTime: string;
-  destination: IWaypointLocation
-  origin: IWaypointLocation
+  destination: IWaypointLocation;
+  origin: IWaypointLocation;
 }
 
 export interface IShip {
   symbol?: string;
-  type: string
-  name: string
-  description: string
-  supply: string
-  activity: string
-  purchasePrice: number
-  frame: Frame
-  reactor: Reactor
-  engine: Engine
-  modules: Module[]
-  mounts: Mount[]
-  crew: Crew
-  cargo?: Cargo
-  fuel?: Fuel
+  type: string;
+  name: string;
+  description: string;
+  supply: string;
+  activity: string;
+  purchasePrice: number;
+  frame: Frame;
+  reactor: Reactor;
+  engine: Engine;
+  modules: Module[];
+  mounts: Mount[];
+  crew: Crew;
+  cargo?: Cargo;
+  fuel?: Fuel;
   nav: {
     flightMode: string;
     route: IRoute;
     status: string;
     systemSymbol: string;
     waypointSymbol: string;
-  }
+  };
   registration: {
     name: string;
     factionSymbol: string;
     role: string;
-  }
+  };
 }
 
 export interface IShipRender extends IShip {
   renderData: {
     color: string;
-  }
+  };
 }
 
 interface Frame {
-  symbol: string
-  name: string
-  description: string
-  moduleSlots: number
-  mountingPoints: number
-  fuelCapacity: number
-  quality: number
-  requirements: Requirements
-  condition: number
-  integrity: number
+  symbol: string;
+  name: string;
+  description: string;
+  moduleSlots: number;
+  mountingPoints: number;
+  fuelCapacity: number;
+  quality: number;
+  requirements: Requirements;
+  condition: number;
+  integrity: number;
 }
 
 interface Reactor {
-  symbol: string
-  name: string
-  description: string
-  powerOutput: number
-  quality: number
-  requirements: Requirements
-  condition: number
-  integrity: number
+  symbol: string;
+  name: string;
+  description: string;
+  powerOutput: number;
+  quality: number;
+  requirements: Requirements;
+  condition: number;
+  integrity: number;
 }
 
 interface Requirements {
-  crew: number
-  power?: number
-  slots?: number
+  crew: number;
+  power?: number;
+  slots?: number;
 }
-  
+
 interface Engine {
-  symbol: string
-  name: string
-  description: string
-  speed: number
-  quality: number
-  requirements: Requirements
-  condition: number
-  integrity: number
+  symbol: string;
+  name: string;
+  description: string;
+  speed: number;
+  quality: number;
+  requirements: Requirements;
+  condition: number;
+  integrity: number;
 }
 
 interface Module {
-  symbol: string
-  name: string
-  description: string
-  capacity?: number
-  requirements: Requirements
+  symbol: string;
+  name: string;
+  description: string;
+  capacity?: number;
+  requirements: Requirements;
 }
 
 interface Mount {
-  symbol: string
-  name: string
-  description: string
-  strength: number
-  requirements: Requirements
+  symbol: string;
+  name: string;
+  description: string;
+  strength: number;
+  requirements: Requirements;
 }
 
 interface Crew {
-  required: number
-  capacity: number
+  required: number;
+  capacity: number;
 }
 
 export interface ICommodity {
@@ -255,10 +255,10 @@ export interface ITradeGood {
 export interface IMarket {
   symbol: string;
   imports: any[];
-  exports: any[]
-  exchange: ICommodity[]
-  transactions: ITransaction[]
-  tradeGoods: ITradeGood[]
+  exports: any[];
+  exchange: ICommodity[];
+  transactions: ITransaction[];
+  tradeGoods: ITradeGood[];
 }
 
 export interface Inventory {
@@ -282,7 +282,7 @@ export interface IShipyard {
   shipTypes: { type: string }[];
   ships: IShip[];
   symbol: string;
-  transactions: ShipyardTransaction[]
+  transactions: ShipyardTransaction[];
 }
 
 export interface IServerStatus {
@@ -295,32 +295,32 @@ export interface IServerStatus {
     ships: number;
     systems: number;
     waypoints: number;
-  }
+  };
   leaderboards: {
     mostCredits: {
       agentSymbol: string;
-      credits: number
+      credits: number;
     }[];
     mostSubmittedCharts: {
       agentSymbol: string;
       chartCount: number;
-    }[]
-  }
+    }[];
+  };
   serverResets: {
     next: string;
     frequency: string;
-  }
+  };
   announcements: {
     title: string;
     body: string;
-  }[]
+  }[];
   links: {
     name: string;
     url: string;
-  }[]
+  }[];
 }
 
-export type TWaypointType = 
+export type TWaypointType =
   | 'PLANET'
   | 'GAS_GIANT'
   | 'MOON'
@@ -336,7 +336,7 @@ export type TWaypointType =
   | 'ARTIFICIAL_GRAVITY_WELL'
   | 'FUEL_STATION';
 
-  export type TSystemType = 
+export type TSystemType =
   | 'NEUTRON_STAR'
   | 'RED_STAR'
   | 'ORANGE_STAR'
@@ -345,9 +345,9 @@ export type TWaypointType =
   | 'WHITE_DWARF'
   | 'BLACK_HOLE'
   | 'HYPERGIANT'
-  | 'NEBULA'
+  | 'NEBULA';
 
-  export type TShipType = 
+export type TShipType =
   | 'SHIP_PROBE'
   | 'SHIP_MINING_DRONE'
   | 'SHIP_SIPHON_DRONE'
@@ -359,6 +359,9 @@ export type TWaypointType =
   | 'SHIP_LIGHT_SHUTTLE'
   | 'SHIP_ORE_HOUND'
   | 'SHIP_REFINING_FREIGHTER'
-  | 'SHIP_SURVEYOR'
+  | 'SHIP_SURVEYOR';
 
-export type TWaypointRenderDataMap = Record<TWaypointType, { radius: number, drawOrbit: boolean}>;
+export type TWaypointRenderDataMap = Record<
+  TWaypointType,
+  { radius: number; drawOrbit: boolean }
+>;

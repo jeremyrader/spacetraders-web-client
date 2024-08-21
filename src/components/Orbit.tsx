@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Circle } from 'react-konva';
 
@@ -9,17 +9,17 @@ interface OrbitProps {
   isWaypointSelected: boolean;
 }
 
-const Orbit = ({x, y, radius, isWaypointSelected}: OrbitProps) => {
+const Orbit = ({ x, y, radius, isWaypointSelected }: OrbitProps) => {
   return (
     <Circle
       x={x}
       y={-y}
       radius={radius}
       stroke="gray"
-      strokeWidth={.5}
-      opacity={isWaypointSelected ? .1 : .2}
+      strokeWidth={0.5}
+      opacity={isWaypointSelected ? 0.1 : 0.2}
     />
-  )
-}
+  );
+};
 
-export default Orbit
+export default Orbit;

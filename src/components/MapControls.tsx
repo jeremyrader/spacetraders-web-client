@@ -4,7 +4,10 @@ interface MapControlsProps {
   children: ReactNode;
   onSelectMap: Function;
 }
-const MapControls: React.FC<MapControlsProps> = ({children, onSelectMap: Function}: MapControlsProps) => {
+const MapControls: React.FC<MapControlsProps> = ({
+  children,
+  onSelectMap: Function,
+}: MapControlsProps) => {
   return (
     <div
       style={{
@@ -15,9 +18,9 @@ const MapControls: React.FC<MapControlsProps> = ({children, onSelectMap: Functio
         fontSize: '24px',
       }}
     >
-      { children }
+      {children}
     </div>
-  )
-}
+  );
+};
 
-export default MapControls
+export default MapControls;

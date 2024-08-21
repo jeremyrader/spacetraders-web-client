@@ -3,7 +3,7 @@ import { openDB, DBSchema, IDBPDatabase } from 'idb';
 interface MyDB extends DBSchema {
   stateStore: {
     key: string;
-    value: { 
+    value: {
       currentSystemsPage: number;
     };
   };
@@ -24,14 +24,14 @@ interface MyDB extends DBSchema {
 const DB_NAME = 'spacetraders';
 const STATE_STORE = 'stateStore';
 const SYSTEMS_STORE = 'systemsStore';
-const WAYPOINT_STORE = 'waypointStore'
-const SHIP_STORE = 'shipStore'
+const WAYPOINT_STORE = 'waypointStore';
+const SHIP_STORE = 'shipStore';
 
-type StoreName = 
-  typeof STATE_STORE | 
-  typeof SYSTEMS_STORE | 
-  typeof WAYPOINT_STORE |
-  typeof SHIP_STORE
+type StoreName =
+  | typeof STATE_STORE
+  | typeof SYSTEMS_STORE
+  | typeof WAYPOINT_STORE
+  | typeof SHIP_STORE;
 
 let dbPromise: Promise<IDBPDatabase<MyDB>>;
 
@@ -43,13 +43,22 @@ export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
           db.createObjectStore(STATE_STORE);
         }
         if (!db.objectStoreNames.contains(SYSTEMS_STORE)) {
-          db.createObjectStore(SYSTEMS_STORE, { keyPath: 'symbol', autoIncrement: true });
+          db.createObjectStore(SYSTEMS_STORE, {
+            keyPath: 'symbol',
+            autoIncrement: true,
+          });
         }
         if (!db.objectStoreNames.contains(WAYPOINT_STORE)) {
-          db.createObjectStore(WAYPOINT_STORE, { keyPath: 'symbol', autoIncrement: true });
+          db.createObjectStore(WAYPOINT_STORE, {
+            keyPath: 'symbol',
+            autoIncrement: true,
+          });
         }
         if (!db.objectStoreNames.contains(SHIP_STORE)) {
-          db.createObjectStore(SHIP_STORE, { keyPath: 'symbol', autoIncrement: true });
+          db.createObjectStore(SHIP_STORE, {
+            keyPath: 'symbol',
+            autoIncrement: true,
+          });
         }
       },
     });
@@ -57,7 +66,10 @@ export const initDB = async (): Promise<IDBPDatabase<MyDB>> => {
   return dbPromise;
 };
 
-export const saveData = async (storeName: StoreName, data: any[]): Promise<void> => {
+export const saveData = async (
+  storeName: StoreName,
+  data: any[],
+): Promise<void> => {
   const db = await initDB();
   const tx = db.transaction(storeName, 'readwrite');
   const store = tx.objectStore(storeName);
@@ -76,11 +88,14 @@ export const getData = async (storeName: StoreName): Promise<any[]> => {
   return allData;
 };
 
-export const getObject = async (storeName: StoreName, key: string): Promise<any> => {
+export const getObject = async (
+  storeName: StoreName,
+  key: string,
+): Promise<any> => {
   const db = await initDB();
   const tx = db.transaction(storeName, 'readonly');
   const store = tx.objectStore(storeName);
-  const allData = await store.get(key)
+  const allData = await store.get(key);
   await tx.done;
   return allData;
 };
@@ -90,15 +105,15 @@ export const saveState = async (currentSystemsPage: number): Promise<void> => {
   const tx = db.transaction(STATE_STORE, 'readwrite');
   const store = tx.objectStore(STATE_STORE);
   await store.put(
-    { 
+    {
       currentSystemsPage: currentSystemsPage,
     },
-    'state'
+    'state',
   );
   await tx.done;
 };
 
-export const getState = async (): Promise<{ 
+export const getState = async (): Promise<{
   currentSystemsPage: number;
 } | null> => {
   const db = await initDB();
@@ -106,9 +121,11 @@ export const getState = async (): Promise<{
   const store = tx.objectStore(STATE_STORE);
   const state = await store.get('state');
   await tx.done;
-  return state || { 
-    currentSystemsPage: 1,
-  };
+  return (
+    state || {
+      currentSystemsPage: 1,
+    }
+  );
 };
 
 export const getTimestamp = async (): Promise<number | null> => {

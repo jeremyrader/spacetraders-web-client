@@ -1,13 +1,13 @@
-'use client'
+'use client';
 
-import { IAgent } from '@/types'
+import { IAgent } from '@/types';
 
 interface AgentCardProps {
-  agent: IAgent
+  agent: IAgent;
 }
 
-const AgentCard = ({agent}: AgentCardProps) => {
-  const { symbol, headquarters, credits, startingFaction, shipCount } = agent
+const AgentCard = ({ agent }: AgentCardProps) => {
+  const { symbol, headquarters, credits, startingFaction, shipCount } = agent;
 
   return (
     <div className="card shadow-xl">
@@ -22,7 +22,7 @@ const AgentCard = ({agent}: AgentCardProps) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AgentCard
+export default AgentCard;

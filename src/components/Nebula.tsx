@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Circle } from 'react-konva';
 
@@ -11,15 +11,13 @@ interface NebulaProps {
   zoomLevel: number;
 }
 
-const Nebula = ({x, y, radius, color1, color2, zoomLevel}: NebulaProps) => {
-
-
+const Nebula = ({ x, y, radius, color1, color2, zoomLevel }: NebulaProps) => {
   const calculateOpacity = (scale: number) => {
     if (scale >= 1) return 1;
     if (scale <= 0.02) return 0;
-    return (scale - 0.005) / (.2 - 0.005); // Linear interpolation
+    return (scale - 0.005) / (0.2 - 0.005); // Linear interpolation
   };
-  
+
   return (
     <Circle
       x={x}
@@ -31,11 +29,13 @@ const Nebula = ({x, y, radius, color1, color2, zoomLevel}: NebulaProps) => {
       fillRadialGradientEndPoint={{ x: 0, y: 0 }}
       fillRadialGradientEndRadius={radius}
       fillRadialGradientColorStops={[
-        0, color1, // Center color
-        1, color2, // Fade to transparent
+        0,
+        color1, // Center color
+        1,
+        color2, // Fade to transparent
       ]}
     />
-  )
-}
+  );
+};
 
-export default Nebula
+export default Nebula;

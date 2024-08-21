@@ -2,14 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import { Circle, Line, Layer, Group } from 'react-konva';
 import Konva from 'konva';
 
-import { IShipRender, IRoute, IWaypointLocation } from '@/types'
+import { IShipRender, IRoute, IWaypointLocation } from '@/types';
 
 interface ShipProps {
   route: IRoute;
   color: string;
   radius: number;
   status: string;
-  isWaypointSelected: boolean
+  isWaypointSelected: boolean;
 }
 
 function Ship({ route, color, radius, status, isWaypointSelected }: ShipProps) {
@@ -17,7 +17,10 @@ function Ship({ route, color, radius, status, isWaypointSelected }: ShipProps) {
   const dashedLineRef = useRef<Konva.Line>(null);
   const solidLineRef = useRef<Konva.Line>(null);
 
-  const getCurrentLocation = (route: ShipProps['route'], currentTime: number): IWaypointLocation => {
+  const getCurrentLocation = (
+    route: ShipProps['route'],
+    currentTime: number,
+  ): IWaypointLocation => {
     const departureTime = new Date(route.departureTime).getTime();
     const arrivalTime = new Date(route.arrival).getTime();
 
@@ -26,9 +29,12 @@ function Ship({ route, color, radius, status, isWaypointSelected }: ShipProps) {
     } else if (currentTime >= arrivalTime) {
       return route.destination;
     } else {
-      const progress = (currentTime - departureTime) / (arrivalTime - departureTime);
-      const currentX = route.origin.x + progress * (route.destination.x - route.origin.x);
-      const currentY = route.origin.y + progress * (route.destination.y - route.origin.y);
+      const progress =
+        (currentTime - departureTime) / (arrivalTime - departureTime);
+      const currentX =
+        route.origin.x + progress * (route.destination.x - route.origin.x);
+      const currentY =
+        route.origin.y + progress * (route.destination.y - route.origin.y);
       return { ...route.origin, x: currentX, y: currentY };
     }
   };
@@ -47,12 +53,22 @@ function Ship({ route, color, radius, status, isWaypointSelected }: ShipProps) {
 
         if (dashedLine) {
           // Update dashed line from origin to current ship position
-          dashedLine.points([route.origin.x, -route.origin.y, currentLocation.x, -currentLocation.y]);
+          dashedLine.points([
+            route.origin.x,
+            -route.origin.y,
+            currentLocation.x,
+            -currentLocation.y,
+          ]);
         }
 
         if (solidLine) {
           // Update solid line from current ship position to destination
-          solidLine.points([currentLocation.x, -currentLocation.y, route.destination.x, -route.destination.y]);
+          solidLine.points([
+            currentLocation.x,
+            -currentLocation.y,
+            route.destination.x,
+            -route.destination.y,
+          ]);
         }
 
         // Blinking effect
@@ -67,27 +83,48 @@ function Ship({ route, color, radius, status, isWaypointSelected }: ShipProps) {
       };
     }
   }, [route]);
-  return (
-    status === 'IN_TRANSIT' ? (
-      <Group>
-        <Line ref={dashedLineRef} stroke={color} strokeWidth={.5} dash={[1, 1]} opacity={isWaypointSelected ? .1 : .3} />
-        <Line ref={solidLineRef} stroke={color} strokeWidth={.5} opacity={isWaypointSelected ? .1 : .3} />
-        <Circle ref={shipRef} radius={radius} fill={'white'} opacity={isWaypointSelected ? .1 : .3} />
-      </Group>
-    ) : null
-  )
+  return status === 'IN_TRANSIT' ? (
+    <Group>
+      <Line
+        ref={dashedLineRef}
+        stroke={color}
+        strokeWidth={0.5}
+        dash={[1, 1]}
+        opacity={isWaypointSelected ? 0.1 : 0.3}
+      />
+      <Line
+        ref={solidLineRef}
+        stroke={color}
+        strokeWidth={0.5}
+        opacity={isWaypointSelected ? 0.1 : 0.3}
+      />
+      <Circle
+        ref={shipRef}
+        radius={radius}
+        fill={'white'}
+        opacity={isWaypointSelected ? 0.1 : 0.3}
+      />
+    </Group>
+  ) : null;
 }
 
 interface FleetLayerProps {
-  ships: IShipRender[]
-  isWaypointSelected: boolean
+  ships: IShipRender[];
+  isWaypointSelected: boolean;
 }
 
 function FleetLayer({ ships, isWaypointSelected }: FleetLayerProps) {
   return (
     <Layer>
       {ships.map((ship, index) => (
-        <Ship key={index} route={ship.nav.route} status={ship.nav.status} color={ship.renderData.color} radius={1} isWaypointSelected={isWaypointSelected} />
+        <Ship
+          key={index}
+          route={ship.nav.route}
+          status={ship.nav.status}
+          color={ship.renderData.color}
+          radius={1}
+          isWaypointSelected={isWaypointSelected}
+        />
       ))}
     </Layer>
   );

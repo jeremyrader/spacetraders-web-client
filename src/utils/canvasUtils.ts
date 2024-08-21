@@ -10,9 +10,9 @@ export function getRandomPointInCircle(radius: number) {
   const angle = Math.random() * Math.PI * 2; // Random angle
   const r = radius * Math.sqrt(Math.random()); // Random radius within the circle
   return {
-      x: r * Math.cos(angle),
-      y: r * Math.sin(angle),
-      distance: r, // Include the distance from the center
+    x: r * Math.cos(angle),
+    y: r * Math.sin(angle),
+    distance: r, // Include the distance from the center
   };
 }
 
