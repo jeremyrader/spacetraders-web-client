@@ -8,10 +8,11 @@ interface ShipProps {
   route: IRoute;
   color: string;
   radius: number;
+  status: string;
   isWaypointSelected: boolean
 }
 
-function Ship({ route, color, radius, isWaypointSelected }: ShipProps) {
+function Ship({ route, color, radius, status, isWaypointSelected }: ShipProps) {
   const shipRef = useRef<Konva.Circle>(null);
   const dashedLineRef = useRef<Konva.Line>(null);
   const solidLineRef = useRef<Konva.Line>(null);
@@ -67,11 +68,13 @@ function Ship({ route, color, radius, isWaypointSelected }: ShipProps) {
     }
   }, [route]);
   return (
-    <Group>
-      <Line ref={dashedLineRef} stroke={color} strokeWidth={.5} dash={[1, 1]} opacity={isWaypointSelected ? .1 : .3} />
-      <Line ref={solidLineRef} stroke={color} strokeWidth={.5} opacity={isWaypointSelected ? .1 : .3} />
-      <Circle ref={shipRef} radius={radius} fill={'white'} opacity={isWaypointSelected ? .1 : .3} />
-    </Group> 
+    status === 'IN_TRANSIT' ? (
+      <Group>
+        <Line ref={dashedLineRef} stroke={color} strokeWidth={.5} dash={[1, 1]} opacity={isWaypointSelected ? .1 : .3} />
+        <Line ref={solidLineRef} stroke={color} strokeWidth={.5} opacity={isWaypointSelected ? .1 : .3} />
+        <Circle ref={shipRef} radius={radius} fill={'white'} opacity={isWaypointSelected ? .1 : .3} />
+      </Group>
+    ) : null
   )
 }
 
@@ -84,9 +87,7 @@ function FleetLayer({ ships, isWaypointSelected }: FleetLayerProps) {
   return (
     <Layer>
       {ships.map((ship, index) => (
-        ship.nav.status === 'IN_TRANSIT' ? (
-          <Ship key={index} route={ship.nav.route} color={ship.renderData.color} radius={1} isWaypointSelected={isWaypointSelected} />
-        ) : null
+        <Ship key={index} route={ship.nav.route} status={ship.nav.status} color={ship.renderData.color} radius={1} isWaypointSelected={isWaypointSelected} />
       ))}
     </Layer>
   );
