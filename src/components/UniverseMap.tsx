@@ -119,7 +119,7 @@ const UniverseMap = ({ onSelectMap }: UniverseMapProps) => {
     };
 
     getSystems();
-  }, []);
+  }, [dataContext]);
 
   return (
     <div ref={containerRef}>

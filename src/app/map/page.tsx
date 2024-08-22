@@ -52,7 +52,7 @@ function Map() {
     if (selectedSystem !== null) {
       sessionStorage.setItem('selectedSystem', JSON.stringify(selectedSystem));
     }
-  }, [selectedMap]);
+  }, [selectedMap, selectedSystem]);
 
   return (
     <DataProvider>

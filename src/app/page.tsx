@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 
 import { DataProvider } from '../contexts/DataContext';
 import LoginForm from '@/components/LoginForm';
@@ -19,8 +19,12 @@ import { IServerStatus, IAgent } from '@/types';
 export default function Home() {
   const [status, setStatus] = useState<IServerStatus | null>(null);
   const [agent, setAgent] = useState<IAgent | null>(null);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
-  const callsign = window.localStorage.getItem('callsign');
+  useEffect(() => {
+    const callsign = window.localStorage.getItem('callsign');
+    setLoggedIn(!!callsign);
+  }, []);
 
   useEffect(() => {
     async function getStatus() {
@@ -46,7 +50,7 @@ export default function Home() {
     <DataProvider>
       <Navbar></Navbar>
       <main className="flex min-h-screen flex-col p-24">
-        {!callsign ? (
+        {!loggedIn ? (
           <LoginForm></LoginForm>
         ) : (
           <div className="flex w-full">

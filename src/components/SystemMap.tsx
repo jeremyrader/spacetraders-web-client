@@ -1,7 +1,7 @@
 'use client';
 
 import { Layer } from 'react-konva';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import Konva from 'konva';
@@ -48,57 +48,86 @@ function SystemMap({ system, onSelectMap }: SystemMapProps) {
   });
   const [ships, setShips] = useState<IShipRender[]>([]);
 
-  const fetchWaypoints = async (manual: boolean = false) => {
-    setIsLoading(true);
-    // check the db for the first waypoint in the list
-    // this avoids fetching waypoints every time the system is loaded
-    // I'd like to find a better way to do this in case the system was only
-    // partially loaded before
+  const fetchWaypoints = useCallback(
+    async (manual: boolean = false) => {
+      setIsLoading(true);
+      // check the db for the first waypoint in the list
+      // this avoids fetching waypoints every time the system is loaded
+      // I'd like to find a better way to do this in case the system was only
+      // partially loaded before
 
-    const currentSystem = await getObject('systemsStore', system.symbol);
+      const currentSystem = await getObject('systemsStore', system.symbol);
 
-    if (
-      (currentSystem.waypoints.length > 0 &&
-        !currentSystem.waypoints[0].traits) ||
-      manual
-    ) {
-      const symbolParts = system.symbol.split('-');
-      const results = await fetchResourcePaginated(
-        `systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`,
+      if (
+        (currentSystem.waypoints.length > 0 &&
+          !currentSystem.waypoints[0].traits) ||
+        manual
+      ) {
+        const symbolParts = system.symbol.split('-');
+        const results = await fetchResourcePaginated(
+          `systems/${symbolParts[0]}-${symbolParts[1]}/waypoints`,
+        );
+
+        type accType = Record<string, (typeof results)[string]>;
+
+        function updateWaypoint(waypoint: IWaypointRender): IWaypointRender {
+          const waypointsIndexedBySymbol = results.reduce(
+            (acc: accType, result: IWaypointRender) => {
+              acc[result.symbol] = result;
+              return acc;
+            },
+            {} as accType,
+          );
+
+          waypoint.traits = waypointsIndexedBySymbol[waypoint.symbol].traits;
+          waypoint.chart = waypointsIndexedBySymbol[waypoint.symbol].chart;
+          waypoint.faction = waypointsIndexedBySymbol[waypoint.symbol].faction;
+
+          waypoint.orbitals = waypoint.orbitals.map((orbital) =>
+            updateWaypoint(orbital),
+          );
+
+          saveData('waypointStore', [waypoint]);
+
+          return waypoint;
+        }
+
+        for (let waypoint of currentSystem.waypoints) {
+          waypoint = updateWaypoint(waypoint);
+        }
+
+        saveData('systemsStore', [currentSystem]);
+      }
+      setIsLoading(false);
+    },
+    [system.symbol],
+  );
+
+  const getShips = useCallback(async () => {
+    const ships: IShipRender[] = await getData('shipStore');
+    const inSystemShips = ships.filter(
+      (ship) => ship.nav.route.destination.systemSymbol == system.symbol,
+    );
+
+    for (const inSystemShip of inSystemShips) {
+      const waypoint = await getObject(
+        'waypointStore',
+        inSystemShip.nav.route.destination.symbol,
       );
-
-      type accType = Record<string, (typeof results)[string]>;
-
-      function updateWaypoint(waypoint: IWaypointRender): IWaypointRender {
-        const waypointsIndexedBySymbol = results.reduce(
-          (acc: accType, result: IWaypointRender) => {
-            acc[result.symbol] = result;
-            return acc;
-          },
-          {} as accType,
-        );
-
-        waypoint.traits = waypointsIndexedBySymbol[waypoint.symbol].traits;
-        waypoint.chart = waypointsIndexedBySymbol[waypoint.symbol].chart;
-        waypoint.faction = waypointsIndexedBySymbol[waypoint.symbol].faction;
-
-        waypoint.orbitals = waypoint.orbitals.map((orbital) =>
-          updateWaypoint(orbital),
-        );
-
-        saveData('waypointStore', [waypoint]);
-
-        return waypoint;
+      if (waypoint) {
+        inSystemShip.renderData = {
+          color: 'white',
+        };
       }
-
-      for (let waypoint of currentSystem.waypoints) {
-        waypoint = updateWaypoint(waypoint);
-      }
-
-      saveData('systemsStore', [currentSystem]);
     }
-    setIsLoading(false);
-  };
+
+    setShips(inSystemShips);
+  }, [system.symbol]);
+
+  const loadData = useCallback(async () => {
+    await fetchWaypoints();
+    await getShips();
+  }, [fetchWaypoints, getShips]);
 
   const highlightTrait = (trait: string) => {
     if (selectedTrait == trait) {
@@ -228,34 +257,8 @@ function SystemMap({ system, onSelectMap }: SystemMapProps) {
   };
 
   useEffect(() => {
-    const getShips = async () => {
-      const ships: IShipRender[] = await getData('shipStore');
-      const inSystemShips = ships.filter(
-        (ship) => ship.nav.route.destination.systemSymbol == system.symbol,
-      );
-
-      for (const inSystemShip of inSystemShips) {
-        const waypoint = await getObject(
-          'waypointStore',
-          inSystemShip.nav.route.destination.symbol,
-        );
-        if (waypoint) {
-          inSystemShip.renderData = {
-            color: 'white',
-          };
-        }
-      }
-
-      setShips(inSystemShips);
-    };
-
-    async function loadData() {
-      await fetchWaypoints();
-      await getShips();
-    }
-
     loadData();
-  }, [system]);
+  }, [system, fetchWaypoints, loadData]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

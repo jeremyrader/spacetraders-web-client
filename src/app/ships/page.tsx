@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { DataProvider } from '../../contexts/DataContext';
 import { fetchResource } from '../../utils/v2';
-import { Ship, Inventory } from '../../types';
+import { IShip, Inventory } from '../../types';
 
 import Navbar from '@/components/Navbar';
 
 function Ships() {
-  const [ships, setShips] = useState<Ship[]>([]);
+  const [ships, setShips] = useState<IShip[]>([]);
   const [inventory, setInventory] = useState<Inventory[]>([]);
 
   async function handleViewCargo(shipSymbol?: string) {

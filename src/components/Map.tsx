@@ -138,7 +138,7 @@ const Map: React.FC<MapProps> = ({
         stage.batchDraw();
       }
     }
-  }, [stageSize, mapCenter]);
+  }, [stageSize, mapCenter, maxZoom]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -150,13 +150,15 @@ const Map: React.FC<MapProps> = ({
       }
     });
 
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+    const currentContainer = containerRef.current;
+
+    if (currentContainer) {
+      resizeObserver.observe(currentContainer);
     }
 
     return () => {
-      if (containerRef.current) {
-        resizeObserver.unobserve(containerRef.current);
+      if (currentContainer) {
+        resizeObserver.unobserve(currentContainer);
       }
     };
   }, [containerRef]);

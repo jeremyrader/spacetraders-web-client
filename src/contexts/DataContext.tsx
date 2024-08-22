@@ -2,7 +2,7 @@ import React, {
   createContext,
   useState,
   useEffect,
-  useRef,
+  useCallback,
   ReactNode,
 } from 'react';
 import {
@@ -125,7 +125,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSystemsData = async (page: number): Promise<void> => {
+  const fetchSystemsData = useCallback(async (page: number): Promise<void> => {
     try {
       const result = await burstLimiter.scheduleRequest(() =>
         rateLimiter.scheduleRequest(() =>
@@ -359,9 +359,9 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
       console.error('Error fetching data:', error);
       throw error;
     }
-  };
+  }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (isFetching) return;
     isFetching = true;
 
@@ -388,7 +388,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
         setIsLoading(false);
       }
     }
-  };
+  }, [fetchSystemsData]);
 
   const getSystems = async (): Promise<any[]> => {
     return await getData('systemsStore');
@@ -408,7 +408,7 @@ export const DataProvider: React.FC<DataProviderProps> = ({ children }) => {
     if (true) {
       loadData();
     }
-  }, []);
+  }, [loadData]);
 
   return (
     <DataContext.Provider value={{ getSystems, isLoading, error }}>
