@@ -191,13 +191,13 @@ const Map: React.FC<MapProps> = ({
         fillRadialGradientColorStops: [0.2, 'white', 0.6, 'blue', 0.8, 'black'],
       });
       layer.add(konvaCircle);
-      layer.moveToBottom();
     });
 
     if (stageRef) {
       const stage = stageRef.current?.getStage();
       if (stage) {
         stage.add(layer);
+        layer.moveToBottom();
       }
     }
   }, []);
@@ -215,7 +215,18 @@ const Map: React.FC<MapProps> = ({
         }}
         draggable
       >
-        {children}
+        {isLoading ? (
+          <Layer>
+            <Text
+              text="Loading map..."
+              fontSize={15}
+              offsetX={50}
+              fill="white"
+            />
+          </Layer>
+        ) : (
+          children
+        )}
       </Stage>
       {/* Fixed text */}
       {!isLoading ? <MapControls /> : null}
