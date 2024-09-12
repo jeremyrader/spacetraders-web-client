@@ -25,3 +25,7 @@ The client uses Next.js, Konva (HTML Canvas), TailwindCSS, and DaisyUI. All data
 
 `yarn start`
 
+## Run ##
+`yarn dev`
+
+The first time the client is opened it does take several minutes to populate data before the map is available. This is because the API has a large amount of paginated data that needs to be fetched and it is rate limited. I still need to build in better feedback into the UI to indicate when this loading has completed. There are 850 pages of data that are being fetched in order to grab data for all of the systems in the universe.
